@@ -1,4 +1,4 @@
-name: 5L-TEP Snapshot Compression
+name: 5L-TEP Layer 4 Snapshot Compression
 on:
   schedule:
     - cron: '0 3 * * 0'
