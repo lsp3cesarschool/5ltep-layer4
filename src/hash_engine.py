@@ -182,28 +182,32 @@ class HashEngine:
         return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
     @staticmethod
-    def compute_schema_hash(metadata: dict) -> str:
+    def compute_manifest_hash(metadata: dict) -> str:
         """
-        Compute a hash of the dataset's structural schema.
+        Compute a hash of the dataset's resource manifest.
 
-        Used specifically to detect SCHEMA_DRIFT events: changes in
-        resource count, resource names, or resource formats that indicate
-        structural breaks in the dataset.
+        Used to detect SCHEMA_DRIFT events: changes in resource count,
+        resource names, or resource formats that indicate structural
+        breaks in the dataset's published file manifest.
+
+        Note: this hashes the CKAN-declared resource list (names/formats),
+        not the internal schema of the underlying data files (columns/types).
+        Inspecting file contents is outside the scope of Layer 4.
 
         Args:
             metadata: Dataset metadata dictionary.
 
         Returns:
-            Hex-encoded SHA-256 hash of the schema structure.
+            Hex-encoded SHA-256 hash of the resource manifest.
         """
-        schema = {
+        manifest = {
             "num_resources": metadata.get("num_resources"),
-            "resource_schema": [
+            "resource_manifest": [
                 {"name": r.get("name"), "format": r.get("format")}
                 for r in metadata.get("resources", [])
             ],
         }
-        canonical = json.dumps(schema, sort_keys=True, ensure_ascii=True)
+        canonical = json.dumps(manifest, sort_keys=True, ensure_ascii=True)
         return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
     def detect_changes(self, datasets: list[dict]) -> list[ChangeEvent]:
@@ -213,7 +217,7 @@ class HashEngine:
         Classification logic (Section 3.2 of the KDMiLe 2026 paper):
           1. If no previous hash exists → CLEAN_UPDATE (baseline observation)
           2. If current_hash == previous_hash → CLEAN_UPDATE (no change)
-          3. If schema_hash differs → SCHEMA_DRIFT (structural break, CRITICAL)
+          3. If manifest_hash differs → SCHEMA_DRIFT (structural break, CRITICAL)
           4. If hash changed BUT timestamp did NOT advance → RETRO_ALTER (CRITICAL)
           5. Otherwise → CONTENT_MOD (normal update, WARNING)
 
@@ -230,13 +234,13 @@ class HashEngine:
 
             dataset_id = metadata.get("id", metadata.get("name", "unknown"))
             current_hash = self.compute_hash(metadata)
-            current_schema_hash = self.compute_schema_hash(metadata)
+            current_manifest_hash = self.compute_manifest_hash(metadata)
             current_timestamp = metadata.get("metadata_modified")
             organization = metadata.get("organization", {}).get("name")
 
             stored = self.hash_store.get(dataset_id, {})
             previous_hash = stored.get("content_hash")
-            previous_schema_hash = stored.get("schema_hash")
+            previous_manifest_hash = stored.get("manifest_hash")
             previous_timestamp = stored.get("timestamp")
 
             # Classify change type per Section 3.2 algorithm
@@ -246,8 +250,8 @@ class HashEngine:
             elif current_hash == previous_hash:
                 # No change detected
                 change_type = ChangeType.CLEAN_UPDATE
-            elif previous_schema_hash and current_schema_hash != previous_schema_hash:
-                # Structural change at schema level → CRITICAL
+            elif previous_manifest_hash and current_manifest_hash != previous_manifest_hash:
+                # Structural change at manifest level → CRITICAL
                 change_type = ChangeType.SCHEMA_DRIFT
             elif (
                 current_timestamp
@@ -276,7 +280,7 @@ class HashEngine:
             # Update store with current state
             self.hash_store[dataset_id] = {
                 "content_hash": current_hash,
-                "schema_hash": current_schema_hash,
+                "manifest_hash": current_manifest_hash,
                 "timestamp": current_timestamp,
                 "last_checked": event.detected_at,
             }

@@ -72,7 +72,7 @@ Given: h_t = SHA-256(canonical_json(metadata_t))
 
 1. If h_{t-1} is NULL           → CLEAN_UPDATE (first observation)
 2. If h_t == h_{t-1}            → CLEAN_UPDATE (no change)
-3. If schema_hash differs       → SCHEMA_DRIFT (structural break)
+3. If manifest_hash differs     → SCHEMA_DRIFT (structural break)
 4. If timestamp_t ≤ timestamp_{t-1} → RETRO_ALTER (retroactive edit)
 5. Otherwise                    → CONTENT_MOD (normal update)
 ```

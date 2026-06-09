@@ -158,7 +158,7 @@ class TestHashEngine:
             store = json.load(f)
         assert "abc123" in store
         assert "content_hash" in store["abc123"]
-        assert "schema_hash" in store["abc123"]
+        assert "manifest_hash" in store["abc123"]
 
     def test_severity_mapping_v16(self):
         """Verify severity mapping matches v16 paper specification."""

@@ -25,6 +25,7 @@ References:
 """
 
 import argparse
+import hashlib
 import json
 import logging
 import os
@@ -59,6 +60,7 @@ DATA_DIR = Path("data")
 HASHES_FILE = DATA_DIR / "hash_store.json"
 PROV_DIR = Path("provenance_logs")
 SNAPSHOTS_DIR = DATA_DIR / "snapshots"
+MANIFEST_FILE = SNAPSHOTS_DIR / "manifest.json"
 
 for d in [DATA_DIR, PROV_DIR, SNAPSHOTS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
@@ -68,11 +70,52 @@ for d in [DATA_DIR, PROV_DIR, SNAPSHOTS_DIR]:
 # Snapshot persistence
 # ---------------------------------------------------------------------------
 
+def _load_manifest() -> Dict[str, Dict[str, str]]:
+    """Load the snapshot deduplication manifest."""
+    if MANIFEST_FILE.exists():
+        with open(MANIFEST_FILE, "r", encoding="utf-8") as fh:
+            return json.load(fh)
+    return {"runs": {}, "snapshots": {}}
+
+
+def _save_manifest(manifest: Dict[str, Dict[str, str]]) -> None:
+    """Persist the snapshot deduplication manifest."""
+    with open(MANIFEST_FILE, "w", encoding="utf-8") as fh:
+        json.dump(manifest, fh, indent=2, ensure_ascii=False)
+
+
 def save_snapshot(datasets: List[Dict[str, Any]], run_id: str) -> Path:
-    """Persist harvested dataset snapshots for auditability."""
-    snap_path = SNAPSHOTS_DIR / f"snapshot_{run_id}.json"
+    """Persist harvested dataset snapshots, deduplicating identical content.
+
+    Snapshots are content-addressed: a new file is written only when its
+    SHA-256 differs from any previously stored snapshot. Otherwise, only
+    a reference is recorded in `manifest.json`, mapping the current run_id
+    to the pre-existing snapshot file. This preserves full auditability
+    while avoiding redundant storage when portal data is unchanged.
+    """
+    content = json.dumps(datasets, indent=2, ensure_ascii=False)
+    snapshot_hash = hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+    manifest = _load_manifest()
+
+    if snapshot_hash in manifest["snapshots"]:
+        existing_file = manifest["snapshots"][snapshot_hash]
+        manifest["runs"][run_id] = snapshot_hash
+        _save_manifest(manifest)
+        logger.info(
+            "Snapshot identical to %s — reference recorded (no file written)",
+            existing_file,
+        )
+        return SNAPSHOTS_DIR / existing_file
+
+    snap_file = f"snapshot_{run_id}.json"
+    snap_path = SNAPSHOTS_DIR / snap_file
     with open(snap_path, "w", encoding="utf-8") as fh:
-        json.dump(datasets, fh, indent=2, ensure_ascii=False)
+        fh.write(content)
+    manifest["snapshots"][snapshot_hash] = snap_file
+    manifest["runs"][run_id] = snapshot_hash
+    _save_manifest(manifest)
+    logger.info("Snapshot saved: %s (hash %s...)", snap_file, snapshot_hash[:12])
     return snap_path
 
 
