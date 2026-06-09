@@ -1,0 +1,34 @@
+name: 5L-TEP Snapshot Compression
+on:
+  schedule:
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  compress:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Compress snapshots older than 90 days
+        run: python compress_snapshots.py
+
+      - name: Commit compressed snapshots
+        run: |
+          git config user.name "5L-TEP L4 Bot"
+          git config user.email "5ltep-l4-bot@users.noreply.github.com"
+          git add data/snapshots/
+          git diff --cached --quiet || git commit -m "chore: gzip snapshots older than 90 days [$(date -u +%Y-%m-%dT%H:%M:%SZ)]"
+          git push
