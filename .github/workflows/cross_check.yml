@@ -1,7 +1,7 @@
 name: 5L-TEP Layer 4 Cross-Check
 on:
   schedule:
-    - cron: '30 6 * * *'
+    - cron: '30 3 * * *'
   workflow_dispatch:
 
 env:

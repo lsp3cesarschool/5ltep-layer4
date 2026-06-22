@@ -209,7 +209,7 @@ When a retroactive alteration is detected:
 │   └── workflows/
 │       ├── monitor.yml              # Scheduled monitoring (every 6h)
 │       ├── compress.yml             # Weekly snapshot compression (Sun 03:00 UTC)
-│       ├── cross_check.yml          # Daily independent validation (06:30 UTC)
+│       ├── cross_check.yml          # Daily independent validation (03:30 UTC, off-peak)
 │       └── tests.yml                # CI/CD test runner
 ├── src/
 │   ├── __init__.py
