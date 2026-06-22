@@ -4,7 +4,12 @@
 
 [![Tests](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/tests.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/tests.yml)
 [![Monitoring](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/monitor.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/monitor.yml)
+[![Cross-Check](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/cross_check.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/cross_check.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+<!-- CROSS_CHECK_STATUS:START -->
+✅ **Cross-check passing** — last verified 2026-06-22 15:48 UTC. All 73 reachable datasets in sync with live IBAMA portal; latest snapshot is 3.8h old.
+<!-- CROSS_CHECK_STATUS:END -->
 
 ## Overview
 
@@ -198,9 +203,13 @@ When a retroactive alteration is detected:
 ├── requirements.txt                 # Python dependencies
 ├── LICENSE                          # MIT License
 ├── README.md                        # This file
+├── compress_snapshots.py            # Weekly gzip of snapshots older than 90 days
+├── cross_check.py                   # Independent validator vs. live CKAN portal
 ├── .github/
 │   └── workflows/
 │       ├── monitor.yml              # Scheduled monitoring (every 6h)
+│       ├── compress.yml             # Weekly snapshot compression (Sun 03:00 UTC)
+│       ├── cross_check.yml          # Daily independent validation (06:30 UTC)
 │       └── tests.yml                # CI/CD test runner
 ├── src/
 │   ├── __init__.py
@@ -210,9 +219,12 @@ When a retroactive alteration is detected:
 ├── tests/
 │   ├── __init__.py
 │   └── test_toolkit.py             # 23 unit + integration tests
-├── data/                            # Runtime data (git-ignored)
+├── data/                            # Runtime data (committed by bot)
 │   ├── hash_store.json
+│   ├── cross_check_report.json
 │   └── snapshots/
+│       ├── manifest.json
+│       └── snapshot_*.json[.gz]
 └── provenance_logs/                 # PROV-DM JSON-LD logs (committed to git)
     └── {dataset_id}.jsonld
 ```

@@ -1,0 +1,41 @@
+name: 5L-TEP Layer 4 Cross-Check
+on:
+  schedule:
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  cross_check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Run independent cross-check against IBAMA portal
+        id: check
+        run: python cross_check.py
+        continue-on-error: true
+
+      - name: Commit cross-check report and README status
+        run: |
+          git config user.name "5L-TEP L4 Bot"
+          git config user.email "5ltep-l4-bot@users.noreply.github.com"
+          git pull --rebase
+          git add data/cross_check_report.json README.md
+          git diff --cached --quiet || git commit -m "chore: cross-check report [$(date -u +%Y-%m-%dT%H:%M:%SZ)]"
+          git push
+
+      - name: Propagate script exit code
+        if: steps.check.outcome == 'failure'
+        run: exit 1
