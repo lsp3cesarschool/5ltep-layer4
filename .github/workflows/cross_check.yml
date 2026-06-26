@@ -31,11 +31,11 @@ jobs:
         run: |
           git config user.name "5L-TEP L4 Bot"
           git config user.email "5ltep-l4-bot@users.noreply.github.com"
-          git pull --rebase
           git add data/cross_check_report.json README.md
-          git diff --cached --quiet || git commit -m "chore: cross-check report [$(date -u +%Y-%m-%dT%H:%M:%SZ)]"
-          git push
-
-      - name: Propagate script exit code
-        if: steps.check.outcome == 'failure'
-        run: exit 1
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: cross-check report [$(date -u +%Y-%m-%dT%H:%M:%SZ)]"
+            git pull --rebase --autostash
+            git push
+          fi
