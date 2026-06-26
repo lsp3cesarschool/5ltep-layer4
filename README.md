@@ -137,8 +137,9 @@ python main.py --portal https://dadosabertos.ibama.gov.br --org ibama
 
 ```bash
 pytest tests/ -v
-# 23 tests covering: hash determinism, 4 change types, dual-agent model,
-# derivation chains, append-only persistence, end-to-end pipeline
+# 28 tests covering: hash determinism, 4 change types, dual-agent model,
+# derivation chains, append-only persistence, end-to-end pipeline,
+# critical-change alerting (SCHEMA_DRIFT/RETRO_ALTER) and CI signalling
 ```
 
 ### GitHub Actions Deployment

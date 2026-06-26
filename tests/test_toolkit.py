@@ -20,9 +20,11 @@ from typing import Any, Dict
 
 import pytest
 
-# Add src/ to path
+# Add repository root and src/ to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
+import main
 from hash_engine import HashEngine, ChangeType, Severity, ChangeEvent, SEVERITY_MAP
 from prov_mapper import ProvMapper
 
@@ -408,3 +410,123 @@ class TestPipeline:
         assert entity["5ltep:changeType"] == "RETRO_ALTER"
         assert entity["5ltep:severity"] == "CRITICAL"
         assert "prov:wasDerivedFrom" in entity
+
+
+# ---------------------------------------------------------------------------
+# Critical-change alerting (main.run_pipeline summary + CI signalling)
+# ---------------------------------------------------------------------------
+
+class TestCriticalAlerting:
+    def _drifted(self, sample_dataset):
+        """sample_dataset with an extra resource → SCHEMA_DRIFT (CRITICAL)."""
+        drifted = {**sample_dataset, "metadata_modified": "2026-06-02T00:00:00",
+                   "num_resources": 4}
+        drifted["resources"] = sample_dataset["resources"] + [
+            {"id": "r4", "name": "new.pdf", "format": "PDF",
+             "url": "https://ibama.gov.br/data/1.pdf", "size": 8192,
+             "last_modified": "2026-06-02"},
+        ]
+        return drifted
+
+    def test_run_pipeline_counts_critical_schema_drift(
+        self, sample_dataset, tmp_path, monkeypatch
+    ):
+        """run_pipeline reports SCHEMA_DRIFT in summary.critical_events."""
+        hashes = tmp_path / "hash_store.json"
+        snaps = tmp_path / "snapshots"
+        prov = tmp_path / "prov"
+        snaps.mkdir(parents=True, exist_ok=True)
+        prov.mkdir(parents=True, exist_ok=True)
+        monkeypatch.setattr(main, "HASHES_FILE", hashes)
+        monkeypatch.setattr(main, "SNAPSHOTS_DIR", snaps)
+        monkeypatch.setattr(main, "MANIFEST_FILE", snaps / "manifest.json")
+        monkeypatch.setattr(main, "PROV_DIR", prov)
+
+        # Seed baseline so the next observation is a comparison, not a baseline.
+        HashEngine(hash_store_path=str(hashes),
+                   portal_url="https://test.gov.br").detect_changes([sample_dataset])
+
+        drifted = self._drifted(sample_dataset)
+
+        class _FakeHarvester:
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def harvest_all(self):
+                return [drifted]
+
+        monkeypatch.setattr(main, "CKANHarvester", _FakeHarvester)
+
+        summary = main.run_pipeline(portal_url="https://test.gov.br")
+
+        assert summary["critical_events"] == 1
+        assert summary["change_events"] == 1
+        assert summary["critical_datasets"][0]["dataset_id"] == "abc123"
+        assert summary["critical_datasets"][0]["change_type"] == "SCHEMA_DRIFT"
+
+    def test_run_pipeline_no_critical_on_content_mod(
+        self, sample_dataset, tmp_path, monkeypatch
+    ):
+        """CONTENT_MOD (WARNING) is a change but NOT counted as critical."""
+        hashes = tmp_path / "hash_store.json"
+        snaps = tmp_path / "snapshots"
+        prov = tmp_path / "prov"
+        snaps.mkdir(parents=True, exist_ok=True)
+        prov.mkdir(parents=True, exist_ok=True)
+        monkeypatch.setattr(main, "HASHES_FILE", hashes)
+        monkeypatch.setattr(main, "SNAPSHOTS_DIR", snaps)
+        monkeypatch.setattr(main, "MANIFEST_FILE", snaps / "manifest.json")
+        monkeypatch.setattr(main, "PROV_DIR", prov)
+
+        HashEngine(hash_store_path=str(hashes),
+                   portal_url="https://test.gov.br").detect_changes([sample_dataset])
+
+        modified = {**sample_dataset, "metadata_modified": "2026-06-03T00:00:00",
+                    "notes": "Legitimate update"}
+        modified["resources"] = sample_dataset["resources"]
+
+        class _FakeHarvester:
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def harvest_all(self):
+                return [modified]
+
+        monkeypatch.setattr(main, "CKANHarvester", _FakeHarvester)
+
+        summary = main.run_pipeline(portal_url="https://test.gov.br")
+
+        assert summary["change_events"] == 1
+        assert summary["critical_events"] == 0
+        assert summary["critical_datasets"] == []
+
+    def test_emit_github_output_flags_critical(self, tmp_path, monkeypatch):
+        """_emit_github_output writes critical=true with count and dataset list."""
+        out = tmp_path / "gh_output.txt"
+        monkeypatch.setenv("GITHUB_OUTPUT", str(out))
+        main._emit_github_output({
+            "critical_events": 2,
+            "critical_datasets": [
+                {"dataset_id": "ds-a", "change_type": "SCHEMA_DRIFT"},
+                {"dataset_id": "ds-b", "change_type": "RETRO_ALTER"},
+            ],
+        })
+        content = out.read_text(encoding="utf-8")
+        assert "critical=true" in content
+        assert "critical_events=2" in content
+        assert "ds-a (SCHEMA_DRIFT)" in content
+        assert "ds-b (RETRO_ALTER)" in content
+
+    def test_emit_github_output_silent_when_clean(self, tmp_path, monkeypatch):
+        """No critical events → critical=false (no alert)."""
+        out = tmp_path / "gh_output.txt"
+        monkeypatch.setenv("GITHUB_OUTPUT", str(out))
+        main._emit_github_output({"critical_events": 0, "critical_datasets": []})
+        content = out.read_text(encoding="utf-8")
+        assert "critical=false" in content
+        assert "critical_events=0" in content
+
+    def test_emit_github_output_noop_outside_ci(self, monkeypatch):
+        """Outside Actions ($GITHUB_OUTPUT unset) the call is a harmless no-op."""
+        monkeypatch.delenv("GITHUB_OUTPUT", raising=False)
+        main._emit_github_output({"critical_events": 1, "critical_datasets": []})
