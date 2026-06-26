@@ -28,6 +28,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run monitoring cycle
+        id: monitor
         run: python main.py --portal ${{ env.CKAN_PORTAL_URL }}
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -40,3 +41,10 @@ jobs:
           git add provenance_logs/ data/
           git diff --cached --quiet || git commit -m "chore: update provenance logs [$(date -u +%Y-%m-%dT%H:%M:%SZ)]"
           git push
+
+      - name: Alert on CRITICAL schema change (SCHEMA_DRIFT / RETRO_ALTER)
+        if: steps.monitor.outputs.critical == 'true'
+        run: |
+          echo "::error::CRITICAL change detected (${{ steps.monitor.outputs.critical_events }}): ${{ steps.monitor.outputs.critical_datasets }}"
+          echo "Provenance records were committed before this alert; see provenance_logs/."
+          exit 1

@@ -202,6 +202,18 @@ def run_pipeline(
     ]
     logger.info("Meaningful changes (non-CLEAN_UPDATE): %d", len(meaningful_events))
 
+    # Isolate CRITICAL events (SCHEMA_DRIFT, RETRO_ALTER) — the core L4 concern
+    critical_events = [
+        e for e in meaningful_events
+        if e.severity == Severity.CRITICAL
+    ]
+    if critical_events:
+        logger.warning(
+            "CRITICAL changes detected (%d): %s",
+            len(critical_events),
+            ", ".join(f"{e.dataset_id}={e.change_type.value}" for e in critical_events),
+        )
+
     # ------------------------------------------------------------------
     # Step 3 – PROV-DM Mapper (L4 Core Contribution, Section 3.3)
     # ------------------------------------------------------------------
@@ -237,6 +249,11 @@ def run_pipeline(
         "scope": "Layer 4 — Observability & Provenance",
         "datasets_harvested": len(datasets),
         "change_events": len(meaningful_events),
+        "critical_events": len(critical_events),
+        "critical_datasets": [
+            {"dataset_id": e.dataset_id, "change_type": e.change_type.value}
+            for e in critical_events
+        ],
         "prov_records": len(prov_records),
     }
 
@@ -284,6 +301,27 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _emit_github_output(summary: Dict[str, Any]) -> None:
+    """Expose critical-change signals to the GitHub Actions workflow.
+
+    Writes to the file referenced by $GITHUB_OUTPUT (when running in CI) so a
+    later workflow step can alert on CRITICAL events WITHOUT failing this
+    process — keeping the provenance-log commit step intact regardless.
+    """
+    github_output = os.environ.get("GITHUB_OUTPUT")
+    if not github_output:
+        return
+    n_critical = summary.get("critical_events", 0)
+    affected = "; ".join(
+        f"{c['dataset_id']} ({c['change_type']})"
+        for c in summary.get("critical_datasets", [])
+    )
+    with open(github_output, "a", encoding="utf-8") as fh:
+        fh.write(f"critical={'true' if n_critical > 0 else 'false'}\n")
+        fh.write(f"critical_events={n_critical}\n")
+        fh.write(f"critical_datasets={affected}\n")
+
+
 if __name__ == "__main__":
     args = parse_args()
     summary = run_pipeline(
@@ -293,3 +331,4 @@ if __name__ == "__main__":
         max_datasets=args.max_datasets,
     )
     print(json.dumps(summary, indent=2))
+    _emit_github_output(summary)
