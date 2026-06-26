@@ -39,3 +39,10 @@ jobs:
             git pull --rebase --autostash
             git push
           fi
+
+      - name: Fail the run on a genuine cross-check problem (ERROR or STALE)
+        if: steps.check.outcome == 'failure'
+        run: |
+          echo "::error::Cross-check reported a genuine problem (ERROR: portal coverage <90%, or STALE: divergences unreconciled for >7h)."
+          echo "Details committed to README status badge and data/cross_check_report.json."
+          exit 1
