@@ -316,10 +316,17 @@ def _emit_github_output(summary: Dict[str, Any]) -> None:
         f"{c['dataset_id']} ({c['change_type']})"
         for c in summary.get("critical_datasets", [])
     )
+    # Sanitized filenames matching ProvMapper.save_records, for direct links
+    # to the affected provenance logs in the alert workflow step.
+    affected_files = ",".join(
+        c["dataset_id"].replace("/", "_").replace("\\", "_") + ".jsonld"
+        for c in summary.get("critical_datasets", [])
+    )
     with open(github_output, "a", encoding="utf-8") as fh:
         fh.write(f"critical={'true' if n_critical > 0 else 'false'}\n")
         fh.write(f"critical_events={n_critical}\n")
         fh.write(f"critical_datasets={affected}\n")
+        fh.write(f"critical_dataset_files={affected_files}\n")
 
 
 if __name__ == "__main__":

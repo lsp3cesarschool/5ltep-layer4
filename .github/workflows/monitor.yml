@@ -35,16 +35,22 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
 
       - name: Commit provenance logs
+        id: commit
         run: |
           git config user.name "5L-TEP L4 Bot"
           git config user.email "5ltep-l4-bot@users.noreply.github.com"
           git add provenance_logs/ data/
           git diff --cached --quiet || git commit -m "chore: update provenance logs [$(date -u +%Y-%m-%dT%H:%M:%SZ)]"
           git push
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Alert on CRITICAL schema change (SCHEMA_DRIFT / RETRO_ALTER)
         if: steps.monitor.outputs.critical == 'true'
         run: |
           echo "::error::CRITICAL change detected (${{ steps.monitor.outputs.critical_events }}): ${{ steps.monitor.outputs.critical_datasets }}"
-          echo "Provenance records were committed before this alert; see provenance_logs/."
+          echo "Provenance records were committed before this alert. Affected logs:"
+          IFS=',' read -ra FILES <<< "${{ steps.monitor.outputs.critical_dataset_files }}"
+          for f in "${FILES[@]}"; do
+            echo "  - https://github.com/${{ github.repository }}/blob/${{ steps.commit.outputs.sha }}/provenance_logs/$f"
+          done
           exit 1

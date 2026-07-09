@@ -516,6 +516,7 @@ class TestCriticalAlerting:
         assert "critical_events=2" in content
         assert "ds-a (SCHEMA_DRIFT)" in content
         assert "ds-b (RETRO_ALTER)" in content
+        assert "critical_dataset_files=ds-a.jsonld,ds-b.jsonld" in content
 
     def test_emit_github_output_silent_when_clean(self, tmp_path, monkeypatch):
         """No critical events → critical=false (no alert)."""

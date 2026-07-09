@@ -43,6 +43,21 @@ jobs:
       - name: Fail the run on a genuine cross-check problem (ERROR or STALE)
         if: steps.check.outcome == 'failure'
         run: |
-          echo "::error::Cross-check reported a genuine problem (ERROR: portal coverage <90%, or STALE: divergences unreconciled for >7h)."
-          echo "Details committed to README status badge and data/cross_check_report.json."
+          REPORT=data/cross_check_report.json
+          STATUS=$(jq -r '.status' "$REPORT")
+          COVERAGE=$(jq -r '(.coverage_ratio * 100 | round)' "$REPORT")
+          ERRORS=$(jq -r '.errors | length' "$REPORT")
+          AGE=$(jq -r '.snapshot_age_hours' "$REPORT")
+          TOLERANCE=$(jq -r '.monitor_tolerance_hours' "$REPORT")
+          ADDED=$(jq -r '.datasets.added | length' "$REPORT")
+          REMOVED=$(jq -r '.datasets.removed | length' "$REPORT")
+          MODIFIED=$(jq -r '.modified | length' "$REPORT")
+          DIVERGENCES=$((ADDED + REMOVED + MODIFIED))
+
+          if [ "$STATUS" = "ERROR" ]; then
+            echo "::error::Cross-check ERROR — coverage ${COVERAGE}% (${ERRORS} fetch failure(s)), below the 90% threshold. See ${REPORT}."
+          else
+            echo "::error::Cross-check STALE — ${DIVERGENCES} unreconciled divergence(s) (added=${ADDED} removed=${REMOVED} modified=${MODIFIED}); snapshot ${AGE}h old (tolerance ${TOLERANCE}h). See ${REPORT}."
+          fi
+          echo "Details committed to README status badge and ${REPORT}."
           exit 1
