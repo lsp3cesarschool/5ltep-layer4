@@ -20,7 +20,7 @@ Usage (GitHub Actions):
     Triggered automatically via .github/workflows/monitor.yml (cron 6h)
 
 References:
-    Pinheiro & Sérgio (2026). 5L-TEP: A Five-Layer Trust Engineering
+    Pinheiro, L.S. et al. (2026). 5L-TEP: A Five-Layer Trust Engineering
     Pyramid for Open Government Data. SOFTENG 2026.
 """
 
@@ -131,7 +131,7 @@ def run_pipeline(
 ) -> Dict[str, Any]:
     """Execute the L4 provenance monitoring pipeline.
 
-    Implements the workflow described in the KDMiLe 2026 paper (Section 3.5):
+    Implements the 5L-TEP Layer 4 monitoring workflow:
     (1) harvest metadata; (2) compute SHA-256 fingerprints;
     (3) classify changes (4 types); (4) generate PROV-DM records;
     (5) commit updated provenance logs.
@@ -185,7 +185,7 @@ def run_pipeline(
         save_snapshot(datasets, run_id)
 
     # ------------------------------------------------------------------
-    # Step 2 – Hash Engine (change detection, Section 3.2)
+    # Step 2 – Hash Engine (change detection)
     # ------------------------------------------------------------------
     logger.info("Step 2/3 — Running Hash Engine on %d datasets...", len(datasets))
     hash_engine = HashEngine(
@@ -215,7 +215,7 @@ def run_pipeline(
         )
 
     # ------------------------------------------------------------------
-    # Step 3 – PROV-DM Mapper (L4 Core Contribution, Section 3.3)
+    # Step 3 – PROV-DM Mapper (L4 Core Contribution)
     # ------------------------------------------------------------------
     logger.info("Step 3/3 — Mapping changes to W3C PROV-DM records (L4 core)...")
     prov_mapper = ProvMapper(
