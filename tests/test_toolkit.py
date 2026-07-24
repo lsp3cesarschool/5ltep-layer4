@@ -5,7 +5,7 @@ Run with: pytest tests/ -v
 
 Covers only L4-essential modules: hash_engine, prov_mapper, ckan_harvester.
 
-Change taxonomy (v16 paper, Section 3.2):
+Change taxonomy (5L-TEP L4 specification):
     CLEAN_UPDATE  → INFO
     SCHEMA_DRIFT  → CRITICAL
     RETRO_ALTER   → CRITICAL
@@ -69,7 +69,7 @@ def sample_dataset() -> Dict[str, Any]:
 
 class TestHashEngine:
     def test_compute_hash_deterministic(self, sample_dataset):
-        """Same input always produces same hash (Section 3.2: canonical JSON)."""
+        """Same input always produces same hash (canonical JSON serialisation)."""
         h1 = HashEngine.compute_hash(sample_dataset)
         h2 = HashEngine.compute_hash(sample_dataset)
         assert h1 == h2
@@ -163,7 +163,7 @@ class TestHashEngine:
         assert "manifest_hash" in store["abc123"]
 
     def test_severity_mapping_v16(self):
-        """Verify severity mapping matches v16 paper specification."""
+        """Verify severity mapping matches 5L-TEP L4 specification."""
         assert SEVERITY_MAP[ChangeType.SCHEMA_DRIFT] == Severity.CRITICAL
         assert SEVERITY_MAP[ChangeType.RETRO_ALTER] == Severity.CRITICAL
         assert SEVERITY_MAP[ChangeType.CONTENT_MOD] == Severity.WARNING
