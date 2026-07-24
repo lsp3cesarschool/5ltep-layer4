@@ -6,13 +6,10 @@ exponential backoff retry logic and per-resource enumeration.
 
 Part of the 5L-TEP Layer 4 (Observability & Provenance) Toolkit.
 
-As described in the KDMiLe 2026 paper (Section 3.1):
-    "The CKAN Harvester polls package_list and package_show endpoints
-    using exponential backoff retry logic and per-resource enumeration."
-
 References:
     - CKAN API Guide: https://docs.ckan.org/en/latest/api/
-    - Pinheiro & Sérgio (2026). 5L-TEP. SOFTENG 2026.
+    - Pinheiro, L.S. et al. (2026). 5L-TEP: A Five-Layer Trust Engineering
+      Pyramid for Open Government Data. SOFTENG 2026.
 """
 
 import time
