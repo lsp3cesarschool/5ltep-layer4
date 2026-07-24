@@ -243,7 +243,6 @@ When a retroactive alteration is detected:
 ## Academic References
 
 - Pinheiro, L. S., et al. (2026). *5L-TEP: A Five-Layer Trust Engineering Pyramid for Open Government Data*. SOFTENG 2026.
-- Pinheiro, L. S. & Sérgio, A. T. (2026). *Provenance-based Observability for Open Government Data via W3C PROV-DM and GitHub Actions*. KDMiLe 2026 (preprint).
 - W3C. (2013). *PROV-DM: The PROV Data Model*. https://www.w3.org/TR/prov-dm/
 - Groth, P. & Moreau, L. (2013). *PROV-Overview*. https://www.w3.org/TR/prov-overview/
 - Simmhan, Y. L. et al. (2005). *A survey of data provenance in e-science*. ACM SIGMOD Record.
