@@ -2,7 +2,7 @@
 PROV-DM Mapper Module — Layer 4 Core Contribution
 ===================================================
 Generates W3C PROV-DM–compliant JSON-LD provenance records implementing
-the mapping strategy described in the KDMiLe 2026 paper (Section 3.3).
+the 5L-TEP Layer 4 PROV-DM mapping strategy.
 
 Mapping Strategy:
     Entity:   Dataset snapshot → prov:Entity (content-addressable URI via SHA-256)
@@ -19,7 +19,8 @@ References:
     - W3C PROV-DM: https://www.w3.org/TR/prov-dm/
     - W3C PROV-O: https://www.w3.org/TR/prov-o/
     - JSON-LD: https://www.w3.org/TR/json-ld/
-    - Pinheiro & Sérgio (2026). 5L-TEP. SOFTENG 2026.
+    - Pinheiro, L.S. et al. (2026). 5L-TEP: A Five-Layer Trust Engineering
+      Pyramid for Open Government Data. SOFTENG 2026.
     - Simmhan et al. (2005). A survey of data provenance. ACM SIGMOD Record.
 """
 
@@ -55,8 +56,7 @@ class ProvMapper:
     W3C PROV-DM Mapper for OGD Quality Events (L4 Core).
 
     Translates ChangeEvent objects into PROV-DM–compliant JSON-LD records
-    following the provenance mapping strategy defined in Section 3.3 of
-    the KDMiLe 2026 paper:
+    following the 5L-TEP Layer 4 PROV-DM mapping strategy:
 
     - Entity: Dataset snapshot (content-addressable URI via SHA-256 hash fragment).
       Because any change produces a cryptographically distinct identifier,
@@ -93,7 +93,7 @@ class ProvMapper:
         Build a content-addressable entity URI.
 
         Format: {portal_url}/dataset/{id}#{sha256_prefix}
-        Per Section 3.3.1: any change produces a cryptographically distinct
+        Any change produces a cryptographically distinct
         identifier, satisfying PROV-DM's entity immutability requirement.
         """
         base = event.portal_url.rstrip("/")
@@ -116,7 +116,7 @@ class ProvMapper:
         """
         Build the data custodian agent identifier.
 
-        Per Section 3.3.2: the originating government agency (from CKAN's
+        The originating government agency (from CKAN's
         organization field) is recorded via prov:wasAttributedTo on the entity.
         """
         if event.organization:
@@ -128,7 +128,7 @@ class ProvMapper:
         """
         Build the prov:Activity node for this monitoring run.
 
-        Per Section 3.3.2: each monitoring run constitutes a prov:Activity
+        Each monitoring run constitutes a prov:Activity
         with ISO-8601 timestamps, associated with the software agent.
         """
         run_end = datetime.now(timezone.utc)
@@ -167,7 +167,7 @@ class ProvMapper:
         """
         Build the data custodian agent node.
 
-        Per Section 3.3.2: the dual-agent model distinguishes the observer
+        The dual-agent model distinguishes the observer
         (software agent) from the data custodian (government agency),
         ensuring accountability is correctly attributed.
         """
@@ -185,7 +185,7 @@ class ProvMapper:
         """
         Generate a W3C PROV-DM JSON-LD record for a single change event.
 
-        Implements the full mapping strategy from Section 3.3:
+        Implements the full 5L-TEP L4 PROV-DM mapping strategy:
         - Entity with content-addressable URI (§3.3.1)
         - Activity with dual-agent model (§3.3.2)
         - Derivation chain via wasDerivedFrom (§3.3.3)
@@ -267,7 +267,7 @@ class ProvMapper:
         """
         Generate and persist provenance records (one file per dataset, append-only).
 
-        Per Section 3.4: provenance records are stored as append-only JSON-LD
+        Provenance records are stored as append-only JSON-LD
         files (one per dataset) in a Git repository. Git's commit hashes
         provide tamper-evidence — a lightweight alternative to blockchain.
 
