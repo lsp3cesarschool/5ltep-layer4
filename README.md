@@ -60,7 +60,6 @@ This toolkit implements **Layer 4 (Observability & Provenance)** of the Five-Lay
 
 ## Change-Detection Taxonomy
 
-As formalised in Section 3.2 of the KDMiLe 2026 paper:
 
 | Change Type | Severity | Description |
 |---|---|---|
@@ -82,7 +81,7 @@ Given: h_t = SHA-256(canonical_json(metadata_t))
 5. Otherwise                    → CONTENT_MOD (normal update)
 ```
 
-## PROV-DM Mapping Strategy (Section 3.3)
+## PROV-DM Mapping Strategy
 
 ### Dual-Agent Model
 
@@ -93,7 +92,7 @@ The toolkit implements a dual-agent provenance model that distinguishes the **ob
 
 This ensures accountability is correctly attributed (cf. Simmhan et al., 2005), in alignment with Brazil's LAI transparency obligations.
 
-### Entity Identification (§3.3.1)
+### Entity Identification
 
 Each dataset snapshot becomes a `prov:Entity` identified by a content-addressable URI:
 ```
@@ -101,7 +100,7 @@ Each dataset snapshot becomes a `prov:Entity` identified by a content-addressabl
 ```
 Because any change produces a cryptographically distinct identifier, PROV-DM's entity immutability requirement is inherently satisfied.
 
-### Derivation Chains (§3.3.3)
+### Derivation Chains
 
 When a dataset changes, the new entity links to its predecessor via `wasDerivedFrom`, forming an immutable derivation chain annotated with `5ltep:changeType`.
 
