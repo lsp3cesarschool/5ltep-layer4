@@ -3,7 +3,7 @@ Hash Engine Module — SHA-256 Fingerprinting & Change Detection
 ===============================================================
 Computes SHA-256 fingerprints over canonical JSON serialisation of CKAN
 dataset metadata and classifies changes according to the formalised logic
-described in the KDMiLe 2026 paper (Section 3.2).
+described in the 5L-TEP Layer 4 specification.
 
 Change-Detection Taxonomy (4 types):
     CLEAN_UPDATE  — No change detected (severity: INFO)
@@ -15,7 +15,7 @@ Change-Detection Taxonomy (4 types):
 Part of the 5L-TEP Layer 4 (Observability & Provenance) Toolkit.
 
 References:
-    Pinheiro & Sérgio (2026). 5L-TEP: A Five-Layer Trust Engineering Pyramid
+    Pinheiro, L.S. et al. (2026). 5L-TEP: A Five-Layer Trust Engineering Pyramid
     for Open Government Data. SOFTENG 2026.
 """
 
@@ -34,7 +34,7 @@ class ChangeType(str, Enum):
     """
     Change classification types aligned with 5L-TEP L4 taxonomy.
 
-    As formalised in the KDMiLe 2026 paper (Section 3.2 — Change-Detection Logic):
+    Change-Detection Taxonomy (5L-TEP L4 specification):
     - CLEAN_UPDATE: no hash difference detected between snapshots.
     - SCHEMA_DRIFT: structural change (resource count/names/formats altered).
     - RETRO_ALTER: content hash changed but metadata_modified did NOT advance,
@@ -49,13 +49,13 @@ class ChangeType(str, Enum):
 
 
 class Severity(str, Enum):
-    """Severity levels for change events (per v16 paper specification)."""
+    """Severity levels for change events (per 5L-TEP L4 specification)."""
     CRITICAL = "CRITICAL"
     WARNING = "WARNING"
     INFO = "INFO"
 
 
-# Mapping from change type to severity (aligned with v16 paper)
+# Mapping from change type to severity
 SEVERITY_MAP = {
     ChangeType.SCHEMA_DRIFT: Severity.CRITICAL,
     ChangeType.RETRO_ALTER: Severity.CRITICAL,
@@ -108,8 +108,8 @@ class HashEngine:
     """
     SHA-256 Fingerprinting Engine for Content-Addressable Change Detection.
 
-    Implements the change-detection logic described in the KDMiLe 2026 paper
-    (Section 3.2). Computes SHA-256 fingerprints over canonical JSON
+    Implements the 5L-TEP Layer 4 change-detection logic.
+    Computes SHA-256 fingerprints over canonical JSON
     serialisation (sorted keys, UTF-8) of dataset metadata, and classifies
     changes by comparing h_t against h_{t-1} and analysing timestamp progression.
 
@@ -150,7 +150,7 @@ class HashEngine:
 
         The hash is computed over the canonical JSON representation
         (sorted keys, no whitespace, UTF-8 encoding) to ensure
-        deterministic output — as specified in the paper's Section 3.2.
+        deterministic output — as required for provenance integrity.
 
         Args:
             metadata: Dataset metadata dictionary from CKAN API.
@@ -214,7 +214,7 @@ class HashEngine:
         """
         Detect changes by comparing current metadata hashes against stored state.
 
-        Classification logic (Section 3.2 of the KDMiLe 2026 paper):
+        Classification logic (5L-TEP L4 change-detection):
           1. If no previous hash exists → CLEAN_UPDATE (baseline observation)
           2. If current_hash == previous_hash → CLEAN_UPDATE (no change)
           3. If manifest_hash differs → SCHEMA_DRIFT (structural break, CRITICAL)
@@ -243,7 +243,7 @@ class HashEngine:
             previous_manifest_hash = stored.get("manifest_hash")
             previous_timestamp = stored.get("timestamp")
 
-            # Classify change type per Section 3.2 algorithm
+            # Classify change type
             if previous_hash is None:
                 # First observation — baseline
                 change_type = ChangeType.CLEAN_UPDATE
