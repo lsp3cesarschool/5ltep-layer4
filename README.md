@@ -8,7 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 <!-- CROSS_CHECK_STATUS:START -->
-✅ **Cross-check passing** — last verified 2026-07-24 06:10 UTC. All 75 reachable datasets in sync with live IBAMA portal; latest snapshot is 3.4h old.
+✅ **Cross-check passing** — last verified 2026-07-25 06:01 UTC. All 75 reachable datasets in sync with live IBAMA portal; latest snapshot is 3.3h old.
 <!-- CROSS_CHECK_STATUS:END -->
 
 ## Overview
