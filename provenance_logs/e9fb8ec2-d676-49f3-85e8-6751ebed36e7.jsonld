@@ -1,0 +1,88 @@
+{
+  "@context": {
+    "prov": "http://www.w3.org/ns/prov#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "5ltep": "https://5ltep.example.org/ontology#",
+    "ckan": "https://ckan.org/schema#"
+  },
+  "5ltep:datasetId": "e9fb8ec2-d676-49f3-85e8-6751ebed36e7",
+  "5ltep:portalUrl": "https://dadosabertos.ibama.gov.br",
+  "provenance_chain": [
+    {
+      "@context": {
+        "prov": "http://www.w3.org/ns/prov#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "5ltep": "https://5ltep.example.org/ontology#",
+        "ckan": "https://ckan.org/schema#"
+      },
+      "@graph": [
+        {
+          "@id": "https://dadosabertos.ibama.gov.br/dataset/e9fb8ec2-d676-49f3-85e8-6751ebed36e7#85c2a14398ee",
+          "@type": [
+            "prov:Entity",
+            "5ltep:DatasetSnapshot"
+          ],
+          "prov:wasGeneratedBy": {
+            "@id": "5ltep:run-20260814T185521Z"
+          },
+          "5ltep:changeType": "CONTENT_MOD",
+          "5ltep:severity": "WARNING",
+          "5ltep:datasetId": "e9fb8ec2-d676-49f3-85e8-6751ebed36e7",
+          "5ltep:contentHash": "85c2a14398eeae3b8c12c78ba4e5e39001eb423312063a03b0125cb4a256e2f9",
+          "5ltep:detectedAt": {
+            "@value": "2026-08-14T18:55:21.840377+00:00",
+            "@type": "xsd:dateTime"
+          },
+          "prov:wasAttributedTo": {
+            "@id": "https://dadosabertos.ibama.gov.br/organization/ibama"
+          },
+          "prov:wasDerivedFrom": {
+            "@id": "https://dadosabertos.ibama.gov.br/dataset/e9fb8ec2-d676-49f3-85e8-6751ebed36e7#5542b31cf4b0"
+          }
+        },
+        {
+          "@id": "5ltep:run-20260814T185521Z",
+          "@type": [
+            "prov:Activity",
+            "5ltep:MonitoringRun"
+          ],
+          "prov:startedAtTime": {
+            "@value": "2026-08-14T18:55:21.841138+00:00",
+            "@type": "xsd:dateTime"
+          },
+          "prov:endedAtTime": {
+            "@value": "2026-08-14T18:55:21.841711+00:00",
+            "@type": "xsd:dateTime"
+          },
+          "prov:wasAssociatedWith": {
+            "@id": "lsp3cesarschool/5ltep-layer4@adb689a"
+          },
+          "prov:used": {
+            "@id": "https://dadosabertos.ibama.gov.br/api/3/action/package_show?id=e9fb8ec2-d676-49f3-85e8-6751ebed36e7"
+          }
+        },
+        {
+          "@id": "lsp3cesarschool/5ltep-layer4@adb689a",
+          "@type": [
+            "prov:Agent",
+            "prov:SoftwareAgent"
+          ],
+          "rdfs:label": "5L-TEP Toolkit v1.0.0 (Layer 4 — Observability & Provenance)",
+          "5ltep:repositoryUrl": "lsp3cesarschool/5ltep-layer4",
+          "5ltep:commitSha": "adb689a56b53b3b21a81c68b213e8284b9354cce"
+        },
+        {
+          "@id": "https://dadosabertos.ibama.gov.br/organization/ibama",
+          "@type": [
+            "prov:Agent",
+            "5ltep:DataCustodian"
+          ],
+          "rdfs:label": "ibama",
+          "5ltep:portalUrl": "https://dadosabertos.ibama.gov.br"
+        }
+      ]
+    }
+  ]
+}
