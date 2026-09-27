@@ -123,6 +123,11 @@ def main() -> int:
     started = datetime.now(timezone.utc)
     print(f"[{started.isoformat()}] cross-check vs {PORTAL}")
 
+    if not MANIFEST.exists():
+        # Fresh repository/fork: the monitoring workflow has not run yet.
+        print("  no snapshot yet (first monitoring cycle pending); nothing to cross-check")
+        return 0
+
     latest_run, snap_path = latest_snapshot_path()
     print(f"  latest snapshot: run={latest_run} file={snap_path.name}")
     local = {d["id"]: d for d in load_snapshot(snap_path)}

@@ -255,12 +255,15 @@ is needed:
 2. In the fork, go to *Settings → Secrets and variables → Actions → Variables* and
    create `CKAN_PORTAL_URL` with the portal's root URL
    (e.g., `https://dados.recife.pe.gov.br`).
-3. **Start with a clean history:** delete the IBAMA data inherited from this
-   repository (`data/hash_store.json`, `data/snapshots/`,
-   `data/cross_check_report.json`, `provenance_logs/*.jsonld`, `changes.md`) and
-   commit. The first cycle then records a baseline for the new portal.
+3. **Start with a clean history:** delete the whole `data/` and
+   `provenance_logs/` folders and the `changes.md` file inherited from this
+   repository, and commit. They are recreated automatically.
 4. Enable the workflows in the fork's **Actions** tab (GitHub disables scheduled
    workflows in forks until you do). Failure e-mails go to the fork's owner.
+5. Optionally, run *5L-TEP Layer 4 Monitoring Workflow* once by hand
+   (*Actions → Run workflow*) to record the baseline right away instead of
+   waiting for the next 6-hour slot. Until the first cycle, the daily cross-check
+   simply reports that there is nothing to compare yet.
 
 Do not change the portal in this repository: its provenance history and
 [`changes.md`](changes.md) refer to IBAMA, and mixing portals would corrupt them.
