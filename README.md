@@ -1,4 +1,4 @@
-# 5L-TEP Layer 4 Provenance Toolkit
+# 5LTEP-L4: 5L-TEP Layer 4 Provenance Toolkit
 
 **W3C PROV-DM–compliant provenance monitoring for CKAN-based Open Government Data portals.**
 
@@ -23,21 +23,21 @@ This toolkit implements **Layer 4 (Observability & Provenance)** of the Five-Lay
 
 ```
 ┌──────────────────────────────────────────────────┐
-│            GitHub Actions (cron 6h)               │
+│            GitHub Actions (cron 6h)              │
 │      ~15% of the free tier (measured)            │
 └──────────────────────────┬───────────────────────┘
                            │ triggers
                            ▼
 ┌──────────────────────────────────────────────────┐
 │  ① CKAN Harvester                                │
-│     API polling + exponential backoff retry       │
-│     (package_list + package_show)                 │
+│     API polling + exponential backoff retry      │
+│     (package_list + package_show)                │
 └──────────────────────────┬───────────────────────┘
                            │ metadata snapshots
                            ▼
 ┌──────────────────────────────────────────────────┐
 │  ② Hash Engine                                   │
-│     SHA-256 content + schema fingerprinting      │
+│     SHA-256 content + resource-manifest hashes   │
 │     Change taxonomy: 4 event types               │
 │     (CLEAN_UPDATE, SCHEMA_DRIFT,                 │
 │      RETRO_ALTER, CONTENT_MOD)                   │
@@ -73,7 +73,9 @@ This toolkit implements **Layer 4 (Observability & Provenance)** of the Five-Lay
 ### Detection Logic
 
 ```
-Given: h_t = SHA-256(canonical_json(metadata_t))
+Given: h_t = SHA-256(canonical_json(stable_fields(metadata_t)))
+       (title, notes, metadata_modified and each resource's name, format,
+        URL, size and last modification; volatile API fields are excluded)
        h_{t-1} = stored hash from previous cycle
 
 1. If h_{t-1} is NULL           → CLEAN_UPDATE (first observation)
@@ -104,7 +106,7 @@ Because any change produces a cryptographically distinct identifier, PROV-DM's e
 
 ### Derivation Chains
 
-When a dataset changes, the new entity links to its predecessor via `wasDerivedFrom`, forming an immutable derivation chain annotated with `5ltep:changeType`.
+When a dataset changes, the new entity links to its predecessor via `wasDerivedFrom`, forming an immutable derivation chain annotated with `5ltep:changeType` and `5ltep:severity`. Since v1.0.2, each record also describes *how* the dataset changed: `5ltep:changeSummary` (one-line English summary), `5ltep:changedFields`, `5ltep:fieldsOutsideFingerprint`, `5ltep:resourceUrlChanges`, `5ltep:hostMoves` and `5ltep:packagingChanges`.
 
 ## Quick Start
 
@@ -138,14 +140,18 @@ python main.py --portal https://dadosabertos.ibama.gov.br --org ibama
 
 ```bash
 pytest tests/ -v
-# 28 tests covering: hash determinism, 4 change types, dual-agent model,
+# 38 tests covering: hash determinism, 4 change types, dual-agent model,
 # derivation chains, append-only persistence, end-to-end pipeline,
-# critical-change alerting (SCHEMA_DRIFT/RETRO_ALTER) and CI signalling
+# critical-change alerting (SCHEMA_DRIFT/RETRO_ALTER) and CI signalling,
+# PROV-O interoperability with the `prov` library (needs: pip install prov rdflib),
+# change details (relocations, packaging) and changes.md generation
 ```
 
 ### GitHub Actions Deployment
 
 The toolkit runs automatically every 6 hours via GitHub Actions (about 15% of the 2,000-minute free tier, measured over 30 days; public repositories are not charged). See `.github/workflows/monitor.yml`.
+
+Alerts cost nothing and need no mail server: on a critical event (`SCHEMA_DRIFT` or `RETRO_ALTER`) the workflow first commits the provenance records and then fails on purpose, and GitHub e-mails the maintainer about the failed run. The daily cross-check alerts the same way when portal coverage drops below 90% or divergences stay unreconciled for more than 7 h.
 
 ## PROV-DM Output Example
 
@@ -158,7 +164,8 @@ When a retroactive alteration is detected:
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
     "5ltep": "https://5ltep.example.org/ontology#",
-    "ckan": "https://ckan.org/schema#"
+    "ckan": "https://ckan.org/schema#",
+    "portal": "https://dadosabertos.ibama.gov.br/"
   },
   "@graph": [
     {
@@ -170,7 +177,13 @@ When a retroactive alteration is detected:
       "5ltep:changeType": "RETRO_ALTER",
       "5ltep:severity": "CRITICAL",
       "5ltep:contentHash": "a1b2c3d4e5f6...",
-      "5ltep:detectedAt": {"@value": "2026-06-07T10:00:00+00:00", "@type": "xsd:dateTime"}
+      "5ltep:detectedAt": {"@value": "2026-06-07T10:00:00+00:00", "@type": "xsd:dateTime"},
+      "5ltep:changeSummary": "Description edited",
+      "5ltep:changedFields": ["notes"],
+      "5ltep:fieldsOutsideFingerprint": [],
+      "5ltep:resourceUrlChanges": 0,
+      "5ltep:hostMoves": 0,
+      "5ltep:packagingChanges": 0
     },
     {
       "@id": "5ltep:run-20260607T100000Z",
@@ -183,7 +196,7 @@ When a retroactive alteration is detected:
     {
       "@id": "https://github.com/lsp3cesarschool/5ltep-layer4@abc1234",
       "@type": ["prov:Agent", "prov:SoftwareAgent"],
-      "rdfs:label": "5L-TEP Toolkit v1.0.0 (Layer 4 — Observability & Provenance)",
+      "rdfs:label": "5L-TEP Toolkit v1.0.2 (Layer 4 — Observability & Provenance)",
       "5ltep:repositoryUrl": "https://github.com/lsp3cesarschool/5ltep-layer4",
       "5ltep:commitSha": "abc1234567890"
     },
@@ -279,7 +292,8 @@ can be reproduced with the scripts in [`evaluation/`](evaluation/).
 ## Academic References
 
 - Pinheiro, L. S., et al. (2026). *Towards Trust Engineering in Open Data Systems: A Layered Conceptual Framework Integrating Quality Assurance and Governance Perspectives*. SOFTENG 2026, IARIA, pp. 21–28.
-- W3C. (2013). *PROV-DM: The PROV Data Model*. https://www.w3.org/TR/prov-dm/
+- Pinheiro, L. S. & Sérgio, A. T. (2026). *5LTEP-L4: An Open-Source CKAN Toolkit for Provenance-Enabled Observability of Open Government Data*. XXV Workshop de Ferramentas e Aplicações (WFA), Anais Estendidos do WebMedia 2026, Lavras/MG, Brazil (to appear).
+- Moreau, L. & Missier, P. (Eds.) (2013). *PROV-DM: The PROV Data Model*. W3C Recommendation. https://www.w3.org/TR/prov-dm/
 - Groth, P. & Moreau, L. (2013). *PROV-Overview*. https://www.w3.org/TR/prov-overview/
 - Simmhan, Y. L. et al. (2005). *A survey of data provenance in e-science*. ACM SIGMOD Record.
 
