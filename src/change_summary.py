@@ -63,18 +63,21 @@ def describe_change(before: dict, after: dict) -> Dict[str, object]:
     """
     res_before = before.get("resources", []) or []
     res_after = after.get("resources", []) or []
+    pairs, added, removed = _match_resources(res_before, res_after)
 
     changed = [f for f in DATASET_FIELDS if before.get(f) != after.get(f)]
     for field in RESOURCE_FIELDS:
-        if [r.get(field) for r in res_before] != [r.get(field) for r in res_after]:
+        if any(old.get(field) != new.get(field) for old, new in pairs):
             changed.append("resource." + field)
+    if added or removed:
+        changed.append("resources")
     outside = sorted(
         k for k in set(before) | set(after)
         if k not in DATASET_FIELDS + ["resources"] and before.get(k) != after.get(k)
     )
     outside += sorted({
         "resource." + k
-        for old, new in zip(res_before, res_after)
+        for old, new in pairs
         for k in set(old) | set(new)
         if k not in RESOURCE_FIELDS + ["metadata_modified"] and old.get(k) != new.get(k)
     })
@@ -82,7 +85,7 @@ def describe_change(before: dict, after: dict) -> Dict[str, object]:
     urls = collections.Counter()
     hosts = collections.Counter()
     formats = []
-    for old, new in zip(res_before, res_after):
+    for old, new in pairs:
         if old.get("url") != new.get("url"):
             urls["changed"] += 1
             host_old = urlparse(old.get("url") or "").netloc
@@ -104,17 +107,33 @@ def describe_change(before: dict, after: dict) -> Dict[str, object]:
         "hostMoves": urls["host_moves"],
         "packagingChanges": urls["zip_to_plain"] + urls["plain_to_zip"],
     }
-    details["summary"] = _summarise(changed, outside, urls, hosts, formats,
-                                    len(res_after) - len(res_before))
+    details["summary"] = _summarise(changed, outside, urls, hosts, formats, added, removed)
     return details
 
 
-def _summarise(changed, outside, urls, hosts, formats, resource_delta) -> str:
+def _match_resources(res_before: list, res_after: list):
+    """Pair resources by CKAN id (by position when ids are missing).
+
+    Returns (pairs, added, removed) so that adding or removing a resource is
+    not misreported as edits to every resource after it.
+    """
+    if all(r.get("id") for r in res_before + res_after):
+        old_by_id = {r["id"]: r for r in res_before}
+        new_by_id = {r["id"]: r for r in res_after}
+        pairs = [(old_by_id[i], new_by_id[i]) for i in old_by_id if i in new_by_id]
+        added = [r for i, r in new_by_id.items() if i not in old_by_id]
+        removed = [r for i, r in old_by_id.items() if i not in new_by_id]
+        return pairs, added, removed
+    n = min(len(res_before), len(res_after))
+    return list(zip(res_before[:n], res_after[:n])), res_after[n:], res_before[n:]
+
+
+def _summarise(changed, outside, urls, hosts, formats, added, removed) -> str:
     parts = []
-    if resource_delta > 0:
-        parts.append(f"{resource_delta} resource(s) added")
-    elif resource_delta < 0:
-        parts.append(f"{-resource_delta} resource(s) removed")
+    if added:
+        parts.append(f"{len(added)} resource(s) added")
+    if removed:
+        parts.append(f"{len(removed)} resource(s) removed")
     if formats:
         parts.append("declared format " + ", ".join(formats))
     if urls["changed"]:

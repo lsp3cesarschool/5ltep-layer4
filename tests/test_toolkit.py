@@ -605,6 +605,14 @@ class TestChangeSummary:
         assert "1 resource(s) added" in details["summary"]
         assert "declared format CSV → XLSX" in details["summary"]
 
+    def test_resource_removed_is_not_misreported(self, sample_dataset):
+        """Removing a resource must not look like edits to the remaining ones."""
+        after = json.loads(json.dumps(sample_dataset))
+        del after["resources"][0]
+        details = describe_change(sample_dataset, after)
+        assert details["summary"] == "1 resource(s) removed"
+        assert details["resourceUrlChanges"] == 0
+
     def test_change_outside_fingerprint(self, sample_dataset):
         """License-only edits are reported as outside the fingerprint."""
         after = {**sample_dataset, "license_title": "Outra (Aberta)"}
