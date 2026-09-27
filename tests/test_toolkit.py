@@ -280,6 +280,44 @@ class TestProvMapper:
         assert "5ltep:DataCustodian" in custodian["@type"]
         assert "ibama" in custodian["@id"]
 
+    def test_context_declares_portal_namespace(self, tmp_path):
+        """@context declares the portal base IRI so all IRIs compact to QNames."""
+        mapper = ProvMapper(provenance_dir=str(tmp_path / "prov"))
+        record = mapper.generate_record(self._make_event("https://dados.gov.br/"))
+        assert record["@context"]["portal"] == "https://dados.gov.br/"
+
+    def test_software_agent_id_is_absolute(self, tmp_path):
+        """GITHUB_REPOSITORY ("owner/repo") is expanded to an absolute IRI."""
+        mapper = ProvMapper(
+            provenance_dir=str(tmp_path / "prov"),
+            repository_url="user/repo",
+            commit_sha="deadbeef12345",
+        )
+        sw_agent = mapper.generate_record(self._make_event())["@graph"][2]
+        assert sw_agent["@id"] == "https://github.com/user/repo@deadbee"
+
+    def test_local_run_uses_toolkit_agent_id(self, tmp_path):
+        """Local runs (repository 'local') fall back to the toolkit QName."""
+        mapper = ProvMapper(provenance_dir=str(tmp_path / "prov"), repository_url="local")
+        sw_agent = mapper.generate_record(self._make_event())["@graph"][2]
+        assert sw_agent["@id"].startswith("5ltep:toolkit-v")
+
+    def test_record_loads_with_prov_library(self, tmp_path):
+        """Records are readable by the `prov` library's PROV-O (RDF) reader."""
+        prov_model = pytest.importorskip("prov.model")
+        pytest.importorskip("rdflib")
+        mapper = ProvMapper(
+            provenance_dir=str(tmp_path / "prov"),
+            repository_url="user/repo",
+            commit_sha="deadbeef12345",
+        )
+        record = mapper.generate_record(self._make_event("https://dadosabertos.ibama.gov.br"))
+        doc = prov_model.ProvDocument.deserialize(
+            content=json.dumps(record), format="rdf", rdf_format="json-ld")
+        types = [r.get_type().localpart for r in doc.get_records()]
+        assert types.count("Entity") == 1
+        assert types.count("Derivation") == 1
+
     def test_entity_attributed_to_custodian(self, tmp_path):
         """Entity wasAttributedTo points to custodian, not software agent (§3.3.2)."""
         mapper = ProvMapper(provenance_dir=str(tmp_path / "prov"))

@@ -47,8 +47,20 @@ PROV_CONTEXT = {
 }
 
 # Toolkit version for agent identification
-TOOLKIT_VERSION = "1.0.0"
+TOOLKIT_VERSION = "1.0.1"
 TOOLKIT_SCOPE = "Layer 4 — Observability & Provenance"
+
+
+def build_context(portal_url: str) -> dict:
+    """
+    Build the JSON-LD @context for records of a given portal.
+
+    Declares the portal base IRI as the "portal" prefix so that every IRI in
+    the record (entities, custodian agent, API endpoint) can be compacted into
+    a PROV qualified name — required by PROV-O readers such as the `prov`
+    Python library.
+    """
+    return {**PROV_CONTEXT, "portal": portal_url.rstrip("/") + "/"}
 
 
 class ProvMapper:
@@ -83,7 +95,11 @@ class ProvMapper:
         """
         self.provenance_dir = Path(provenance_dir)
         self.provenance_dir.mkdir(parents=True, exist_ok=True)
-        self.repository_url = repository_url
+        # GITHUB_REPOSITORY is "owner/repo"; expand it to an absolute IRI so the
+        # software agent is not resolved as a relative IRI by JSON-LD readers.
+        if repository_url and repository_url != "local" and "://" not in repository_url:
+            repository_url = f"https://github.com/{repository_url}"
+        self.repository_url = "" if repository_url == "local" else repository_url
         self.commit_sha = commit_sha
         self.run_id = f"5ltep:run-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
         self.run_start = datetime.now(timezone.utc)
@@ -240,7 +256,7 @@ class ProvMapper:
 
         # Full JSON-LD document
         record = {
-            "@context": PROV_CONTEXT,
+            "@context": build_context(event.portal_url),
             "@graph": graph,
         }
 
@@ -291,7 +307,7 @@ class ProvMapper:
                     log = json.load(f)
             else:
                 log = {
-                    "@context": PROV_CONTEXT,
+                    "@context": build_context(event.portal_url),
                     "5ltep:datasetId": event.dataset_id,
                     "5ltep:portalUrl": event.portal_url,
                     "provenance_chain": [],

@@ -26,6 +26,7 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest-github-actions-annotate-failures
+          pip install prov rdflib  # PROV-O interoperability test (test-only)
 
       - name: Run tests
         run: pytest tests/ -v --tb=short
