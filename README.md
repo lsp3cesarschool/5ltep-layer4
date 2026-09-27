@@ -238,11 +238,34 @@ When a retroactive alteration is detected:
 
 | Environment Variable | Default | Description |
 |---|---|---|
-| `CKAN_PORTAL_URL` | `https://dadosabertos.ibama.gov.br` | Target CKAN portal |
+| `CKAN_PORTAL_URL` | `https://dadosabertos.ibama.gov.br` | Target CKAN portal (in GitHub Actions: repository variable, see below) |
 | `CKAN_ORG_FILTER` | _(empty)_ | Filter by organization |
 | `MAX_DATASETS` | `0` (all) | Limit harvested datasets |
 | `GITHUB_REPOSITORY` | `local` | Used for software agent identification |
 | `GITHUB_SHA` | `local` | Used for software agent identification |
+
+### Monitoring another CKAN portal
+
+The continuous monitoring (every 6 h, with failure e-mails from GitHub) and the
+daily cross-check both read the portal from a single place: the repository
+variable `CKAN_PORTAL_URL`. When it is not set, they monitor IBAMA. No code change
+is needed:
+
+1. **Fork** this repository.
+2. In the fork, go to *Settings → Secrets and variables → Actions → Variables* and
+   create `CKAN_PORTAL_URL` with the portal's root URL
+   (e.g., `https://dados.recife.pe.gov.br`).
+3. **Start with a clean history:** delete the IBAMA data inherited from this
+   repository (`data/hash_store.json`, `data/snapshots/`,
+   `data/cross_check_report.json`, `provenance_logs/*.jsonld`, `changes.md`) and
+   commit. The first cycle then records a baseline for the new portal.
+4. Enable the workflows in the fork's **Actions** tab (GitHub disables scheduled
+   workflows in forks until you do). Failure e-mails go to the fork's owner.
+
+Do not change the portal in this repository: its provenance history and
+[`changes.md`](changes.md) refer to IBAMA, and mixing portals would corrupt them.
+To try a portal once, without GitHub, run `python main.py --portal <url>` in a
+separate working copy.
 
 ## Evaluation
 

@@ -5,7 +5,9 @@ on:
   workflow_dispatch:
 
 env:
-  CKAN_PORTAL_URL: https://dadosabertos.ibama.gov.br
+  # Portal monitored by this repository. Forks: set the repository variable
+  # CKAN_PORTAL_URL (Settings > Secrets and variables > Actions > Variables).
+  CKAN_PORTAL_URL: ${{ vars.CKAN_PORTAL_URL || 'https://dadosabertos.ibama.gov.br' }}
   PYTHON_VERSION: '3.11'
 
 jobs:

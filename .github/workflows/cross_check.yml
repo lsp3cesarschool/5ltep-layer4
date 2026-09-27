@@ -5,6 +5,8 @@ on:
   workflow_dispatch:
 
 env:
+  # Same portal as the monitoring workflow (see monitor.yml)
+  CKAN_PORTAL_URL: ${{ vars.CKAN_PORTAL_URL || 'https://dadosabertos.ibama.gov.br' }}
   PYTHON_VERSION: '3.11'
 
 jobs:
@@ -22,7 +24,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Run independent cross-check against IBAMA portal
+      - name: Run independent cross-check against the monitored portal
         id: check
         run: python cross_check.py
         continue-on-error: true

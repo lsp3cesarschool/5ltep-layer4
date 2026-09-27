@@ -21,6 +21,7 @@ Exit codes:
 
 import gzip
 import json
+import os
 import sys
 import time
 import urllib.error
@@ -28,7 +29,8 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
-PORTAL = "https://dadosabertos.ibama.gov.br"
+# Same portal as the monitoring workflow (repository variable CKAN_PORTAL_URL)
+PORTAL = os.environ.get("CKAN_PORTAL_URL", "https://dadosabertos.ibama.gov.br").rstrip("/")
 MANIFEST = Path("data/snapshots/manifest.json")
 SNAPSHOTS_DIR = Path("data/snapshots")
 REPORT = Path("data/cross_check_report.json")
@@ -92,7 +94,7 @@ def render_status(divergences, snapshot_age_h, shared, errors, coverage, ended):
         label = "passing" if errors == 0 else "degraded"
         return ("IN_SYNC" if errors == 0 else "DEGRADED"), 0, (
             f"{emoji} **Cross-check {label}** — last verified {ts}. All {shared} reachable "
-            f"datasets in sync with live IBAMA portal; latest snapshot is {snapshot_age_h:.1f}h old.{note}"
+            f"datasets in sync with the live portal ({PORTAL.split('//')[-1]}); latest snapshot is {snapshot_age_h:.1f}h old.{note}"
         )
     if snapshot_age_h <= MONITOR_TOLERANCE_HOURS:
         return "PENDING", 0, (
