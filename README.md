@@ -22,7 +22,7 @@ This toolkit implements **Layer 4 (Observability & Provenance)** of the Five-Lay
 ```
 ┌──────────────────────────────────────────────────┐
 │            GitHub Actions (cron 6h)               │
-│            free-tier < 12% budget                 │
+│      ~15% of the free tier (measured)            │
 └──────────────────────────┬───────────────────────┘
                            │ triggers
                            ▼
@@ -143,7 +143,7 @@ pytest tests/ -v
 
 ### GitHub Actions Deployment
 
-The toolkit runs automatically every 6 hours via GitHub Actions (within the free-tier limit of ~12% usage). See `.github/workflows/monitor.yml`.
+The toolkit runs automatically every 6 hours via GitHub Actions (about 15% of the 2,000-minute free tier, measured over 30 days; public repositories are not charged). See `.github/workflows/monitor.yml`.
 
 ## PROV-DM Output Example
 

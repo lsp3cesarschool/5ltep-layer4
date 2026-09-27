@@ -1,6 +1,7 @@
-cycles recorded: 419; distinct snapshots: 30
+cycles recorded: 420; distinct snapshots: 30
 ground truth: 31 modifications, 8 additions, 0 non-fingerprinted-only changes
 expected classes: {'CONTENT_MOD': 31}
-fingerprinted fields changed: {'metadata_modified': 31, 'resource.url': 29, 'notes': 2, 'resource.last_modified': 1, 'resource.size': 1}
+fingerprinted fields changed: {'metadata_modified': 31, 'notes': 2, 'resource.url': 29, 'resource.last_modified': 1, 'resource.size': 1}
 co-changed dataset fields outside the fingerprint: {'license_title': 7}
+resource URL changes: {'url_changes': 105, 'host_moves': 69, 'packaging_changes': 54, 'declared_format_changes': 0, 'host: dadosabertos.ibama.gov.br -> stibamadadosabertosprd.blob.core.windows.net': 69}
 recorded events: 31; matched correct: 31, wrong class: 0, missed: 0, spurious (no ground truth): 0

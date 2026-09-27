@@ -3,11 +3,12 @@
 Scripts that reproduce the evaluation reported in the WFA/WebMedia 2026 paper
 *"5LTEP-L4: An Open-Source CKAN Toolkit for Provenance-Enabled Observability of
 Open Government Data"*. Run them from the repository root. Outputs obtained on
-2026-09-27 are kept in [`results/`](results/).
+2026-09-27 are kept in [`results/`](results/). The paper reports the data up to the
+monitoring cycle of 2026-09-27 16:34 UTC; later runs add new cycles and may change the counts.
 
 | Script | What it checks | Paper claim |
 |---|---|---|
-| `ground_truth_diff.py` | Diffs every pair of consecutive distinct snapshots in `data/snapshots/` field by field (without the Hash Engine) and matches the result against the events in `provenance_logs/` | 31/31 recorded events match the ground truth; no misses, no spurious events |
+| `ground_truth_diff.py` | Diffs every pair of consecutive distinct snapshots in `data/snapshots/` field by field (without the Hash Engine) and matches the result against the events in `provenance_logs/` | 31/31 recorded events match the ground truth; no misses, no spurious events. Also counts resource URL changes (105; 69 host moves to cloud storage, 54 zip/plain switches, 0 declared-format changes) |
 | `fault_injection.py` | Injects 9 change scenarios into every dataset of the latest snapshot and reports the confusion matrix of the classifier | 632/632 in-scope cases correct; tag/license-only edits are not fingerprinted |
 | `prov_interop.py` | Loads every PROV-DM record with the [`prov`](https://github.com/trungdong/prov) library's PROV-O reader | 31/31 records load (records written before v1.0.1 need `--declare-portal-ns`) |
 | `actions_stats.py` | Queries the GitHub Actions API for cycles, success rate, gaps, durations and billed minutes | 430 cycles, 97.2% successful, 290 billed min in 30 days |

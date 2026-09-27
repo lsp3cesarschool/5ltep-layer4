@@ -16,6 +16,7 @@ import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlparse
 
 REPO = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
 SNAP_DIR = REPO / "data" / "snapshots"
@@ -55,6 +56,20 @@ def expected_class(before, after):
     return "CONTENT_MOD", fields
 
 
+def distribution_changes(before, after, counts):
+    """Count resource URL changes by kind (host move, zip <-> plain packaging)."""
+    for old, new in zip(before.get("resources", []), after.get("resources", [])):
+        if old.get("url") == new.get("url"):
+            continue
+        u0, u1 = urlparse(old.get("url") or ""), urlparse(new.get("url") or "")
+        counts["url_changes"] += 1
+        counts["host_moves"] += u0.netloc != u1.netloc
+        counts["packaging_changes"] += u0.path.endswith(".zip") != u1.path.endswith(".zip")
+        counts["declared_format_changes"] += old.get("format") != new.get("format")
+        if u0.netloc != u1.netloc:
+            counts["host: " + u0.netloc + " -> " + u1.netloc] += 1
+
+
 def main():
     manifest = json.loads((SNAP_DIR / "manifest.json").read_text(encoding="utf-8"))
     transitions = []
@@ -64,6 +79,7 @@ def main():
 
     truth, additions, unfingerprinted = [], [], 0
     field_counts, other_counts = collections.Counter(), collections.Counter()
+    distribution = collections.Counter()
     for (_, d0), (run1, d1) in zip(transitions, transitions[1:]):
         before = load_snapshot(manifest["snapshots"][d0])
         after = load_snapshot(manifest["snapshots"][d1])
@@ -77,6 +93,7 @@ def main():
                     continue
                 truth.append((run1, ds, label))
                 field_counts.update(set(fields))
+                distribution_changes(before[ds], after[ds], distribution)
                 other_counts.update(k for k in set(before[ds]) | set(after[ds])
                                     if k not in DATASET_FIELDS + ["resources"]
                                     and before[ds].get(k) != after[ds].get(k))
@@ -106,6 +123,7 @@ def main():
     print("expected classes:", dict(collections.Counter(t[2] for t in truth)))
     print("fingerprinted fields changed:", dict(field_counts))
     print("co-changed dataset fields outside the fingerprint:", dict(other_counts))
+    print("resource URL changes:", dict(distribution))
     print(f"recorded events: {len(recorded)}; matched correct: {matches['correct']}, "
           f"wrong class: {matches['wrong_class']}, missed: {matches['missed']}, "
           f"spurious (no ground truth): {len(unmatched)}")
