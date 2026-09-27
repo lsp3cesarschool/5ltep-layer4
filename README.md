@@ -218,7 +218,8 @@ When a retroactive alteration is detected:
 │   └── prov_mapper.py              # ★ W3C PROV-DM JSON-LD generator (L4 core)
 ├── tests/
 │   ├── __init__.py
-│   └── test_toolkit.py             # 23 unit + integration tests
+│   └── test_toolkit.py             # 32 unit + integration tests
+├── evaluation/                      # Scripts + results reproducing the paper's evaluation
 ├── data/                            # Runtime data (committed by bot)
 │   ├── hash_store.json
 │   ├── cross_check_report.json
@@ -239,9 +240,15 @@ When a retroactive alteration is detected:
 | `GITHUB_REPOSITORY` | `local` | Used for software agent identification |
 | `GITHUB_SHA` | `local` | Used for software agent identification |
 
+## Evaluation
+
+The evaluation reported in the WFA/WebMedia 2026 paper (ground-truth check of
+recorded events, fault injection, `prov` interoperability, operational statistics)
+can be reproduced with the scripts in [`evaluation/`](evaluation/).
+
 ## Academic References
 
-- Pinheiro, L. S., et al. (2026). *5L-TEP: A Five-Layer Trust Engineering Pyramid for Open Government Data*. SOFTENG 2026.
+- Pinheiro, L. S., et al. (2026). *Towards Trust Engineering in Open Data Systems: A Layered Conceptual Framework Integrating Quality Assurance and Governance Perspectives*. SOFTENG 2026, IARIA, pp. 21–28.
 - W3C. (2013). *PROV-DM: The PROV Data Model*. https://www.w3.org/TR/prov-dm/
 - Groth, P. & Moreau, L. (2013). *PROV-Overview*. https://www.w3.org/TR/prov-overview/
 - Simmhan, Y. L. et al. (2005). *A survey of data provenance in e-science*. ACM SIGMOD Record.

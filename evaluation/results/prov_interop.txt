@@ -1,0 +1,2 @@
+prov 3.2.2 (portal ns declared=False): 0 records parsed, 31 failed; {'entities': 0, 'activities': 0, 'agents': 0, 'derivations': 0}
+prov 3.2.2 (portal ns declared=True): 31 records parsed, 0 failed; {'entities': 31, 'activities': 31, 'agents': 62, 'derivations': 31}

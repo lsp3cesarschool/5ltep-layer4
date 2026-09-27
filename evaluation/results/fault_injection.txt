@@ -1,0 +1,17 @@
+baseline run 20260927T163406Z: 79 datasets; 711 injected cases
+  no change (control)              {'CLEAN_UPDATE': 79}
+  notes edit + ts                  {'CONTENT_MOD': 79}
+  resource re-upload + ts          {'CONTENT_MOD': 79}
+  resource added                   {'SCHEMA_DRIFT': 79}
+  resource removed                 {'SCHEMA_DRIFT': 79}
+  format changed                   {'SCHEMA_DRIFT': 79}
+  notes edit, no ts                {'RETRO_ALTER': 79}
+  re-upload, no ts                 {'RETRO_ALTER': 79}
+  tags/license edit (unhashed)     {'CLEAN_UPDATE': 79}
+accuracy on in-scope scenarios: 632/632
+confusion (expected -> predicted):
+  CHANGE_NOT_FINGERPRINTED   -> CLEAN_UPDATE   79
+  CLEAN_UPDATE               -> CLEAN_UPDATE   79
+  CONTENT_MOD                -> CONTENT_MOD    158
+  RETRO_ALTER                -> RETRO_ALTER    158
+  SCHEMA_DRIFT               -> SCHEMA_DRIFT   237

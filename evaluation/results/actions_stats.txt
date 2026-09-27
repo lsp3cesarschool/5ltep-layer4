@@ -1,0 +1,8 @@
+period: 2026-06-09 .. 2026-09-27 (109 days)
+scheduled monitoring cycles: 430; successful: 418 (97.2%); longest gap between successes: 24.0 h
+cycle duration: median 36 s, p90 141 s
+  5L-TEP Layer 4 Cross-Check: {'success': 91, 'failure': 7}
+  5L-TEP Layer 4 Monitoring Workflow: {'success': 419, 'failure': 12}
+  5L-TEP Layer 4 Snapshot Compression: {'success': 16}
+  Tests: {'success': 20}
+last 30 days (scheduled): {'5L-TEP Layer 4 Monitoring Workflow': 116, '5L-TEP Layer 4 Cross-Check': 30, '5L-TEP Layer 4 Snapshot Compression': 5} runs; 290 billed minutes (14.5% of the 2,000-minute free tier)

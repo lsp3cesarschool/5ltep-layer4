@@ -1,0 +1,6 @@
+recife cycle 1 {'run_id': '20260927T200010Z', 'portal': 'https://dados.recife.pe.gov.br', 'datasets_harvested': 223, 'change_events': 0, 'prov_records': 0}
+recife cycle 2 {'run_id': '20260927T200110Z', 'portal': 'https://dados.recife.pe.gov.br', 'datasets_harvested': 223, 'change_events': 0, 'prov_records': 0}
+recife cycle 3 {'run_id': '20260927T200239Z', 'portal': 'https://dados.recife.pe.gov.br', 'datasets_harvested': 223, 'change_events': 0, 'prov_records': 0}
+aneel cycle 1 {'run_id': '20260927T200010Z', 'portal': 'https://dadosabertos.aneel.gov.br', 'datasets_harvested': 72, 'change_events': 0, 'prov_records': 0}
+aneel cycle 2 {'run_id': '20260927T200028Z', 'portal': 'https://dadosabertos.aneel.gov.br', 'datasets_harvested': 72, 'change_events': 0, 'prov_records': 0}
+aneel cycle 3 {'run_id': '20260927T200239Z', 'portal': 'https://dadosabertos.aneel.gov.br', 'datasets_harvested': 72, 'change_events': 0, 'prov_records': 0}
