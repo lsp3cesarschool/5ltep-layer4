@@ -88,6 +88,8 @@ class ChangeEvent:
         self.portal_url = portal_url
         self.organization = organization
         self.detected_at = datetime.now(timezone.utc).isoformat()
+        # Optional human-readable description of the change (see change_summary)
+        self.details: Optional[dict] = None
 
     def to_dict(self) -> dict:
         return {
@@ -101,6 +103,7 @@ class ChangeEvent:
             "portal_url": self.portal_url,
             "organization": self.organization,
             "detected_at": self.detected_at,
+            "details": self.details,
         }
 
 

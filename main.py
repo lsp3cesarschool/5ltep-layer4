@@ -40,6 +40,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from ckan_harvester import CKANHarvester
 from hash_engine import HashEngine, ChangeType, Severity
 from prov_mapper import ProvMapper
+from change_summary import describe_change, latest_snapshot, write_changes_md
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -61,6 +62,7 @@ HASHES_FILE = DATA_DIR / "hash_store.json"
 PROV_DIR = Path("provenance_logs")
 SNAPSHOTS_DIR = DATA_DIR / "snapshots"
 MANIFEST_FILE = SNAPSHOTS_DIR / "manifest.json"
+CHANGES_FILE = Path("changes.md")  # human-readable change log (generated)
 
 for d in [DATA_DIR, PROV_DIR, SNAPSHOTS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
@@ -181,6 +183,13 @@ def run_pipeline(
         logger.warning("No datasets harvested. Exiting.")
         return {"run_id": run_id, "datasets": 0, "changes": 0, "prov_records": 0}
 
+    # Previous snapshot, used to describe *how* each dataset changed
+    try:
+        previous = latest_snapshot(SNAPSHOTS_DIR) or {}
+    except Exception as e:  # never block monitoring on the description step
+        logger.warning("Could not load previous snapshot for change details: %s", e)
+        previous = {}
+
     if not dry_run:
         save_snapshot(datasets, run_id)
 
@@ -201,6 +210,12 @@ def run_pipeline(
         if e.change_type != ChangeType.CLEAN_UPDATE
     ]
     logger.info("Meaningful changes (non-CLEAN_UPDATE): %d", len(meaningful_events))
+
+    # Describe each change (fields, relocations, packaging) for PROV and changes.md
+    current = {d.get("id"): d for d in datasets if "_error" not in d}
+    for e in meaningful_events:
+        if e.dataset_id in previous and e.dataset_id in current:
+            e.details = describe_change(previous[e.dataset_id], current[e.dataset_id])
 
     # Isolate CRITICAL events (SCHEMA_DRIFT, RETRO_ALTER) — the core L4 concern
     critical_events = [
@@ -239,6 +254,14 @@ def run_pipeline(
         prov_records = []
         prov_summary = {"total_datasets": 0}
         logger.info("No meaningful changes — no PROV-DM records generated.")
+
+    # Human-readable change log, rebuilt from the stored history
+    if not dry_run:
+        try:
+            entries = write_changes_md(SNAPSHOTS_DIR, PROV_DIR, portal_url, CHANGES_FILE)
+            logger.info("changes.md updated (%d entries)", entries)
+        except Exception as e:  # never block monitoring on the report step
+            logger.warning("Could not update changes.md: %s", e)
 
     # ------------------------------------------------------------------
     # Summary

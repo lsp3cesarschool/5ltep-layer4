@@ -11,9 +11,11 @@
 ✅ **Cross-check passing** — last verified 2026-09-27 09:27 UTC. All 79 reachable datasets in sync with live IBAMA portal; latest snapshot is 5.3h old.
 <!-- CROSS_CHECK_STATUS:END -->
 
+📄 **What changed in the portal?** See [`changes.md`](changes.md): a human-readable log of every detected change (when, which dataset, and how, e.g., files relocated to another host or switched between zip and plain formats), rebuilt automatically by each monitoring cycle.
+
 ## Overview
 
-This toolkit implements **Layer 4 (Observability & Provenance)** of the Five-Layer Trust Engineering Pyramid (5L-TEP) for Open Government Data quality assurance. It monitors CKAN-based data portals (e.g., [IBAMA](https://dadosabertos.ibama.gov.br)), detects changes via SHA-256 fingerprinting, and generates W3C PROV-DM–compliant provenance records in JSON-LD.
+This toolkit implements **Layer 4 (Observability & Provenance)** of the Five-Layer Trust Engineering Pyramid (5L-TEP) for Open Government Data quality assurance. It monitors CKAN-based data portals (e.g., [IBAMA](https://dadosabertos.ibama.gov.br)), detects changes via SHA-256 fingerprinting, and generates W3C PROV-DM–compliant provenance records in JSON-LD. Since v1.0.2, each record also describes *how* the dataset changed (changed fields, resource URL relocations, zip/plain packaging switches), and the same description feeds [`changes.md`](changes.md).
 
 > **Scope**: This repository contains **only** the L4-essential modules. Layers 1–3 (structural/semantic/anomaly validation) and Layer 5 (governance dashboards) are outside this implementation's scope.
 
@@ -203,6 +205,7 @@ When a retroactive alteration is detected:
 ├── requirements.txt                 # Python dependencies
 ├── LICENSE                          # MIT License
 ├── README.md                        # This file
+├── changes.md                       # Human-readable change log (generated each cycle)
 ├── compress_snapshots.py            # Weekly gzip of snapshots older than 90 days
 ├── cross_check.py                   # Independent validator vs. live CKAN portal
 ├── .github/
@@ -215,10 +218,11 @@ When a retroactive alteration is detected:
 │   ├── __init__.py
 │   ├── ckan_harvester.py            # CKAN API client with retry logic
 │   ├── hash_engine.py              # SHA-256 fingerprinting & change detection
+│   ├── change_summary.py           # Change details (fields, relocations) + changes.md
 │   └── prov_mapper.py              # ★ W3C PROV-DM JSON-LD generator (L4 core)
 ├── tests/
 │   ├── __init__.py
-│   └── test_toolkit.py             # 32 unit + integration tests
+│   └── test_toolkit.py             # 37 unit + integration tests
 ├── evaluation/                      # Scripts + results reproducing the paper's evaluation
 ├── data/                            # Runtime data (committed by bot)
 │   ├── hash_store.json

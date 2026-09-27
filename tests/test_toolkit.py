@@ -479,6 +479,7 @@ class TestCriticalAlerting:
         monkeypatch.setattr(main, "SNAPSHOTS_DIR", snaps)
         monkeypatch.setattr(main, "MANIFEST_FILE", snaps / "manifest.json")
         monkeypatch.setattr(main, "PROV_DIR", prov)
+        monkeypatch.setattr(main, "CHANGES_FILE", tmp_path / "changes.md")
 
         # Seed baseline so the next observation is a comparison, not a baseline.
         HashEngine(hash_store_path=str(hashes),
@@ -515,6 +516,7 @@ class TestCriticalAlerting:
         monkeypatch.setattr(main, "SNAPSHOTS_DIR", snaps)
         monkeypatch.setattr(main, "MANIFEST_FILE", snaps / "manifest.json")
         monkeypatch.setattr(main, "PROV_DIR", prov)
+        monkeypatch.setattr(main, "CHANGES_FILE", tmp_path / "changes.md")
 
         HashEngine(hash_store_path=str(hashes),
                    portal_url="https://test.gov.br").detect_changes([sample_dataset])
@@ -569,3 +571,114 @@ class TestCriticalAlerting:
         """Outside Actions ($GITHUB_OUTPUT unset) the call is a harmless no-op."""
         monkeypatch.delenv("GITHUB_OUTPUT", raising=False)
         main._emit_github_output({"critical_events": 1, "critical_datasets": []})
+
+
+# ---------------------------------------------------------------------------
+# Change details and changes.md (change_summary)
+# ---------------------------------------------------------------------------
+
+from change_summary import describe_change  # noqa: E402
+
+
+class TestChangeSummary:
+    def test_host_move_and_packaging_change(self, sample_dataset):
+        """A download relocated to another host and unzipped is described as such."""
+        after = json.loads(json.dumps(sample_dataset))
+        after["metadata_modified"] = "2026-06-02T00:00:00"
+        after["resources"][0]["url"] = "https://blob.example.net/dados/embargos.csv"
+        before = json.loads(json.dumps(sample_dataset))
+        before["resources"][0]["url"] = "https://ibama.gov.br/data/embargos_csv.zip"
+
+        details = describe_change(before, after)
+        assert details["resourceUrlChanges"] == 1
+        assert details["hostMoves"] == 1
+        assert details["packagingChanges"] == 1
+        assert "resource.url" in details["changedFields"]
+        assert "moved from ibama.gov.br to blob.example.net" in details["summary"]
+        assert "zip → plain file" in details["summary"]
+
+    def test_resource_added_and_format_changed(self, sample_dataset):
+        after = json.loads(json.dumps(sample_dataset))
+        after["resources"][0]["format"] = "XLSX"
+        after["resources"].append({"id": "r4", "name": "new.pdf", "format": "PDF"})
+        details = describe_change(sample_dataset, after)
+        assert "1 resource(s) added" in details["summary"]
+        assert "declared format CSV → XLSX" in details["summary"]
+
+    def test_change_outside_fingerprint(self, sample_dataset):
+        """License-only edits are reported as outside the fingerprint."""
+        after = {**sample_dataset, "license_title": "Outra (Aberta)"}
+        details = describe_change(sample_dataset, after)
+        assert details["changedFields"] == []
+        assert details["fieldsOutsideFingerprint"] == ["license_title"]
+        assert details["summary"] == "License title changed"
+
+    def test_prov_record_carries_details(self, sample_dataset, tmp_path):
+        """Details are written to the PROV entity and still load with `prov`."""
+        after = json.loads(json.dumps(sample_dataset))
+        after["metadata_modified"] = "2026-06-02T00:00:00"
+        after["resources"][0]["url"] = "https://blob.example.net/dados/embargos.csv"
+        event = ChangeEvent(
+            dataset_id="abc123", change_type=ChangeType.CONTENT_MOD,
+            current_hash="b" * 64, previous_hash="a" * 64,
+            current_timestamp=after["metadata_modified"],
+            previous_timestamp=sample_dataset["metadata_modified"],
+            portal_url="https://dadosabertos.ibama.gov.br", organization="ibama",
+        )
+        event.details = describe_change(sample_dataset, after)
+        record = ProvMapper(provenance_dir=str(tmp_path / "prov")).generate_record(event)
+        entity = record["@graph"][0]
+        assert entity["5ltep:hostMoves"] == 1
+        assert "resource URL(s) changed" in entity["5ltep:changeSummary"]
+
+        prov_model = pytest.importorskip("prov.model")
+        pytest.importorskip("rdflib")
+        prov_model.ProvDocument.deserialize(
+            content=json.dumps(record), format="rdf", rdf_format="json-ld")
+
+    def test_pipeline_writes_changes_md(self, sample_dataset, tmp_path, monkeypatch):
+        """Two cycles with a relocation: PROV details + a changes.md row."""
+        snaps = tmp_path / "snapshots"
+        prov = tmp_path / "prov"
+        snaps.mkdir(parents=True, exist_ok=True)
+        prov.mkdir(parents=True, exist_ok=True)
+        monkeypatch.setattr(main, "HASHES_FILE", tmp_path / "hash_store.json")
+        monkeypatch.setattr(main, "SNAPSHOTS_DIR", snaps)
+        monkeypatch.setattr(main, "MANIFEST_FILE", snaps / "manifest.json")
+        monkeypatch.setattr(main, "PROV_DIR", prov)
+        monkeypatch.setattr(main, "CHANGES_FILE", tmp_path / "changes.md")
+
+        relocated = json.loads(json.dumps(sample_dataset))
+        relocated["metadata_modified"] = "2026-06-02T00:00:00"
+        relocated["resources"][0]["url"] = "https://blob.example.net/dados/embargos.csv"
+        cycles = iter([[sample_dataset], [relocated]])
+
+        class _FakeHarvester:
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def harvest_all(self):
+                return next(cycles)
+
+        monkeypatch.setattr(main, "CKANHarvester", _FakeHarvester)
+        run_ids = iter(["20260601T000000Z", "20260602T000000Z"])
+
+        class _Clock:
+            @staticmethod
+            def now(tz=None):
+                from datetime import datetime as real
+                return real.strptime(next(run_ids), "%Y%m%dT%H%M%SZ").replace(tzinfo=tz)
+
+        monkeypatch.setattr(main, "datetime", _Clock)
+        main.run_pipeline(portal_url="https://test.gov.br")
+        summary = main.run_pipeline(portal_url="https://test.gov.br")
+        assert summary["change_events"] == 1
+
+        log = json.loads((prov / "abc123.jsonld").read_text(encoding="utf-8"))
+        entity = log["provenance_chain"][-1]["@graph"][0]
+        assert entity["5ltep:resourceUrlChanges"] == 1
+
+        changes = (tmp_path / "changes.md").read_text(encoding="utf-8")
+        assert "Embargos Ambientais Federais" in changes
+        assert "`CONTENT_MOD`" in changes
+        assert "moved from ibama.gov.br to blob.example.net" in changes

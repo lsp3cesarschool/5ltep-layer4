@@ -47,7 +47,7 @@ PROV_CONTEXT = {
 }
 
 # Toolkit version for agent identification
-TOOLKIT_VERSION = "1.0.1"
+TOOLKIT_VERSION = "1.0.2"
 TOOLKIT_SCOPE = "Layer 4 — Observability & Provenance"
 
 
@@ -245,6 +245,16 @@ class ProvMapper:
         if previous_uri:
             entity["prov:wasDerivedFrom"] = {"@id": previous_uri}
 
+        # Human-readable change description (fields, relocations, packaging)
+        details = getattr(event, "details", None)
+        if details:
+            entity["5ltep:changeSummary"] = details["summary"]
+            entity["5ltep:changedFields"] = details["changedFields"]
+            entity["5ltep:fieldsOutsideFingerprint"] = details["fieldsOutsideFingerprint"]
+            entity["5ltep:resourceUrlChanges"] = details["resourceUrlChanges"]
+            entity["5ltep:hostMoves"] = details["hostMoves"]
+            entity["5ltep:packagingChanges"] = details["packagingChanges"]
+
         # Build activity (§3.3.2)
         activity = self._build_activity(event)
 
@@ -303,7 +313,7 @@ class ProvMapper:
 
             # Load existing log or start new
             if log_path.exists():
-                with open(log_path, "r") as f:
+                with open(log_path, "r", encoding="utf-8") as f:
                     log = json.load(f)
             else:
                 log = {
@@ -317,7 +327,7 @@ class ProvMapper:
             log["provenance_chain"].append(record)
 
             # Write back
-            with open(log_path, "w") as f:
+            with open(log_path, "w", encoding="utf-8") as f:
                 json.dump(log, f, indent=2, ensure_ascii=False)
 
             saved_files.append(str(log_path))
