@@ -7,9 +7,9 @@ first monitoring cycle that saw the change).
 
 - **Monitored since:** 2026-06-09
 - **Datasets in the latest snapshot:** 79
-- **Changes recorded as PROV events:** 31 (0 critical)
+- **Changes recorded as PROV events:** 32 (0 critical)
 - **New datasets:** 8
-- **Last change detected:** 2026-09-22 16:28 UTC
+- **Last change detected:** 2026-09-28 23:00 UTC
 
 Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 (resources added, removed, renamed or re-formatted; critical), `RETRO_ALTER`
@@ -20,7 +20,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Month | PROV events | Critical | New datasets |
 |---|---:|---:|---:|
-| 2026-09 | 7 | 0 | 0 |
+| 2026-09 | 8 | 0 | 0 |
 | 2026-08 | 10 | 0 | 3 |
 | 2026-07 | 11 | 0 | 3 |
 | 2026-06 | 3 | 0 | 2 |
@@ -29,6 +29,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Detected (UTC) | Dataset | Type | What changed | Provenance |
 |---|---|---|---|---|
+| 2026-09-28 23:00 | [Fila de acompanhamento de registro de agrotóxicos químicos](https://dadosabertos.ibama.gov.br/dataset/fila-de-acompanhamento-de-registro-de-agrotoxicos-quimicos) | `CONTENT_MOD` | 3 resource URL(s) changed (3 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net; 3 zip → plain file) | [log](provenance_logs/5cc6ed7b-01b1-430c-96cf-e994a2555348.jsonld) |
 | 2026-09-22 16:28 | [Fiscalização - termo de embargo](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-embargo) | `CONTENT_MOD` | 3 resource URL(s) changed (3 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/4b292c2e-56bb-4639-9ea2-a9b02fea9558.jsonld) |
 | 2026-09-16 16:19 | [Fiscalização - termo de embargo](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-embargo) | `CONTENT_MOD` | 3 resource URL(s) changed (3 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/4b292c2e-56bb-4639-9ea2-a9b02fea9558.jsonld) |
 | 2026-09-11 03:30 | [Fiscalização - termo de embargo](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-embargo) | `CONTENT_MOD` | 3 resource URL(s) changed (3 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/4b292c2e-56bb-4639-9ea2-a9b02fea9558.jsonld) |
