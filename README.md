@@ -8,7 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 <!-- CROSS_CHECK_STATUS:START -->
-✅ **Cross-check passing** — last verified 2026-09-30 09:55 UTC. All 79 reachable datasets in sync with the live portal (dadosabertos.ibama.gov.br); latest snapshot is 5.4h old.
+✅ **Cross-check passing** — last verified 2026-10-01 10:22 UTC. All 79 reachable datasets in sync with the live portal (dadosabertos.ibama.gov.br); latest snapshot is 5.7h old.
 <!-- CROSS_CHECK_STATUS:END -->
 
 📄 **What changed in the portal?** See [`changes.md`](changes.md): a human-readable log of every detected change (when, which dataset, and how, e.g., files relocated to another host or switched between zip and plain formats), rebuilt automatically by each monitoring cycle.
