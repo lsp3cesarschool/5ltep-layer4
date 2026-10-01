@@ -22,7 +22,10 @@ import requests
 logger = logging.getLogger(__name__)
 
 # Default timeout and retry configuration
-DEFAULT_TIMEOUT = 30
+DEFAULT_TIMEOUT = 30  # seconds to read an answer
+# Seconds to open a connection: a connection the portal refuses fails fast instead of waiting the
+# whole read timeout (some portals intermittently refuse new connections from cloud runners).
+CONNECT_TIMEOUT = 10
 MAX_RETRIES = 3
 RETRY_BACKOFF = 2  # seconds (exponential backoff base)
 
@@ -76,7 +79,7 @@ class CKANHarvester:
         last_error = None
         for attempt in range(MAX_RETRIES):
             try:
-                response = self.session.get(url, params=params, timeout=self.timeout)
+                response = self.session.get(url, params=params, timeout=(min(CONNECT_TIMEOUT, self.timeout), self.timeout))
                 response.raise_for_status()
                 data = response.json()
                 if data.get("success"):
