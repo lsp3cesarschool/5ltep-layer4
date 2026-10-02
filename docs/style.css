@@ -186,7 +186,9 @@ h3.sub { margin-top: 18px; }
 
 /* tiles: "Details" expands in place without stretching the other tiles of the row */
 section.tiles { align-items: start; }
-.tile-more { margin-top: 8px; font-size: .82rem; color: var(--text-2); overflow-wrap: anywhere; }
+/* tiles are columns: Details sits at the bottom, level across the row */
+#tiles .tile { display: flex; flex-direction: column; }
+.tile-more { margin-top: auto; padding-top: 8px; font-size: .82rem; color: var(--text-2); overflow-wrap: anywhere; }
 .tile-more summary { cursor: pointer; color: var(--accent); font-weight: 600; }
 .tile-more p { margin: 6px 0 0; }
 .tile-more ul { margin: 4px 0 0; padding-left: 0; list-style: none; }
@@ -194,4 +196,4 @@ section.tiles { align-items: start; }
 /* the PROV tile is a link to the datasets that changed */
 .tile.go { cursor: pointer; }
 .tile.go:hover, .tile.go:focus-visible { border-color: var(--accent); }
-#datasets-head { scroll-margin-top: 16px; }
+#datasets-head, #latest, #health, #cross-check-panel { scroll-margin-top: 16px; }

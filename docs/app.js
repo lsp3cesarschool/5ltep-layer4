@@ -11,7 +11,9 @@ const I18N = {
     t_cycles: "Monitoring cycles", t_cycles_note: "{n} in the last 30 days · longest gap {g} h",
     t_events: "Changes recorded in PROV", t_events_note: "in {n} of the {total} datasets",
     t_critical: "critical", t_critical_tip: "SCHEMA_DRIFT or RETRO_ALTER", t_no_critical: "no critical change",
-    t_events_go: "Click to list the datasets that changed",
+    t_events_go: "Click to list the datasets that changed", t_go_datasets: "Click to list every dataset",
+    t_go_health: "Click to see the monitoring health", t_go_latest: "Click to see the latest changes",
+    t_go_cc: "Click to see the cross-check",
     t_last: "Last change", t_none: "none yet",
     t_cc: "Cross-check", t_cc_note: "checked {d}",
     details: "Details",
@@ -65,7 +67,9 @@ const I18N = {
     t_cycles: "Ciclos de monitoramento", t_cycles_note: "{n} nos últimos 30 dias · maior intervalo {g} h",
     t_events: "Mudanças registradas em PROV", t_events_note: "em {n} dos {total} conjuntos",
     t_critical: "críticas", t_critical_tip: "SCHEMA_DRIFT ou RETRO_ALTER", t_no_critical: "nenhuma mudança crítica",
-    t_events_go: "Clique para listar os conjuntos que mudaram",
+    t_events_go: "Clique para listar os conjuntos que mudaram", t_go_datasets: "Clique para listar todos os conjuntos",
+    t_go_health: "Clique para ver a saúde do monitoramento", t_go_latest: "Clique para ver as últimas mudanças",
+    t_go_cc: "Clique para ver a verificação cruzada",
     t_last: "Última mudança", t_none: "nenhuma ainda",
     t_cc: "Verificação cruzada", t_cc_note: "verificada em {d}",
     details: "Detalhes",
@@ -212,20 +216,71 @@ const statusClass = (s) => (s === "IN_SYNC" ? "good" : s === "STALE" || s === "E
 const md = (text) => esc(text).replace(/`([^`]+)`/g, "<code>$1</code>");
 const plainSentence = (text) => (text || "").replace(/\*\*/g, "").replace(/`/g, "").replace(/^[^\p{L}]+/u, "");
 
-function tile(label, value, note = "", meter = null, extra = "", details = "", attrs = "") {
-  return `<div ${attrs.includes("class=") ? "" : 'class="tile"'}${attrs}><div class="label">${esc(label)}</div><div class="value">${value}</div>`
+// Each tile is a link to its section (`go`); its Details toggle and its own links keep their behaviour.
+function tile(label, value, note = "", meter = null, extra = "", details = "", go = "") {
+  const link = go ? ` data-tile-go="${go}" role="link" tabindex="0" title="${esc(t(TILE_GO[go].tip))}"` : "";
+  return `<div class="tile${go ? " go" : ""}"${link}><div class="label">${esc(label)}</div><div class="value">${value}</div>`
     + (meter == null ? "" : `<div class="meter"><span style="width:${Math.max(0, Math.min(1, meter)) * 100}%"></span></div>`)
     + `<div class="note">${note}</div>${extra}`
     + (details ? `<details class="tile-more"><summary>${esc(t("details"))}</summary>${details}</details>` : "")
     + "</div>";
 }
 
-// The datasets table, filtered to the ones that changed (from the PROV tile).
-function showChangedDatasets() {
-  el("only-changed").checked = true;
+function scrollToId(id) {
+  el(id).scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// The datasets table, all of them or only the ones that changed.
+function showDatasets(onlyChanged) {
+  el("only-changed").checked = onlyChanged;
   el("search").value = "";
   renderDatasets();
-  el("datasets-head").scrollIntoView({ behavior: "smooth", block: "start" });
+  scrollToId("datasets-head");
+}
+
+const TILE_GO = {
+  datasets: { tip: "t_go_datasets", run: () => showDatasets(false) },
+  health: { tip: "t_go_health", run: () => scrollToId("health") },
+  changed: { tip: "t_events_go", run: () => showDatasets(true) },
+  latest: {
+    tip: "t_go_latest",
+    run: () => {                       // unfiltered, so the first row is the last change
+      el("ev-search").value = "";
+      el("ev-type").value = "";
+      SHOW_ALL = false;
+      renderEvents();
+      scrollToId("latest");
+    },
+  },
+  cc: { tip: "t_go_cc", run: () => scrollToId("cross-check-panel") },
+};
+
+function bindTileLinks() {
+  const tiles = el("tiles");
+  tiles.addEventListener("click", (ev) => {
+    const own = ev.target.closest("[data-go]");      // a link inside Details that does the same
+    if (!own && ev.target.closest("summary, .tile-more, a")) return;
+    const node = own ? own.closest(".tile") : ev.target.closest(".tile[data-tile-go]");
+    if (!node) return;
+    ev.preventDefault();
+    TILE_GO[node.dataset.tileGo].run();
+  });
+  tiles.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter" && ev.target.matches(".tile[data-tile-go]")) TILE_GO[ev.target.dataset.tileGo].run();
+  });
+  window.addEventListener("resize", () => requestAnimationFrame(equalizeTiles));
+}
+
+// Collapsed tiles share one height (the tallest collapsed tile); an open tile grows alone. Measured
+// with every Details closed, so opening one never changes the others.
+function equalizeTiles() {
+  const all = [...document.querySelectorAll("#tiles .tile")];
+  const open = [...document.querySelectorAll("#tiles details[open]")];
+  open.forEach((d) => { d.open = false; });
+  all.forEach((x) => { x.style.minHeight = ""; });
+  const height = Math.max(...all.map((x) => x.offsetHeight));
+  all.forEach((x) => { x.style.minHeight = `${height}px`; });
+  open.forEach((d) => { d.open = true; });
 }
 
 function renderTiles(d, cc) {
@@ -250,28 +305,17 @@ function renderTiles(d, cc) {
     ? `<p>${esc(t("d_cc_last"))} ${esc(plainSentence(LANG === "pt" ? cc.sentence_pt : cc.sentence))}</p>` : "");
   el("tiles").innerHTML = [
     tile(t("t_datasets"), fmt(s.datasets), esc(t("t_datasets_note", { r: fmt(s.resources), o: fmt(s.organizations) })),
-      null, "", `<p>${md(t("d_datasets"))}</p>`),
+      null, "", `<p>${md(t("d_datasets"))}</p>`, "datasets"),
     tile(t("t_cycles"), fmt(m.cycles), esc(t("t_cycles_note", { n: fmt(m.cycles_30d), g: fmt(m.max_gap_hours_30d) })),
       null, "", `<p>${md(t("d_cycles", { since: day(m.since), n: fmt(m.cycles), n30: fmt(m.cycles_30d),
-        g: fmt(m.max_gap_hours_30d), snaps: fmt(m.distinct_snapshots) }))}</p>`),
+        g: fmt(m.max_gap_hours_30d), snaps: fmt(m.distinct_snapshots) }))}</p>`, "health"),
     tile(t("t_events"), fmt(s.prov_events), esc(t("t_events_note", { n: fmt(s.datasets_changed), total: fmt(s.datasets) })),
-      share, crit, eventsDetails,
-      ` id="tile-events" class="tile go" role="link" tabindex="0" title="${esc(t("t_events_go"))}"`),
-    tile(t("t_last"), last ? day(last.when) : esc(t("t_none")), last ? esc(last.title) : "", null, "", lastDetails),
+      share, crit, eventsDetails, "changed"),
+    tile(t("t_last"), last ? day(last.when) : esc(t("t_none")), last ? esc(last.title) : "", null, "", lastDetails, "latest"),
     tile(t("t_cc"), `<span class="status ${statusClass(ccStatus)}">${STATUS_ICON[ccStatus] || ""} ${esc(t(`s_${ccStatus}`))}</span>`,
-      cc && cc.checked_at ? esc(t("t_cc_note", { d: day(cc.checked_at) })) : "", null, "", ccDetails),
+      cc && cc.checked_at ? esc(t("t_cc_note", { d: day(cc.checked_at) })) : "", null, "", ccDetails, "cc"),
   ].join("");
-  // The PROV tile opens the changed datasets; its Details and links keep their own behaviour.
-  const go = el("tile-events");
-  go.addEventListener("click", (ev) => {
-    if (ev.target.closest("summary, .tile-more") && !ev.target.closest("[data-go]")) return;
-    if (ev.target.closest("a") && !ev.target.closest("[data-go]")) return;
-    ev.preventDefault();
-    showChangedDatasets();
-  });
-  go.addEventListener("keydown", (ev) => {
-    if (ev.key === "Enter" && ev.target === go) showChangedDatasets();
-  });
+  equalizeTiles();
 }
 
 // --- changes per month: stacked bars, one axis, 2px surface gaps -----------------
@@ -506,6 +550,7 @@ async function main() {
   el("subtitle").textContent = t("subtitle", { since: day(DATA.monitoring.since), last: stamp(DATA.monitoring.last_cycle),
     gen: stamp(DATA.generated_at) });
   renderTiles(DATA, cc);
+  bindTileLinks();
   renderMonths(DATA);
   renderWhere(DATA);
   const types = [...new Set(DATA.events.map((e) => e.type))];

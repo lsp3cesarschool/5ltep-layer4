@@ -77,13 +77,13 @@
     <button class="showmore" id="ev-more" hidden></button>
   </section>
 
-  <section>
+  <section id="health">
     <div class="section-head"><h2 data-i18n="health_h">Monitoring health</h2></div>
     <p class="muted" data-i18n="health_note">Monitoring cycles per day over the last 90 days (four are scheduled). A missing
       cycle delays when a change is seen, never what is recorded: the next cycle compares with the last stored reading.</p>
     <div class="chart" id="cycles-chart"></div>
     <div class="two">
-      <div class="panel"><h3 data-i18n="cc_h">Independent cross-check</h3><div id="cross-check"></div></div>
+      <div class="panel" id="cross-check-panel"><h3 data-i18n="cc_h">Independent cross-check</h3><div id="cross-check"></div></div>
       <div class="panel"><h3 data-i18n="mon_h">Cycles</h3><div class="kv" id="monitoring"></div></div>
     </div>
   </section>
