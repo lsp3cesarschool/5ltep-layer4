@@ -13,7 +13,7 @@ const I18N = {
     t_critical: "critical", t_critical_tip: "SCHEMA_DRIFT or RETRO_ALTER", t_last: "Last change", t_none: "none yet",
     t_cc: "Cross-check", t_cc_note: "checked {d}",
     months_h: "Changes per month",
-    months_note: "The classifier described in the paper has four types: CLEAN_UPDATE (no change; not charted), CONTENT_MOD, SCHEMA_DRIFT and RETRO_ALTER, the last two critical. Each change of the last three types becomes a W3C PROV-DM record. New datasets (recorded as a baseline on their first observation) and removed datasets are also shown, by month of detection; they are not change types and produce no PROV record.",
+    months_note: "The classifier described in the paper has four types: CLEAN_UPDATE (no change; not charted), CONTENT_MOD, SCHEMA_DRIFT and RETRO_ALTER; changes of the last two types are critical. Each change of the last three types becomes a W3C PROV-DM record. New datasets (recorded as a baseline on their first observation) and removed datasets are also shown, by month of detection; they are not change types and produce no PROV record.",
     table_view: "Table view", month: "Month", total: "Total",
     where_h: "Where the files are",
     where_note: "The server each resource URL points to today, and the moves between servers seen since monitoring began. A move, or a switch between a zip and a plain file, usually keeps the format the portal declares: a program that downloads these files can break without warning.",
@@ -39,9 +39,9 @@ const I18N = {
     no_changes: "No change since monitoring began.",
     footer: "Toolkit {v} · {repo} · Layers 1–3 and 5 of 5L-TEP are separate repositories; this page shows Layer 4 only. Data:",
     type_CONTENT_MOD: "content changed, with a new timestamp", type_SCHEMA_DRIFT: "resources added, removed, renamed or re-formatted",
-    type_RETRO_ALTER: "changed without a new timestamp", type_NEW: "dataset published", type_REMOVED: "dataset no longer listed",
+    type_RETRO_ALTER: "changed without a new timestamp", type_NEW: "new dataset published", type_REMOVED: "dataset no longer listed",
     type_NOT_FINGERPRINTED: "only fields outside the fingerprint changed (no PROV record)",
-    inv_NEW: "new dataset (baseline)", inv_REMOVED: "removed dataset", inv_NOT_FINGERPRINTED: "outside the fingerprint",
+    inv_NEW: "New dataset published (baseline)", inv_REMOVED: "Dataset removed", inv_NOT_FINGERPRINTED: "Outside the fingerprint",
   },
   pt: {
     back: "← Voltar ao repositório", eyebrow: "5L-TEP · Camada 4 · Observabilidade e Proveniência", loading: "Carregando…",
@@ -54,7 +54,7 @@ const I18N = {
     t_critical: "críticas", t_critical_tip: "SCHEMA_DRIFT ou RETRO_ALTER", t_last: "Última mudança", t_none: "nenhuma ainda",
     t_cc: "Verificação cruzada", t_cc_note: "verificada em {d}",
     months_h: "Mudanças por mês",
-    months_note: "O classificador descrito no artigo tem quatro tipos: CLEAN_UPDATE (sem mudança; fora do gráfico), CONTENT_MOD, SCHEMA_DRIFT e RETRO_ALTER, os dois últimos críticos. Cada mudança dos três últimos tipos vira um registro W3C PROV-DM. Conjuntos novos (registrados como linha de base na primeira observação) e conjuntos removidos também aparecem, por mês de detecção; não são tipos de mudança e não geram registro PROV.",
+    months_note: "O classificador descrito no artigo tem quatro tipos: CLEAN_UPDATE (sem mudança; fora do gráfico), CONTENT_MOD, SCHEMA_DRIFT e RETRO_ALTER; as mudanças dos dois últimos tipos são críticas. Cada mudança dos três últimos tipos vira um registro W3C PROV-DM. Conjuntos novos (registrados como linha de base na primeira observação) e conjuntos removidos também aparecem, por mês de detecção; não são tipos de mudança e não geram registro PROV.",
     table_view: "Ver como tabela", month: "Mês", total: "Total",
     where_h: "Onde estão os arquivos",
     where_note: "O servidor para o qual aponta hoje a URL de cada recurso, e as mudanças de servidor vistas desde o início do monitoramento. Uma mudança de servidor, ou a troca entre zip e arquivo simples, costuma manter o formato que o portal declara: um programa que baixa esses arquivos pode quebrar sem aviso.",
@@ -80,9 +80,9 @@ const I18N = {
     no_changes: "Nenhuma mudança desde o início do monitoramento.",
     footer: "Kit {v} · {repo} · As camadas 1–3 e 5 do 5L-TEP são repositórios separados; esta página mostra só a Camada 4. Dados:",
     type_CONTENT_MOD: "conteúdo mudou, com nova data", type_SCHEMA_DRIFT: "recursos adicionados, removidos, renomeados ou com outro formato",
-    type_RETRO_ALTER: "mudou sem nova data", type_NEW: "conjunto publicado", type_REMOVED: "conjunto deixou de ser listado",
+    type_RETRO_ALTER: "mudou sem nova data", type_NEW: "novo conjunto publicado", type_REMOVED: "conjunto deixou de ser listado",
     type_NOT_FINGERPRINTED: "só mudaram campos fora da impressão digital (sem registro PROV)",
-    inv_NEW: "conjunto novo (linha de base)", inv_REMOVED: "conjunto removido", inv_NOT_FINGERPRINTED: "fora da impressão digital",
+    inv_NEW: "Novo conjunto publicado (linha de base)", inv_REMOVED: "Conjunto removido", inv_NOT_FINGERPRINTED: "Fora da impressão digital",
   },
 };
 
@@ -108,9 +108,10 @@ const day = (iso) => (iso || "").slice(0, 10);
 const stamp = (iso) => (iso ? `${iso.slice(0, 10)} ${iso.slice(11, 16)}` : "—");
 const safeUrl = (u) => (/^https?:\/\//i.test(u || "") ? u : "#");
 
-// Heat by severity, bottom of the stack to top: NEW (info), REMOVED (neutral), CONTENT_MOD (warning),
-// SCHEMA_DRIFT and RETRO_ALTER (critical; the first hatched). NOT_FINGERPRINTED is grey and never charted.
-const TYPES = ["NEW", "REMOVED", "CONTENT_MOD", "SCHEMA_DRIFT", "RETRO_ALTER"];
+// Heat by severity, bottom of the stack to top: the hottest at the base, where it is seen first —
+// RETRO_ALTER and SCHEMA_DRIFT (critical; the second hatched), CONTENT_MOD (warning), REMOVED (neutral),
+// NEW (info). Legend and table follow the same order. NOT_FINGERPRINTED is grey and never charted.
+const TYPES = ["RETRO_ALTER", "SCHEMA_DRIFT", "CONTENT_MOD", "REMOVED", "NEW"];
 const PROV_TYPES = new Set(["CONTENT_MOD", "SCHEMA_DRIFT", "RETRO_ALTER"]);
 const typeColor = (ty) => (ty === "SCHEMA_DRIFT" ? "url(#hatch-drift)" : `var(--type-${ty})`);
 const swatch = (ty) => `<span class="swatch${ty === "SCHEMA_DRIFT" ? " hatch" : ""}" style="background:var(--type-${ty})"></span>`;

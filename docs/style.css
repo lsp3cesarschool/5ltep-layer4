@@ -158,7 +158,7 @@ h3.sub { margin-top: 18px; }
 
 /* --- Layer 4 additions ------------------------------------------------------------- */
 /* change types: a heat scale by severity (validated light and dark): info = cool blue, warning =
-   yellow, critical = red; SCHEMA_DRIFT is hatched red so it never relies on colour alone to differ from
+   yellow, critical = red, stacked hottest at the base; SCHEMA_DRIFT is hatched red so it never relies on colour alone to differ from
    RETRO_ALTER; REMOVED is a neutral grey (a dataset leaving the portal is not a content change). */
 :root { --type-NEW: #2a78d6; --type-REMOVED: #898781; --type-CONTENT_MOD: #eda100;
   --type-SCHEMA_DRIFT: #d03b3b; --type-RETRO_ALTER: #d03b3b; --type-NOT_FINGERPRINTED: #898781; }
