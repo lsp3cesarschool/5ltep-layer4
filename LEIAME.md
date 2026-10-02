@@ -180,12 +180,14 @@ python main.py --portal https://dadosabertos.ibama.gov.br --org ibama
 
 ```bash
 pytest tests/ -v
-# 49 testes cobrindo: determinismo do hash, os 4 tipos de mudança, modelo de dois
+# 53 testes cobrindo: determinismo do hash, os 4 tipos de mudança, modelo de dois
 # agentes, cadeias de derivação, persistência somente por acréscimo, pipeline de
 # ponta a ponta, alertas de mudança crítica (SCHEMA_DRIFT/RETRO_ALTER) e sinalização
 # para a CI, interoperabilidade PROV-O com a biblioteca `prov` (requer:
 # pip install prov rdflib), detalhes das mudanças (mudanças de servidor, empacotamento),
-# changes.md e dados do painel, portal.json, selos de situação e estrutura README/LEIAME
+# changes.md e dados do painel, portal.json, selos de situação, estrutura README/LEIAME
+# e o comportamento dos workflows descrito no artigo do WFA 2026 (horários, ordem do
+# alerta, consulta SPARQL)
 ```
 
 ### Implantação no GitHub Actions
@@ -267,8 +269,8 @@ Quando uma alteração retroativa é detectada:
 ├── .github/
 │   └── workflows/
 │       ├── monitor.yml              # Monitoramento agendado (a cada 6h, aos :10)
-│       ├── compress.yml             # Compactação semanal dos snapshots (dom 04:20 UTC)
-│       ├── cross_check.yml          # Validação independente diária (09:40 UTC)
+│       ├── compress.yml             # Compactação semanal dos snapshots (dom 03:00 UTC)
+│       ├── cross_check.yml          # Validação independente diária (03:30 UTC, fora do pico)
 │       └── tests.yml                # Execução dos testes na CI/CD
 ├── src/
 │   ├── __init__.py
@@ -280,7 +282,7 @@ Quando uma alteração retroativa é detectada:
 │   └── prov_mapper.py              # ★ Gerador de JSON-LD W3C PROV-DM (núcleo da L4)
 ├── tests/
 │   ├── __init__.py
-│   └── test_toolkit.py             # 49 testes unitários e de integração
+│   └── test_toolkit.py             # 53 testes unitários e de integração
 ├── docs/                            # Painel (GitHub Pages): index.html, app.js, style.css
 │   └── data/                        # layer4.json, cross_check.json, selos (commit feito pelo bot)
 ├── evaluation/                      # Scripts e resultados que reproduzem a avaliação do artigo
@@ -300,7 +302,7 @@ O portal monitorado é declarado no [`portal.json`](portal.json) (`portal_url`, 
 
 | Variável de ambiente | Padrão | Descrição |
 |---|---|---|
-| `CKAN_PORTAL_URL` | _(vazio)_ | Só para ensaios locais: substitui o `portal.json` numa execução (`--portal` substitui os dois) |
+| `CKAN_PORTAL_URL` | _(vazio)_ | Substitui o `portal.json`; no GitHub Actions, defina como variável do repositório (`--portal` substitui os dois) |
 | `CKAN_ORG_FILTER` | _(vazio)_ | Filtra por organização |
 | `MAX_DATASETS` | `0` (todos) | Limita a quantidade de conjuntos de dados coletados |
 | `GITHUB_REPOSITORY` | `local` | Usada na identificação do agente de software |
@@ -308,14 +310,17 @@ O portal monitorado é declarado no [`portal.json`](portal.json) (`portal_url`, 
 
 ### Monitorando outro portal CKAN
 
-O monitoramento contínuo (a cada 6 h, com e-mails de falha enviados pelo GitHub), a
-verificação cruzada diária e o painel leem o portal de um único arquivo versionado,
-o [`portal.json`](portal.json). Nenhuma mudança de código é necessária:
+O monitoramento contínuo (a cada 6 h, com e-mails de falha enviados pelo GitHub) e a
+verificação cruzada diária leem o portal da variável de repositório `CKAN_PORTAL_URL`,
+quando ela existe, e senão do arquivo versionado [`portal.json`](portal.json). Nenhuma
+mudança de código é necessária:
 
 1. Faça um **fork** deste repositório.
-2. No fork, edite o `portal.json`: `portal_url` com a URL raiz do portal
-   (por exemplo, `https://dados.recife.pe.gov.br`), e `name` e `title` com o nome
-   que o painel deve mostrar.
+2. No fork, crie a variável de repositório `CKAN_PORTAL_URL`
+   (*Settings → Secrets and variables → Actions → Variables*) com a URL raiz do portal
+   (por exemplo, `https://dados.recife.pe.gov.br`), ou edite o `portal.json`
+   (`portal_url`, mais o `name` e o `title` que o painel mostra). As instâncias ANEEL
+   e Recife usam o `portal.json`, para que a diferença fique visível no git.
 3. **Comece com um histórico limpo:** apague as pastas `data/` e
    `provenance_logs/` inteiras, a pasta `docs/data/` e o arquivo `changes.md`
    herdados deste repositório, e faça commit. Eles são recriados automaticamente.

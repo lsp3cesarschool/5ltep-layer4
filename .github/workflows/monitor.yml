@@ -6,8 +6,10 @@ on:
     - cron: '10 */6 * * *'
   workflow_dispatch:
 
-# The monitored portal is declared in portal.json (versioned); forks change it there.
+# Portal: the repository variable CKAN_PORTAL_URL when set (Settings > Secrets and
+# variables > Actions > Variables), otherwise portal.json (versioned).
 env:
+  CKAN_PORTAL_URL: ${{ vars.CKAN_PORTAL_URL }}
   PYTHON_VERSION: '3.11'
 
 concurrency:

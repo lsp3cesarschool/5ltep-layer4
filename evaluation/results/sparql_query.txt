@@ -1,0 +1,7 @@
+loaded 32 PROV-DM records from provenance_logs/ into one RDF graph (603 triples)
+
+Q1. Which datasets had RETRO_ALTER events in the last 30 days (since 2026-09-02)?
+    none
+
+Q2. Recorded changes by type (all time):
+    CONTENT_MOD     32 events in 23 datasets

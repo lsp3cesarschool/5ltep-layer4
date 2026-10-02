@@ -839,3 +839,50 @@ class TestCrossCheck:
         report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
         assert report["status"] == "ERROR" and report["errors"][0]["name"] == "package_list"
         assert json.loads((docs / "b.json").read_text(encoding="utf-8"))["color"] == "red"
+
+
+class TestPaperClaims:
+    """Behaviour stated in the WFA 2026 paper (Pinheiro & Sérgio), kept from regressing."""
+
+    @staticmethod
+    def _workflow(name):
+        path = os.path.join(os.path.dirname(__file__), "..", ".github", "workflows", name)
+        return open(path, encoding="utf-8").read()
+
+    def test_workflows_read_the_repository_variable(self):
+        """§3.2: adopters fork, set one repository variable, and both workflows read it."""
+        for name in ("monitor.yml", "cross_check.yml"):
+            assert "CKAN_PORTAL_URL: ${{ vars.CKAN_PORTAL_URL }}" in self._workflow(name)
+
+    def test_schedules(self):
+        """§3.2: monitoring every 6 h; cross-check daily 03:30 UTC; compression Sundays 03:00 UTC."""
+        assert "*/6 * * *'" in self._workflow("monitor.yml")
+        assert "cron: '30 3 * * *'" in self._workflow("cross_check.yml")
+        assert "cron: '0 3 * * 0'" in self._workflow("compress.yml")
+
+    def test_monitor_commits_before_alerting(self):
+        """§3.2: six steps, the commit before the conditional alert on CRITICAL events."""
+        text = self._workflow("monitor.yml")
+        steps = [line.strip() for line in text.splitlines() if line.strip().startswith("- name:")
+                 or line.strip().startswith("- uses:")]
+        assert len(steps) == 6
+        assert text.index("Commit provenance logs") < text.index("Alert on CRITICAL")
+        assert "steps.monitor.outputs.critical == 'true'" in text
+        assert "python-version: ${{ env.PYTHON_VERSION }}" in text and "PYTHON_VERSION: '3.11'" in text
+
+    def test_sparql_finds_retro_alter(self, sample_dataset, tmp_path):
+        """§3.2: the JSON-LD records answer "which datasets had retroactive alterations?" in SPARQL."""
+        pytest.importorskip("rdflib")
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "evaluation"))
+        import sparql_query
+        engine = HashEngine(hash_store_path=str(tmp_path / "h.json"), portal_url="https://test.gov.br")
+        engine.detect_changes([sample_dataset])
+        silent = {**sample_dataset, "notes": "Edited without a new timestamp"}
+        events = engine.detect_changes([silent])
+        assert events[0].change_type == ChangeType.RETRO_ALTER
+        prov = tmp_path / "prov"
+        ProvMapper(provenance_dir=str(prov), repository_url="o/r", commit_sha="abc1234").save_records(events)
+        graph, records = sparql_query.load_graph(str(prov))
+        since = "2000-01-01T00:00:00+00:00"
+        rows = list(graph.query(sparql_query.WINDOW_QUERY % (sparql_query.NS_5LTEP, "RETRO_ALTER", since)))
+        assert records == 1 and len(rows) == 1 and str(rows[0][0]) == "abc123"

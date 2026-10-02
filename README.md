@@ -176,12 +176,13 @@ python main.py --portal https://dadosabertos.ibama.gov.br --org ibama
 
 ```bash
 pytest tests/ -v
-# 49 tests covering: hash determinism, 4 change types, dual-agent model,
+# 53 tests covering: hash determinism, 4 change types, dual-agent model,
 # derivation chains, append-only persistence, end-to-end pipeline,
 # critical-change alerting (SCHEMA_DRIFT/RETRO_ALTER) and CI signalling,
 # PROV-O interoperability with the `prov` library (needs: pip install prov rdflib),
 # change details (relocations, packaging), changes.md and dashboard data,
-# portal.json, status badges, and README/LEIAME structure
+# portal.json, status badges, README/LEIAME structure, and the workflow
+# behaviour stated in the WFA 2026 paper (schedules, alert order, SPARQL query)
 ```
 
 ### GitHub Actions Deployment
@@ -263,8 +264,8 @@ When a retroactive alteration is detected:
 ├── .github/
 │   └── workflows/
 │       ├── monitor.yml              # Scheduled monitoring (every 6h, at :10)
-│       ├── compress.yml             # Weekly snapshot compression (Sun 04:20 UTC)
-│       ├── cross_check.yml          # Daily independent validation (09:40 UTC)
+│       ├── compress.yml             # Weekly snapshot compression (Sun 03:00 UTC)
+│       ├── cross_check.yml          # Daily independent validation (03:30 UTC, off-peak)
 │       └── tests.yml                # CI/CD test runner
 ├── src/
 │   ├── __init__.py
@@ -276,7 +277,7 @@ When a retroactive alteration is detected:
 │   └── prov_mapper.py              # ★ W3C PROV-DM JSON-LD generator (L4 core)
 ├── tests/
 │   ├── __init__.py
-│   └── test_toolkit.py             # 49 unit + integration tests
+│   └── test_toolkit.py             # 53 unit + integration tests
 ├── docs/                            # Dashboard (GitHub Pages): index.html, app.js, style.css
 │   └── data/                        # layer4.json, cross_check.json, badges (committed by bot)
 ├── evaluation/                      # Scripts + results reproducing the paper's evaluation
@@ -296,7 +297,7 @@ The monitored portal is declared in [`portal.json`](portal.json) (`portal_url`, 
 
 | Environment Variable | Default | Description |
 |---|---|---|
-| `CKAN_PORTAL_URL` | _(empty)_ | Local trials only: overrides `portal.json` for one run (`--portal` overrides both) |
+| `CKAN_PORTAL_URL` | _(empty)_ | Overrides `portal.json`; in GitHub Actions, set it as a repository variable (`--portal` overrides both) |
 | `CKAN_ORG_FILTER` | _(empty)_ | Filter by organization |
 | `MAX_DATASETS` | `0` (all) | Limit harvested datasets |
 | `GITHUB_REPOSITORY` | `local` | Used for software agent identification |
@@ -304,14 +305,17 @@ The monitored portal is declared in [`portal.json`](portal.json) (`portal_url`, 
 
 ### Monitoring another CKAN portal
 
-The continuous monitoring (every 6 h, with failure e-mails from GitHub), the daily
-cross-check and the dashboard all read the portal from a single versioned file,
-[`portal.json`](portal.json). No code change is needed:
+The continuous monitoring (every 6 h, with failure e-mails from GitHub) and the
+daily cross-check read the portal from the repository variable `CKAN_PORTAL_URL`
+when it is set, and otherwise from the versioned file [`portal.json`](portal.json).
+No code change is needed:
 
 1. **Fork** this repository.
-2. In the fork, edit `portal.json`: set `portal_url` to the portal's root URL
-   (e.g., `https://dados.recife.pe.gov.br`), and `name` and `title` to how the
-   dashboard should call it.
+2. In the fork, either create the repository variable `CKAN_PORTAL_URL`
+   (*Settings → Secrets and variables → Actions → Variables*) with the portal's
+   root URL (e.g., `https://dados.recife.pe.gov.br`), or edit `portal.json`
+   (`portal_url`, plus the `name` and `title` the dashboard shows). The ANEEL
+   and Recife instances use `portal.json`, so the difference is visible in git.
 3. **Start with a clean history:** delete the whole `data/` and
    `provenance_logs/` folders, the `docs/data/` folder and the `changes.md` file
    inherited from this repository, and commit. They are recreated automatically.

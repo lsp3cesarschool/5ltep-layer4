@@ -1,12 +1,13 @@
 name: 5L-TEP Layer 4 Cross-Check
 on:
   schedule:
-    # Daily, ~3.5 h after the 06:10 monitoring cycle (tolerance: 7 h)
-    - cron: '40 9 * * *'
+    # Daily at 03:30 UTC, off-peak (~3.3 h after the 00:10 monitoring cycle; tolerance: 7 h)
+    - cron: '30 3 * * *'
   workflow_dispatch:
 
-# Same portal as the monitoring workflow (portal.json)
+# Same portal as the monitoring workflow (repository variable, otherwise portal.json)
 env:
+  CKAN_PORTAL_URL: ${{ vars.CKAN_PORTAL_URL }}
   PYTHON_VERSION: '3.11'
 
 jobs:

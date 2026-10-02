@@ -8,7 +8,10 @@ in a versioned file, rather than in a repository variable, makes the
 difference between two instances visible in git.
 
 Precedence: an explicit URL (``main.py --portal``) > the environment variable
-CKAN_PORTAL_URL (local trials only) > portal.json.
+CKAN_PORTAL_URL > portal.json. In GitHub Actions the workflows pass the
+repository variable CKAN_PORTAL_URL (the adoption path described in the WFA
+2026 paper: fork, set one repository variable, enable Actions); when it is not
+set, the variable is empty and portal.json applies.
 
 Part of the 5L-TEP Layer 4 (Observability & Provenance) Toolkit.
 """
