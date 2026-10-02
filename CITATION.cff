@@ -1,0 +1,78 @@
+cff-version: 1.2.0
+message: "If you use this toolkit or its provenance records, please cite the paper that presents it (preferred citation below)."
+title: "5LTEP-L4: 5L-TEP Layer 4 Provenance Toolkit"
+abstract: >-
+  Reference implementation of Layer 4 (Observability and Provenance) of the
+  Five-Layer Trust Engineering Pyramid (5L-TEP, SOFTENG 2026) for open
+  government data: every six hours it reads the metadata of every dataset of a
+  CKAN portal, fingerprints it with SHA-256, classifies each change
+  (CONTENT_MOD, SCHEMA_DRIFT, RETRO_ALTER), describes how the dataset changed
+  (fields, relocations to another server, zip/plain packaging), and appends a
+  W3C PROV-DM (JSON-LD) record to a per-dataset derivation chain with a
+  dual-agent model (observer and data custodian). A daily independent
+  cross-check, a static dashboard and status badges publish the results. One
+  value (the portal URL in portal.json) adapts it to another CKAN portal.
+type: software
+authors:
+  - family-names: Pinheiro
+    given-names: Luciano Santos
+    affiliation: "CESAR School, Recife, Brazil"
+    email: lsp3@cesar.school
+  - family-names: Sérgio
+    given-names: Anderson Tenório
+    affiliation: "CESAR School, Recife, Brazil"
+    email: ats@cesar.school
+repository-code: "https://github.com/lsp3cesarschool/5ltep-layer4"
+url: "https://lsp3cesarschool.github.io/5ltep-layer4/"
+license: MIT
+version: 1.1.0
+date-released: 2026-10-02
+keywords:
+  - provenance
+  - W3C PROV-DM
+  - observability
+  - change detection
+  - trust engineering
+  - open government data
+  - CKAN
+  - FAIR
+preferred-citation:
+  type: conference-paper
+  title: "5LTEP-L4: An Open-Source CKAN Toolkit for Provenance-Enabled Observability of Open Government Data"
+  authors:
+    - family-names: Pinheiro
+      given-names: Luciano Santos
+    - family-names: Sérgio
+      given-names: Anderson Tenório
+  collection-title: "Anais Estendidos do WebMedia 2026: XXV Workshop de Ferramentas e Aplicações (WFA)"
+  conference:
+    name: "WebMedia 2026"
+    city: Lavras
+    region: MG
+    country: BR
+  year: 2026
+  notes: "To appear."
+references:
+  - type: thesis
+    thesis-type: "Master's thesis"
+    title: "Engenharia da Confiança (5L-TEP) Aplicada a Dados Abertos do IBAMA: Automação, Inteligência Artificial e Human-in-the-Loop para Avaliação da Qualidade de Big Data através da Plataforma CUPIM"
+    authors:
+      - family-names: Pinheiro
+        given-names: Luciano Santos
+    institution:
+      name: "CESAR School, Programa de Pós-Graduação em Engenharia de Software"
+      city: Recife
+      country: BR
+    year: 2027
+    notes: "In preparation. Advisor: Prof. Anderson Tenório Sérgio (ats@cesar.school)."
+  - type: conference-paper
+    title: "Towards Trust Engineering in Open Data Systems: A Layered Conceptual Framework Integrating Quality Assurance and Governance Perspectives"
+    authors:
+      - family-names: Pinheiro
+        given-names: Luciano Santos
+    collection-title: "SOFTENG 2026"
+    publisher:
+      name: IARIA
+    start: 21
+    end: 28
+    year: 2026

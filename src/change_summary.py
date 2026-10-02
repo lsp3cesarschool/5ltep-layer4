@@ -10,7 +10,8 @@ dataset field by field:
 - resource URL changes, split into host moves (e.g., relocation of downloads
   to cloud storage) and packaging changes (zip <-> plain file), which the
   CKAN-declared format does not reveal;
-- a one-line English summary for humans.
+- a one-line summary for humans, in English (also stored in the PROV record)
+  and in Portuguese (dashboard only).
 
 The same diff reconstructs the full change history from the stored snapshots
 and renders it as `changes.md`, a human-readable log of what changed in the
@@ -44,6 +45,35 @@ FIELD_LABELS = {
     "resource.description": "resource descriptions edited",
 }
 
+# Portuguese wording of the same summaries (dashboard; never stored in PROV records)
+FIELD_LABELS_PT = {
+    "title": "título alterado",
+    "name": "nome do conjunto alterado",
+    "notes": "descrição editada",
+    "resource.size": "tamanho do arquivo atualizado",
+    "resource.last_modified": "data do arquivo atualizada",
+    "resource.name": "recurso renomeado",
+    "license_title": "título da licença alterado",
+    "resource.description": "descrições dos recursos editadas",
+}
+
+TEXT = {
+    "en": {
+        "added": "{n} resource(s) added", "removed": "{n} resource(s) removed",
+        "format": "declared format {changes}", "urls": "{n} resource URL(s) changed",
+        "moved": "{n} moved from {old} to {new}", "zip_to_plain": "{n} zip → plain file",
+        "plain_to_zip": "{n} plain file → zip", "timestamp": "metadata timestamp updated",
+        "outside": "metadata changed outside the fingerprint",
+    },
+    "pt": {
+        "added": "{n} recurso(s) adicionado(s)", "removed": "{n} recurso(s) removido(s)",
+        "format": "formato declarado {changes}", "urls": "{n} URL(s) de recurso alterada(s)",
+        "moved": "{n} movida(s) de {old} para {new}", "zip_to_plain": "{n} zip → arquivo simples",
+        "plain_to_zip": "{n} arquivo simples → zip", "timestamp": "data dos metadados atualizada",
+        "outside": "metadados alterados fora da impressão digital",
+    },
+}
+
 MAX_TABLE_ROWS = 200
 
 
@@ -59,7 +89,8 @@ def describe_change(before: dict, after: dict) -> Dict[str, object]:
     """Describe how a dataset's CKAN metadata changed between two snapshots.
 
     Returns a dict with the changed fields, resource URL change counts and a
-    one-line English summary.
+    one-line summary ("summary" in English, "summary_pt" in Portuguese). The
+    PROV mapper copies only the English summary and the counts.
     """
     res_before = before.get("resources", []) or []
     res_after = after.get("resources", []) or []
@@ -106,8 +137,15 @@ def describe_change(before: dict, after: dict) -> Dict[str, object]:
         "resourceUrlChanges": urls["changed"],
         "hostMoves": urls["host_moves"],
         "packagingChanges": urls["zip_to_plain"] + urls["plain_to_zip"],
+        "hostPairs": [[old, new, n] for (old, new), n in hosts.items()],
+        "zipToPlain": urls["zip_to_plain"],
+        "plainToZip": urls["plain_to_zip"],
+        "resourcesAdded": len(added),
+        "resourcesRemoved": len(removed),
+        "formatChanges": formats,
     }
     details["summary"] = _summarise(changed, outside, urls, hosts, formats, added, removed)
+    details["summary_pt"] = _summarise(changed, outside, urls, hosts, formats, added, removed, "pt")
     return details
 
 
@@ -128,33 +166,34 @@ def _match_resources(res_before: list, res_after: list):
     return list(zip(res_before[:n], res_after[:n])), res_after[n:], res_before[n:]
 
 
-def _summarise(changed, outside, urls, hosts, formats, added, removed) -> str:
+def _summarise(changed, outside, urls, hosts, formats, added, removed, lang="en") -> str:
+    t = TEXT[lang]
+    labels = FIELD_LABELS_PT if lang == "pt" else FIELD_LABELS
     parts = []
     if added:
-        parts.append(f"{len(added)} resource(s) added")
+        parts.append(t["added"].format(n=len(added)))
     if removed:
-        parts.append(f"{len(removed)} resource(s) removed")
+        parts.append(t["removed"].format(n=len(removed)))
     if formats:
-        parts.append("declared format " + ", ".join(formats))
+        parts.append(t["format"].format(changes=", ".join(formats)))
     if urls["changed"]:
-        text = f"{urls['changed']} resource URL(s) changed"
+        text = t["urls"].format(n=urls["changed"])
         extra = []
         for (old, new), n in hosts.items():
-            extra.append(f"{n} moved from {old or '?'} to {new or '?'}")
+            extra.append(t["moved"].format(n=n, old=old or "?", new=new or "?"))
         if urls["zip_to_plain"]:
-            extra.append(f"{urls['zip_to_plain']} zip → plain file")
+            extra.append(t["zip_to_plain"].format(n=urls["zip_to_plain"]))
         if urls["plain_to_zip"]:
-            extra.append(f"{urls['plain_to_zip']} plain file → zip")
+            extra.append(t["plain_to_zip"].format(n=urls["plain_to_zip"]))
         if extra:
             text += " (" + "; ".join(extra) + ")"
         parts.append(text)
     for field in changed + outside:
-        label = FIELD_LABELS.get(field)
+        label = labels.get(field)
         if label and label not in parts:
             parts.append(label)
     if not parts:
-        parts.append("metadata timestamp updated" if "metadata_modified" in changed
-                     else "metadata changed outside the fingerprint")
+        parts.append(t["timestamp"] if "metadata_modified" in changed else t["outside"])
     text = "; ".join(parts)
     return text[0].upper() + text[1:]
 
@@ -221,11 +260,14 @@ def build_history(snapshots_dir: Path, prov_dir: Path) -> List[dict]:
             if ds in err0 or ds in err1:
                 continue  # harvest error in one of the snapshots: not a change
             if ds not in before:
+                n = len(after[ds].get("resources", []))
                 entry = {"type": "NEW", "severity": "INFO",
-                         "summary": f"Dataset published ({len(after[ds].get('resources', []))} resources)"}
+                         "summary": f"Dataset published ({n} resources)",
+                         "summary_pt": f"Conjunto publicado ({n} recursos)"}
                 meta = after[ds]
             elif ds not in after:
-                entry = {"type": "REMOVED", "severity": "WARNING", "summary": "Dataset no longer listed"}
+                entry = {"type": "REMOVED", "severity": "WARNING", "summary": "Dataset no longer listed",
+                         "summary_pt": "Conjunto deixou de ser listado"}
                 meta = before[ds]
             elif before[ds] != after[ds]:
                 details = describe_change(before[ds], after[ds])
@@ -233,7 +275,8 @@ def build_history(snapshots_dir: Path, prov_dir: Path) -> List[dict]:
                               and abs((r[0] - when).total_seconds()) < 1800), None)
                 entry = {"type": match[2] if match else "NOT_FINGERPRINTED",
                          "severity": match[3] if match else "INFO",
-                         "summary": details["summary"]}
+                         "summary": details["summary"], "summary_pt": details["summary_pt"],
+                         "details": details}
                 meta = after[ds]
             else:
                 continue
@@ -306,10 +349,12 @@ def render_changes_md(history: List[dict], portal_url: str, current_datasets: in
     return "\n".join(lines) + "\n"
 
 
-def write_changes_md(snapshots_dir: Path, prov_dir: Path, portal_url: str, out_path: Path) -> int:
+def write_changes_md(snapshots_dir: Path, prov_dir: Path, portal_url: str, out_path: Path,
+                     history: Optional[List[dict]] = None) -> int:
     """Rebuild changes.md from the stored history. Returns the number of entries."""
     manifest = json.loads((Path(snapshots_dir) / "manifest.json").read_text(encoding="utf-8"))
-    history = build_history(snapshots_dir, prov_dir)
+    if history is None:
+        history = build_history(snapshots_dir, prov_dir)
     first_run = min(manifest["runs"]) if manifest.get("runs") else None
     since = (datetime.strptime(first_run, "%Y%m%dT%H%M%SZ").strftime("%Y-%m-%d")
              if first_run else None)

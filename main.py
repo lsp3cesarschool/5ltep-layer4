@@ -14,7 +14,8 @@ semantic, anomaly validation) and Layer 5 (governance dashboards) are
 outside this implementation's scope.
 
 Usage (local):
-    python main.py --portal https://dadosabertos.ibama.gov.br
+    python main.py                      # the portal declared in portal.json
+    python main.py --portal https://dadosabertos.aneel.gov.br   # a trial on another portal
 
 Usage (GitHub Actions):
     Triggered automatically via .github/workflows/monitor.yml (cron 6h)
@@ -39,8 +40,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 from ckan_harvester import CKANHarvester
 from hash_engine import HashEngine, ChangeType, Severity
-from prov_mapper import ProvMapper
-from change_summary import describe_change, latest_snapshot, write_changes_md
+from prov_mapper import ProvMapper, TOOLKIT_VERSION
+from change_summary import build_history, describe_change, latest_snapshot, write_changes_md
+from dashboard import build_dashboard, write_dashboard
+from portal_config import load_portal
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -63,6 +66,7 @@ PROV_DIR = Path("provenance_logs")
 SNAPSHOTS_DIR = DATA_DIR / "snapshots"
 MANIFEST_FILE = SNAPSHOTS_DIR / "manifest.json"
 CHANGES_FILE = Path("changes.md")  # human-readable change log (generated)
+DOCS_DATA_DIR = Path("docs") / "data"  # dashboard data and README badges (GitHub Pages)
 
 for d in [DATA_DIR, PROV_DIR, SNAPSHOTS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
@@ -130,6 +134,7 @@ def run_pipeline(
     org_filter: str = "",
     dry_run: bool = False,
     max_datasets: int = 0,
+    portal: Dict[str, str] = None,
 ) -> Dict[str, Any]:
     """Execute the L4 provenance monitoring pipeline.
 
@@ -144,6 +149,7 @@ def run_pipeline(
     org_filter  : If set, only process datasets from this organization.
     dry_run     : If True, skip persisting results (useful for testing).
     max_datasets: If > 0, limit harvest to this many datasets.
+    portal      : Name and title of the portal (portal.json), for the dashboard.
 
     Returns
     -------
@@ -200,6 +206,7 @@ def run_pipeline(
     hash_engine = HashEngine(
         hash_store_path=str(HASHES_FILE),
         portal_url=portal_url,
+        persist=not dry_run,
     )
     change_events = hash_engine.detect_changes(datasets)
     logger.info("Processed %d datasets for change detection.", len(change_events))
@@ -255,13 +262,20 @@ def run_pipeline(
         prov_summary = {"total_datasets": 0}
         logger.info("No meaningful changes — no PROV-DM records generated.")
 
-    # Human-readable change log, rebuilt from the stored history
+    # Human-readable change log and dashboard, rebuilt from the stored history
     if not dry_run:
         try:
-            entries = write_changes_md(SNAPSHOTS_DIR, PROV_DIR, portal_url, CHANGES_FILE)
+            history = build_history(SNAPSHOTS_DIR, PROV_DIR)
+            entries = write_changes_md(SNAPSHOTS_DIR, PROV_DIR, portal_url, CHANGES_FILE, history)
             logger.info("changes.md updated (%d entries)", entries)
+            data = build_dashboard(
+                history, SNAPSHOTS_DIR, PROV_DIR,
+                portal or {"portal_url": portal_url, "name": portal_url, "title": portal_url},
+                repository=os.environ.get("GITHUB_REPOSITORY"), toolkit_version=TOOLKIT_VERSION)
+            write_dashboard(DOCS_DATA_DIR, data)
+            logger.info("Dashboard data and status badges written to %s", DOCS_DATA_DIR)
         except Exception as e:  # never block monitoring on the report step
-            logger.warning("Could not update changes.md: %s", e)
+            logger.warning("Could not update changes.md / dashboard: %s", e)
 
     # ------------------------------------------------------------------
     # Summary
@@ -301,8 +315,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--portal",
-        default=os.environ.get("CKAN_PORTAL_URL", "https://dadosabertos.ibama.gov.br"),
-        help="CKAN portal base URL (or set CKAN_PORTAL_URL env var)",
+        default=None,
+        help="CKAN portal base URL (default: CKAN_PORTAL_URL env var, then portal.json)",
     )
     parser.add_argument(
         "--org",
@@ -354,8 +368,10 @@ def _emit_github_output(summary: Dict[str, Any]) -> None:
 
 if __name__ == "__main__":
     args = parse_args()
+    portal = load_portal(args.portal)
     summary = run_pipeline(
-        portal_url=args.portal,
+        portal_url=portal["portal_url"],
+        portal=portal,
         org_filter=args.org,
         dry_run=args.dry_run,
         max_datasets=args.max_datasets,

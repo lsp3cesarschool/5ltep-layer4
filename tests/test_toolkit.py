@@ -63,6 +63,12 @@ def sample_dataset() -> Dict[str, Any]:
     }
 
 
+@pytest.fixture(autouse=True)
+def _isolated_docs(tmp_path, monkeypatch):
+    """Dashboard data and badges written by run_pipeline go to tmp_path, never to docs/."""
+    monkeypatch.setattr(main, "DOCS_DATA_DIR", tmp_path / "docs_data")
+
+
 # ---------------------------------------------------------------------------
 # Hash Engine Tests
 # ---------------------------------------------------------------------------
@@ -161,6 +167,13 @@ class TestHashEngine:
         assert "abc123" in store
         assert "content_hash" in store["abc123"]
         assert "manifest_hash" in store["abc123"]
+
+    def test_dry_run_engine_leaves_store_untouched(self, sample_dataset, tmp_path):
+        """persist=False (main.py --dry-run) never writes the hash store."""
+        store = tmp_path / "hashes.json"
+        HashEngine(hash_store_path=str(store), portal_url="https://test.gov.br",
+                   persist=False).detect_changes([sample_dataset])
+        assert not store.exists()
 
     def test_severity_mapping_v16(self):
         """Verify severity mapping matches 5L-TEP L4 specification."""
@@ -690,3 +703,110 @@ class TestChangeSummary:
         assert "Embargos Ambientais Federais" in changes
         assert "`CONTENT_MOD`" in changes
         assert "moved from ibama.gov.br to blob.example.net" in changes
+
+        data = json.loads((main.DOCS_DATA_DIR / "layer4.json").read_text(encoding="utf-8"))
+        event = data["events"][0]  # its type depends on the real detection time; not checked here
+        assert "movida(s) de ibama.gov.br para blob.example.net" in event["summary_pt"]
+        assert data["relocations"][0]["to"] == "blob.example.net"
+        assert data["monitoring"]["cycles"] == 2
+        assert data["datasets"][0]["prov_records"] == 1
+        badge = json.loads((main.DOCS_DATA_DIR / "status.json").read_text(encoding="utf-8"))
+        assert badge["message"].startswith("1 datasets · ") and badge["label"] == "Layer 4"
+        assert badge["color"] == "brightgreen"
+
+
+# ---------------------------------------------------------------------------
+# Portal configuration, badges and documentation
+# ---------------------------------------------------------------------------
+
+from portal_config import load_portal  # noqa: E402
+from dashboard import status_badges  # noqa: E402
+
+
+class TestPortalConfig:
+    def _file(self, tmp_path):
+        path = tmp_path / "portal.json"
+        path.write_text(json.dumps({"portal_url": "https://dados.example.gov.br/",
+                                    "name": "Example", "title": "Example portal"}),
+                        encoding="utf-8")
+        return path
+
+    def test_reads_portal_json(self, tmp_path, monkeypatch):
+        monkeypatch.delenv("CKAN_PORTAL_URL", raising=False)
+        portal = load_portal(path=self._file(tmp_path))
+        assert portal == {"portal_url": "https://dados.example.gov.br",
+                          "name": "Example", "title": "Example portal"}
+
+    def test_environment_then_explicit_url_take_precedence(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("CKAN_PORTAL_URL", "https://env.example.org")
+        path = self._file(tmp_path)
+        assert load_portal(path=path)["portal_url"] == "https://env.example.org"
+        other = load_portal("https://cli.example.org/", path=path)
+        assert other == {"portal_url": "https://cli.example.org",
+                         "name": "cli.example.org", "title": "cli.example.org"}
+
+    def test_missing_url_is_an_error(self, tmp_path, monkeypatch):
+        monkeypatch.delenv("CKAN_PORTAL_URL", raising=False)
+        with pytest.raises(ValueError):
+            load_portal(path=tmp_path / "absent.json")
+
+    def test_repository_declares_a_portal(self, monkeypatch):
+        monkeypatch.delenv("CKAN_PORTAL_URL", raising=False)
+        assert load_portal()["portal_url"].startswith("https://")
+
+
+class TestBadges:
+    def _data(self, severity="WARNING", when="2026-09-30T00:00:00+00:00"):
+        return {"totals": {"datasets": 1234, "prov_events": 5, "critical": int(severity == "CRITICAL")},
+                "monitoring": {"last_cycle": "2026-10-01T00:00:00+00:00"},
+                "events": [{"severity": severity, "when": when}]}
+
+    def test_layer4_badge_both_languages(self):
+        badges = status_badges(self._data())
+        assert badges["en"]["message"] == "1,234 datasets · 5 changes · 0 critical"
+        assert badges["pt"]["message"] == "1.234 conjuntos · 5 mudanças · 0 críticas"
+        assert badges["en"]["schemaVersion"] == 1 and badges["en"]["color"] == "brightgreen"
+
+    def test_recent_critical_turns_badge_red(self):
+        assert status_badges(self._data("CRITICAL"))["en"]["color"] == "red"
+        old = self._data("CRITICAL", when="2026-06-01T00:00:00+00:00")
+        assert status_badges(old)["en"]["color"] == "brightgreen"
+
+    def test_before_first_cycle(self):
+        data = {"totals": {"datasets": 0, "prov_events": 0, "critical": 0},
+                "monitoring": {"last_cycle": None}, "events": []}
+        assert status_badges(data)["pt"]["message"] == "aguardando o primeiro ciclo"
+
+    def test_cross_check_badges(self):
+        import cross_check
+        ok = cross_check.badges("IN_SYNC", day="2026-10-02")
+        assert ok["en"] == {"schemaVersion": 1, "label": "cross-check",
+                            "message": "in sync · 2026-10-02", "color": "brightgreen"}
+        stale = cross_check.badges("STALE", divergences=3, day="2026-10-02")
+        assert stale["pt"]["message"] == "desatualizada: 3 divergência(s) · 2026-10-02"
+        assert stale["pt"]["color"] == "orange"
+        assert cross_check.badges("ERROR", coverage=0.8)["en"]["message"] == "error: 80% reached"
+
+
+class TestDocs:
+    def test_readme_and_leiame_match(self):
+        """README.md and LEIAME.md: same heading structure, code blocks and cross links."""
+        import re
+        root = os.path.join(os.path.dirname(__file__), "..")
+        readme = open(os.path.join(root, "README.md"), encoding="utf-8").read()
+        leiame = open(os.path.join(root, "LEIAME.md"), encoding="utf-8").read()
+
+        def outline(text):
+            lines, fenced = [], False
+            for line in text.splitlines():
+                if line.startswith("```"):
+                    fenced = not fenced
+                    lines.append("```")
+                elif not fenced and re.match(r"#{1,6} ", line):
+                    lines.append(line.split(" ")[0])
+            return lines
+
+        assert outline(readme) == outline(leiame)
+        assert "(LEIAME.md)" in readme and "(README.md)" in leiame
+        assert "docs%2Fdata%2Fstatus.json" in readme and "docs%2Fdata%2Fstatus.pt.json" in leiame
+        assert "CROSS_CHECK_STATUS" not in readme + leiame  # no workflow rewrites the READMEs

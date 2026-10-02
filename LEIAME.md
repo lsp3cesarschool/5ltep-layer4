@@ -1,32 +1,66 @@
 # 5LTEP-L4: kit de proveniência da Camada 4 do 5L-TEP
 
-**Monitoramento de proveniência compatível com o W3C PROV-DM para portais de Dados Abertos Governamentais baseados em CKAN.**
-
-[![Tests](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/tests.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/tests.yml)
-[![Monitoring](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/monitor.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/monitor.yml)
-[![Cross-Check](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/cross_check.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/cross_check.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Tests](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/tests.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/tests.yml) [![Layer 4](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Flsp3cesarschool%2F5ltep-layer4%2Fmain%2Fdocs%2Fdata%2Fstatus.pt.json)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/monitor.yml) [![Cross-check](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Flsp3cesarschool%2F5ltep-layer4%2Fmain%2Fdocs%2Fdata%2Fstatus-cross-check.pt.json)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/cross_check.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 [English](README.md) · **Português**
 
-<!-- CROSS_CHECK_STATUS:START -->
-✅ **Verificação cruzada aprovada** — última verificação em 2026-09-27 09:27 UTC. Todos os 79 conjuntos de dados acessíveis estão sincronizados com o portal ao vivo (dadosabertos.ibama.gov.br); o snapshot mais recente tem 5,3 h.
-<!-- CROSS_CHECK_STATUS:END -->
+**Registra o que mudou num portal de dados abertos, quando e como, como proveniência W3C PROV-DM.**
+A cada seis horas, lê os metadados de todos os conjuntos de dados de um portal CKAN, calcula a
+impressão digital de cada um, classifica cada mudança e a acrescenta a uma cadeia de derivação por
+conjunto, que o git torna à prova de adulteração.
 
-📄 **O que mudou no portal?** Veja [`changes.md`](changes.md) (em inglês): um registro legível de cada mudança detectada (quando, em qual conjunto de dados e como, por exemplo, arquivos transferidos para outro servidor ou trocados entre zip e formato simples), reconstruído automaticamente a cada ciclo de monitoramento.
+| Recurso | O que você encontra lá |
+|---|---|
+| 📊 **Painel** | [lsp3cesarschool.github.io/5ltep-layer4](https://lsp3cesarschool.github.io/5ltep-layer4/?lang=pt): mudanças por mês, onde estão os arquivos, últimas mudanças, saúde do monitoramento, todos os conjuntos |
+| 📄 **Registro de mudanças** | [`changes.md`](changes.md) (em inglês): cada mudança detectada em palavras simples, reconstruído a cada ciclo |
+| 🔗 **Registros de proveniência** | [`provenance_logs/`](provenance_logs/): uma cadeia W3C PROV-DM (JSON-LD) somente por acréscimo, por conjunto |
+| ✅ **Verificação cruzada** | [`data/cross_check_report.json`](data/cross_check_report.json): comparação diária e independente com o portal ao vivo (selo acima) |
+| 🧪 **Avaliação** | [`evaluation/`](evaluation/): scripts que reproduzem a avaliação do artigo |
+
+> **Situação: demonstração de pesquisa.** Este kit faz parte de uma pesquisa de mestrado e é mantido
+> pelo autor. Não é um serviço oficial do IBAMA e não pressupõe que algum órgão vá revisar seus
+> resultados ou adotá-lo. Os alertas chegam ao mantenedor deste repositório, não ao órgão; os
+> registros ficam prontos para quem quiser auditar o histórico do portal.
+
+## Caso de uso em um parágrafo
+
+Portais de dados abertos mudam em silêncio. Suponha uma equipe que baixa um conjunto de dados todo
+mês para um relatório. Entre dois downloads, o portal leva os arquivos para outro servidor e troca
+um zip por um CSV simples, enquanto o formato declarado continua "CSV" e nada na página diz o que
+mudou: o script da equipe quebra ou, pior, continua rodando sobre outro arquivo. Isso aconteceu no
+portal do IBAMA em agosto e setembro de 2026, conjunto após conjunto, e este kit registrou cada passo
+(veja *Onde estão os arquivos* no painel). Ele lê os metadados de todos os conjuntos a cada seis horas
+e registra cada mudança como uma entidade de proveniência ligada à versão anterior: o que mudou,
+quando foi vista pela primeira vez, quem responde pelos dados (o órgão que publica) e quem a observou
+(este kit). Uma mudança feita sem nova data de modificação, que de outro modo passaria despercebida,
+é marcada como crítica. Antes de confiar num arquivo, quem reutiliza os dados pode conferir se ele
+ainda é o que validou, e um auditor tem um histórico do portal somente por acréscimo.
+
+## Termos-chave
+
+| Termo | Significado aqui |
+|---|---|
+| **Snapshot** | Os metadados de todos os conjuntos do portal lidos num ciclo de monitoramento (guardados uma vez por conteúdo distinto). |
+| **Impressão digital** | SHA-256 dos campos estáveis dos metadados de um conjunto; impressão diferente significa que o conjunto mudou. |
+| **Manifesto de recursos** | Nomes, formatos e quantidade dos recursos de um conjunto; quando muda, a mudança é um `SCHEMA_DRIFT`. |
+| **Entidade PROV** | Uma versão de um conjunto, identificada pela URL dele mais um prefixo da impressão digital (W3C PROV-DM). |
+| **Cadeia de derivação** | As versões de um conjunto ligadas por `prov:wasDerivedFrom`, da mais antiga à mais nova, nunca reescritas. |
+| **Observador e custodiante** | Os dois agentes de cada registro: este kit, que viu a mudança, e o órgão que publica os dados. |
+| **Mudança crítica** | `SCHEMA_DRIFT` (recursos adicionados, removidos, renomeados ou com outro formato) ou `RETRO_ALTER` (mudou sem nova data de modificação). |
+| **Verificação cruzada** | Um script diário separado que relê o portal e compara os campos que o órgão define com o snapshot mais recente. |
 
 ## Visão geral
 
-Este kit implementa a **Camada 4 (Observabilidade e Proveniência)** da Pirâmide de Engenharia de Confiança em Cinco Camadas (5L-TEP, *Five-Layer Trust Engineering Pyramid*) para a garantia de qualidade de Dados Abertos Governamentais. Ele monitora portais de dados baseados em CKAN (por exemplo, o do [IBAMA](https://dadosabertos.ibama.gov.br)), detecta mudanças por meio de impressões digitais SHA-256 e gera registros de proveniência em JSON-LD compatíveis com o W3C PROV-DM. Desde a v1.0.2, cada registro também descreve *como* o conjunto de dados mudou (campos alterados, mudanças de URL dos recursos, trocas entre zip e formato simples), e essa mesma descrição alimenta o [`changes.md`](changes.md).
+Este kit implementa a **Camada 4 (Observabilidade e Proveniência)** da Pirâmide de Engenharia de Confiança em Cinco Camadas (5L-TEP, *Five-Layer Trust Engineering Pyramid*) para a garantia de qualidade de Dados Abertos Governamentais. Ele monitora portais de dados baseados em CKAN (por exemplo, o do [IBAMA](https://dadosabertos.ibama.gov.br)), detecta mudanças por meio de impressões digitais SHA-256 e gera registros de proveniência em JSON-LD compatíveis com o W3C PROV-DM. Desde a v1.0.2, cada registro também descreve *como* o conjunto de dados mudou (campos alterados, mudanças de URL dos recursos, trocas entre zip e formato simples), e essa mesma descrição alimenta o [`changes.md`](changes.md). Desde a v1.1.0, cada ciclo também grava os dados do [painel](https://lsp3cesarschool.github.io/5ltep-layer4/) e dos selos de situação (`docs/data/`), de modo que nenhum workflow reescreve o próprio README.
 
-> **Escopo**: este repositório contém **apenas** os módulos essenciais da Camada 4. As Camadas 1 a 3 (validação estrutural, semântica e de anomalias) e a Camada 5 (painéis de governança) estão fora do escopo desta implementação.
+> **Escopo**: este repositório contém **apenas** os módulos essenciais da Camada 4. As Camadas 1 a 3 (validação estrutural, semântica e de anomalias) e a Camada 5 (painéis de governança) estão fora do escopo desta implementação; combinar os resultados de várias camadas é papel da Camada 5.
 
 ### Arquitetura
 
 ```
 ┌──────────────────────────────────────────────────┐
 │            GitHub Actions (cron 6h)              │
-│      ~15% da cota gratuita (medido)              │
+│         gratuito em repositório público          │
 └──────────────────────────┬───────────────────────┘
                            │ dispara
                            ▼
@@ -145,17 +179,17 @@ python main.py --portal https://dadosabertos.ibama.gov.br --org ibama
 
 ```bash
 pytest tests/ -v
-# 38 testes cobrindo: determinismo do hash, os 4 tipos de mudança, modelo de dois
+# 48 testes cobrindo: determinismo do hash, os 4 tipos de mudança, modelo de dois
 # agentes, cadeias de derivação, persistência somente por acréscimo, pipeline de
 # ponta a ponta, alertas de mudança crítica (SCHEMA_DRIFT/RETRO_ALTER) e sinalização
 # para a CI, interoperabilidade PROV-O com a biblioteca `prov` (requer:
-# pip install prov rdflib), detalhes das mudanças (mudanças de servidor, empacotamento)
-# e geração do changes.md
+# pip install prov rdflib), detalhes das mudanças (mudanças de servidor, empacotamento),
+# changes.md e dados do painel, portal.json, selos de situação e estrutura README/LEIAME
 ```
 
 ### Implantação no GitHub Actions
 
-O kit roda automaticamente a cada 6 horas via GitHub Actions (cerca de 15% da cota gratuita de 2.000 minutos, medido ao longo de 30 dias; repositórios públicos não são cobrados). Veja `.github/workflows/monitor.yml`.
+O kit roda automaticamente a cada 6 horas via GitHub Actions. Não custa nada: repositórios públicos não são cobrados pelos runners padrão (num repositório privado, o uso medido equivaleria a cerca de 15% da cota gratuita de 2.000 minutos). Veja `.github/workflows/monitor.yml`. O painel é uma página estática servida pelo GitHub Pages a partir de `docs/` (*Settings → Pages*: branch `main`, pasta `/docs`).
 
 Os alertas não custam nada e não precisam de servidor de e-mail: diante de um evento crítico (`SCHEMA_DRIFT` ou `RETRO_ALTER`), o workflow primeiro faz commit dos registros de proveniência e depois falha de propósito, e o GitHub envia um e-mail ao mantenedor sobre a execução que falhou. A verificação cruzada diária alerta da mesma forma quando a cobertura do portal cai abaixo de 90% ou quando divergências ficam sem reconciliação por mais de 7 h.
 
@@ -225,24 +259,29 @@ Quando uma alteração retroativa é detectada:
 ├── LICENSE                          # Licença MIT
 ├── README.md                        # Este documento, em inglês
 ├── LEIAME.md                        # Este documento
+├── portal.json                      # O portal monitorado (o único valor a mudar para outro portal)
 ├── changes.md                       # Registro legível das mudanças (gerado a cada ciclo)
 ├── compress_snapshots.py            # Compactação gzip semanal dos snapshots com mais de 90 dias
 ├── cross_check.py                   # Validador independente contra o portal CKAN ao vivo
 ├── .github/
 │   └── workflows/
-│       ├── monitor.yml              # Monitoramento agendado (a cada 6h)
-│       ├── compress.yml             # Compactação semanal dos snapshots (dom 03:00 UTC)
-│       ├── cross_check.yml          # Validação independente diária (03:30 UTC, fora do pico)
+│       ├── monitor.yml              # Monitoramento agendado (a cada 6h, aos :10)
+│       ├── compress.yml             # Compactação semanal dos snapshots (dom 04:20 UTC)
+│       ├── cross_check.yml          # Validação independente diária (09:40 UTC)
 │       └── tests.yml                # Execução dos testes na CI/CD
 ├── src/
 │   ├── __init__.py
 │   ├── ckan_harvester.py            # Cliente da API do CKAN com novas tentativas
 │   ├── hash_engine.py              # Impressões digitais SHA-256 e detecção de mudanças
 │   ├── change_summary.py           # Detalhes das mudanças (campos, mudanças de servidor) + changes.md
+│   ├── dashboard.py                # Dados do painel + selos de situação (docs/data)
+│   ├── portal_config.py            # Lê o portal.json
 │   └── prov_mapper.py              # ★ Gerador de JSON-LD W3C PROV-DM (núcleo da L4)
 ├── tests/
 │   ├── __init__.py
-│   └── test_toolkit.py             # 38 testes unitários e de integração
+│   └── test_toolkit.py             # 48 testes unitários e de integração
+├── docs/                            # Painel (GitHub Pages): index.html, app.js, style.css
+│   └── data/                        # layer4.json, cross_check.json, selos (commit feito pelo bot)
 ├── evaluation/                      # Scripts e resultados que reproduzem a avaliação do artigo
 ├── data/                            # Dados de execução (commit feito pelo bot)
 │   ├── hash_store.json
@@ -256,9 +295,11 @@ Quando uma alteração retroativa é detectada:
 
 ## Configuração
 
+O portal monitorado é declarado no [`portal.json`](portal.json) (`portal_url`, mais `name` e `title` para o painel).
+
 | Variável de ambiente | Padrão | Descrição |
 |---|---|---|
-| `CKAN_PORTAL_URL` | `https://dadosabertos.ibama.gov.br` | Portal CKAN monitorado (no GitHub Actions: variável do repositório, veja abaixo) |
+| `CKAN_PORTAL_URL` | _(vazio)_ | Só para ensaios locais: substitui o `portal.json` numa execução (`--portal` substitui os dois) |
 | `CKAN_ORG_FILTER` | _(vazio)_ | Filtra por organização |
 | `MAX_DATASETS` | `0` (todos) | Limita a quantidade de conjuntos de dados coletados |
 | `GITHUB_REPOSITORY` | `local` | Usada na identificação do agente de software |
@@ -266,21 +307,22 @@ Quando uma alteração retroativa é detectada:
 
 ### Monitorando outro portal CKAN
 
-O monitoramento contínuo (a cada 6 h, com e-mails de falha enviados pelo GitHub) e
-a verificação cruzada diária leem o portal de um único lugar: a variável de
-repositório `CKAN_PORTAL_URL`. Quando ela não está definida, monitoram o IBAMA.
-Nenhuma mudança de código é necessária:
+O monitoramento contínuo (a cada 6 h, com e-mails de falha enviados pelo GitHub), a
+verificação cruzada diária e o painel leem o portal de um único arquivo versionado,
+o [`portal.json`](portal.json). Nenhuma mudança de código é necessária:
 
 1. Faça um **fork** deste repositório.
-2. No fork, vá em *Settings → Secrets and variables → Actions → Variables* e
-   crie `CKAN_PORTAL_URL` com a URL raiz do portal
-   (por exemplo, `https://dados.recife.pe.gov.br`).
+2. No fork, edite o `portal.json`: `portal_url` com a URL raiz do portal
+   (por exemplo, `https://dados.recife.pe.gov.br`), e `name` e `title` com o nome
+   que o painel deve mostrar.
 3. **Comece com um histórico limpo:** apague as pastas `data/` e
-   `provenance_logs/` inteiras e o arquivo `changes.md` herdados deste
-   repositório, e faça commit. Eles são recriados automaticamente.
+   `provenance_logs/` inteiras, a pasta `docs/data/` e o arquivo `changes.md`
+   herdados deste repositório, e faça commit. Eles são recriados automaticamente.
 4. Habilite os workflows na aba **Actions** do fork (o GitHub desabilita workflows
-   agendados em forks até que você faça isso). Os e-mails de falha vão para o dono
-   do fork.
+   agendados em forks até que você faça isso) e o GitHub Pages em
+   *Settings → Pages* (branch `main`, pasta `/docs`). Os e-mails de falha vão para
+   o dono do fork. No README do fork, troque `lsp3cesarschool/5ltep-layer4` nos
+   links dos selos e do painel pelo nome do fork.
 5. Opcionalmente, execute o *5L-TEP Layer 4 Monitoring Workflow* uma vez manualmente
    (*Actions → Run workflow*) para registrar a linha de base imediatamente, em vez de
    esperar o próximo horário de 6 horas. Até o primeiro ciclo, a verificação cruzada

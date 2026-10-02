@@ -1,32 +1,65 @@
 # 5LTEP-L4: 5L-TEP Layer 4 Provenance Toolkit
 
-**W3C PROV-DM–compliant provenance monitoring for CKAN-based Open Government Data portals.**
-
-[![Tests](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/tests.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/tests.yml)
-[![Monitoring](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/monitor.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/monitor.yml)
-[![Cross-Check](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/cross_check.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/cross_check.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Tests](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/tests.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/tests.yml) [![Layer 4](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Flsp3cesarschool%2F5ltep-layer4%2Fmain%2Fdocs%2Fdata%2Fstatus.json)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/monitor.yml) [![Cross-check](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Flsp3cesarschool%2F5ltep-layer4%2Fmain%2Fdocs%2Fdata%2Fstatus-cross-check.json)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/cross_check.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **English** · [Português](LEIAME.md)
 
-<!-- CROSS_CHECK_STATUS:START -->
-✅ **Cross-check passing** — last verified 2026-10-02 09:58 UTC. All 79 reachable datasets in sync with the live portal (dadosabertos.ibama.gov.br); latest snapshot is 5.4h old.
-<!-- CROSS_CHECK_STATUS:END -->
+**Records what changed in an open data portal, when, and how, as W3C PROV-DM provenance.**
+Every six hours it reads the metadata of every dataset of a CKAN portal, fingerprints it, classifies
+each change, and appends it to a per-dataset derivation chain that git makes tamper-evident.
 
-📄 **What changed in the portal?** See [`changes.md`](changes.md): a human-readable log of every detected change (when, which dataset, and how, e.g., files relocated to another host or switched between zip and plain formats), rebuilt automatically by each monitoring cycle.
+| Resource | What you find there |
+|---|---|
+| 📊 **Dashboard** | [lsp3cesarschool.github.io/5ltep-layer4](https://lsp3cesarschool.github.io/5ltep-layer4/?lang=en): changes per month, where the files are, latest changes, monitoring health, every dataset |
+| 📄 **Change log** | [`changes.md`](changes.md): every detected change in plain words, rebuilt each cycle |
+| 🔗 **Provenance records** | [`provenance_logs/`](provenance_logs/): one append-only W3C PROV-DM (JSON-LD) chain per dataset |
+| ✅ **Cross-check** | [`data/cross_check_report.json`](data/cross_check_report.json): a daily, independent comparison with the live portal (badge above) |
+| 🧪 **Evaluation** | [`evaluation/`](evaluation/): scripts that reproduce the paper's evaluation |
+
+> **Status: research demonstration.** This toolkit is part of a master's research project and is
+> maintained by its author. It is not an official IBAMA service, and it does not assume that any
+> agency will review its results or adopt it. Alerts reach the maintainer of this repository, not the
+> agency; the records are ready for anyone who wants to audit the portal's history.
+
+## Use case in one paragraph
+
+Open data portals change in silence. Suppose a team downloads a dataset every month for a report.
+Between two downloads the portal moves the files to another server and swaps a zip for a plain CSV,
+while the format it declares stays "CSV" and nothing on the page says what changed: the team's
+script breaks, or, worse, keeps running on a different file. This happened on IBAMA's portal in
+August and September 2026, dataset after dataset, and this toolkit recorded each step (see the
+dashboard's *Where the files are*). It reads the metadata of every dataset every six hours and
+records each change as a provenance entity linked to the version before it: what changed, when it
+was first seen, who is accountable for the data (the publishing agency) and who observed it (this
+toolkit). A change made without a new modification date, which would otherwise go unnoticed, is
+flagged as critical. Before trusting a file, anyone who reuses the data can check whether it is
+still the one they validated, and an auditor gets an append-only history of the portal.
+
+## Key terms
+
+| Term | Meaning here |
+|---|---|
+| **Snapshot** | The metadata of every dataset of the portal as read in one monitoring cycle (stored once per distinct content). |
+| **Fingerprint** | SHA-256 of a dataset's stable metadata fields; a different fingerprint means the dataset changed. |
+| **Resource manifest** | Names, formats and count of a dataset's resources; when it changes, the change is a `SCHEMA_DRIFT`. |
+| **PROV entity** | One version of a dataset, identified by its URL plus a fingerprint prefix (W3C PROV-DM). |
+| **Derivation chain** | The versions of a dataset linked by `prov:wasDerivedFrom`, oldest to newest, never rewritten. |
+| **Observer and custodian** | The two agents of each record: this toolkit, which saw the change, and the agency that publishes the data. |
+| **Critical change** | `SCHEMA_DRIFT` (resources added, removed, renamed or re-formatted) or `RETRO_ALTER` (changed without a new modification date). |
+| **Cross-check** | A separate daily script that re-reads the portal and compares the fields the agency sets with the latest snapshot. |
 
 ## Overview
 
-This toolkit implements **Layer 4 (Observability & Provenance)** of the Five-Layer Trust Engineering Pyramid (5L-TEP) for Open Government Data quality assurance. It monitors CKAN-based data portals (e.g., [IBAMA](https://dadosabertos.ibama.gov.br)), detects changes via SHA-256 fingerprinting, and generates W3C PROV-DM–compliant provenance records in JSON-LD. Since v1.0.2, each record also describes *how* the dataset changed (changed fields, resource URL relocations, zip/plain packaging switches), and the same description feeds [`changes.md`](changes.md).
+This toolkit implements **Layer 4 (Observability & Provenance)** of the Five-Layer Trust Engineering Pyramid (5L-TEP) for Open Government Data quality assurance. It monitors CKAN-based data portals (e.g., [IBAMA](https://dadosabertos.ibama.gov.br)), detects changes via SHA-256 fingerprinting, and generates W3C PROV-DM–compliant provenance records in JSON-LD. Since v1.0.2, each record also describes *how* the dataset changed (changed fields, resource URL relocations, zip/plain packaging switches), and the same description feeds [`changes.md`](changes.md). Since v1.1.0, each cycle also writes the data of the [dashboard](https://lsp3cesarschool.github.io/5ltep-layer4/) and of the status badges (`docs/data/`), so the README itself is never rewritten by a workflow.
 
-> **Scope**: This repository contains **only** the L4-essential modules. Layers 1–3 (structural/semantic/anomaly validation) and Layer 5 (governance dashboards) are outside this implementation's scope.
+> **Scope**: This repository contains **only** the L4-essential modules. Layers 1–3 (structural/semantic/anomaly validation) and Layer 5 (governance dashboards) are outside this implementation's scope; combining the results of several layers is Layer 5's job.
 
 ### Architecture
 
 ```
 ┌──────────────────────────────────────────────────┐
 │            GitHub Actions (cron 6h)              │
-│      ~15% of the free tier (measured)            │
+│           free for public repositories           │
 └──────────────────────────┬───────────────────────┘
                            │ triggers
                            ▼
@@ -142,16 +175,17 @@ python main.py --portal https://dadosabertos.ibama.gov.br --org ibama
 
 ```bash
 pytest tests/ -v
-# 38 tests covering: hash determinism, 4 change types, dual-agent model,
+# 48 tests covering: hash determinism, 4 change types, dual-agent model,
 # derivation chains, append-only persistence, end-to-end pipeline,
 # critical-change alerting (SCHEMA_DRIFT/RETRO_ALTER) and CI signalling,
 # PROV-O interoperability with the `prov` library (needs: pip install prov rdflib),
-# change details (relocations, packaging) and changes.md generation
+# change details (relocations, packaging), changes.md and dashboard data,
+# portal.json, status badges, and README/LEIAME structure
 ```
 
 ### GitHub Actions Deployment
 
-The toolkit runs automatically every 6 hours via GitHub Actions (about 15% of the 2,000-minute free tier, measured over 30 days; public repositories are not charged). See `.github/workflows/monitor.yml`.
+The toolkit runs automatically every 6 hours via GitHub Actions. It costs nothing: public repositories are not charged for standard runners (in a private repository, the measured usage would be about 15% of the 2,000-minute free tier). See `.github/workflows/monitor.yml`. The dashboard is a static page served by GitHub Pages from `docs/` (*Settings → Pages*: branch `main`, folder `/docs`).
 
 Alerts cost nothing and need no mail server: on a critical event (`SCHEMA_DRIFT` or `RETRO_ALTER`) the workflow first commits the provenance records and then fails on purpose, and GitHub e-mails the maintainer about the failed run. The daily cross-check alerts the same way when portal coverage drops below 90% or divergences stay unreconciled for more than 7 h.
 
@@ -221,24 +255,29 @@ When a retroactive alteration is detected:
 ├── LICENSE                          # MIT License
 ├── README.md                        # This file
 ├── LEIAME.md                        # This file, in Portuguese
+├── portal.json                      # The monitored portal (the one value to change for another portal)
 ├── changes.md                       # Human-readable change log (generated each cycle)
 ├── compress_snapshots.py            # Weekly gzip of snapshots older than 90 days
 ├── cross_check.py                   # Independent validator vs. live CKAN portal
 ├── .github/
 │   └── workflows/
-│       ├── monitor.yml              # Scheduled monitoring (every 6h)
-│       ├── compress.yml             # Weekly snapshot compression (Sun 03:00 UTC)
-│       ├── cross_check.yml          # Daily independent validation (03:30 UTC, off-peak)
+│       ├── monitor.yml              # Scheduled monitoring (every 6h, at :10)
+│       ├── compress.yml             # Weekly snapshot compression (Sun 04:20 UTC)
+│       ├── cross_check.yml          # Daily independent validation (09:40 UTC)
 │       └── tests.yml                # CI/CD test runner
 ├── src/
 │   ├── __init__.py
 │   ├── ckan_harvester.py            # CKAN API client with retry logic
 │   ├── hash_engine.py              # SHA-256 fingerprinting & change detection
 │   ├── change_summary.py           # Change details (fields, relocations) + changes.md
+│   ├── dashboard.py                # Dashboard data + status badges (docs/data)
+│   ├── portal_config.py            # Reads portal.json
 │   └── prov_mapper.py              # ★ W3C PROV-DM JSON-LD generator (L4 core)
 ├── tests/
 │   ├── __init__.py
-│   └── test_toolkit.py             # 38 unit + integration tests
+│   └── test_toolkit.py             # 48 unit + integration tests
+├── docs/                            # Dashboard (GitHub Pages): index.html, app.js, style.css
+│   └── data/                        # layer4.json, cross_check.json, badges (committed by bot)
 ├── evaluation/                      # Scripts + results reproducing the paper's evaluation
 ├── data/                            # Runtime data (committed by bot)
 │   ├── hash_store.json
@@ -252,9 +291,11 @@ When a retroactive alteration is detected:
 
 ## Configuration
 
+The monitored portal is declared in [`portal.json`](portal.json) (`portal_url`, plus a `name` and `title` for the dashboard).
+
 | Environment Variable | Default | Description |
 |---|---|---|
-| `CKAN_PORTAL_URL` | `https://dadosabertos.ibama.gov.br` | Target CKAN portal (in GitHub Actions: repository variable, see below) |
+| `CKAN_PORTAL_URL` | _(empty)_ | Local trials only: overrides `portal.json` for one run (`--portal` overrides both) |
 | `CKAN_ORG_FILTER` | _(empty)_ | Filter by organization |
 | `MAX_DATASETS` | `0` (all) | Limit harvested datasets |
 | `GITHUB_REPOSITORY` | `local` | Used for software agent identification |
@@ -262,20 +303,22 @@ When a retroactive alteration is detected:
 
 ### Monitoring another CKAN portal
 
-The continuous monitoring (every 6 h, with failure e-mails from GitHub) and the
-daily cross-check both read the portal from a single place: the repository
-variable `CKAN_PORTAL_URL`. When it is not set, they monitor IBAMA. No code change
-is needed:
+The continuous monitoring (every 6 h, with failure e-mails from GitHub), the daily
+cross-check and the dashboard all read the portal from a single versioned file,
+[`portal.json`](portal.json). No code change is needed:
 
 1. **Fork** this repository.
-2. In the fork, go to *Settings → Secrets and variables → Actions → Variables* and
-   create `CKAN_PORTAL_URL` with the portal's root URL
-   (e.g., `https://dados.recife.pe.gov.br`).
+2. In the fork, edit `portal.json`: set `portal_url` to the portal's root URL
+   (e.g., `https://dados.recife.pe.gov.br`), and `name` and `title` to how the
+   dashboard should call it.
 3. **Start with a clean history:** delete the whole `data/` and
-   `provenance_logs/` folders and the `changes.md` file inherited from this
-   repository, and commit. They are recreated automatically.
+   `provenance_logs/` folders, the `docs/data/` folder and the `changes.md` file
+   inherited from this repository, and commit. They are recreated automatically.
 4. Enable the workflows in the fork's **Actions** tab (GitHub disables scheduled
-   workflows in forks until you do). Failure e-mails go to the fork's owner.
+   workflows in forks until you do), and GitHub Pages in *Settings → Pages*
+   (branch `main`, folder `/docs`). Failure e-mails go to the fork's owner. In
+   the README of the fork, replace `lsp3cesarschool/5ltep-layer4` in the badge
+   and dashboard links with the fork's name.
 5. Optionally, run *5L-TEP Layer 4 Monitoring Workflow* once by hand
    (*Actions → Run workflow*) to record the baseline right away instead of
    waiting for the next 6-hour slot. Until the first cycle, the daily cross-check

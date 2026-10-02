@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5L-TEP Layer 4 · Observability &amp; Provenance</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Every label marked data-i18n is translated by app.js (English / Portuguese). -->
+<nav class="topbar">
+  <a id="repo-link" href="https://github.com/lsp3cesarschool/5ltep-layer4" data-i18n="back">← Back to the repository</a>
+  <span class="muted">·</span>
+  <a id="readme-link" href="https://github.com/lsp3cesarschool/5ltep-layer4#readme">README</a>
+  <span class="muted">·</span>
+  <a id="leiame-link" href="https://github.com/lsp3cesarschool/5ltep-layer4/blob/main/LEIAME.md" lang="pt">LEIAME</a>
+  <span class="lang-switch">
+    <a id="lang-en" href="?lang=en">English</a>
+    <span class="muted">·</span>
+    <a id="lang-pt" href="?lang=pt" lang="pt">Português</a>
+  </span>
+</nav>
+
+<header>
+  <div>
+    <p class="eyebrow" data-i18n="eyebrow">5L-TEP · Layer 4 · Observability &amp; Provenance</p>
+    <h1 id="title" data-i18n="loading">Loading…</h1>
+    <p class="muted" id="subtitle"></p>
+  </div>
+  <div class="actions">
+    <a class="button" id="run-link" target="_blank" rel="noopener" data-i18n="run">Run a cycle now ↗</a>
+    <a class="button secondary" id="changes-link" target="_blank" rel="noopener" data-i18n="changes_btn">changes.md ↗</a>
+    <a class="button secondary" id="prov-link" target="_blank" rel="noopener" data-i18n="prov_btn">Provenance logs ↗</a>
+  </div>
+</header>
+<p class="intro" data-i18n="intro">Every six hours this repository reads the metadata of every dataset of the portal, compares it
+  with the previous reading, and records each change as a W3C PROV-DM entity derived from the version before it. This page
+  shows what changed, when and how; the records themselves are in the repository.</p>
+
+<main>
+  <section class="tiles" id="tiles" aria-label="Key numbers"></section>
+
+  <section>
+    <div class="section-head"><h2 data-i18n="months_h">Changes per month</h2></div>
+    <p class="muted" data-i18n="months_note">Each change detected in a dataset, by month of detection and type. CONTENT_MOD,
+      SCHEMA_DRIFT and RETRO_ALTER become PROV records; the last two are critical. NEW and REMOVED are datasets that
+      appeared in or left the portal.</p>
+    <ul class="legend" id="months-legend"></ul>
+    <div class="chart" id="months-chart"></div>
+    <details class="more"><summary data-i18n="table_view">Table view</summary>
+      <div class="table-wrap"><table class="mini" id="months-table"></table></div></details>
+  </section>
+
+  <section>
+    <div class="section-head"><h2 data-i18n="where_h">Where the files are</h2></div>
+    <p class="muted" data-i18n="where_note">The server each resource URL points to today, and the moves between servers seen
+      since monitoring began. A move, or a switch between a zip and a plain file, usually keeps the format the portal
+      declares: a program that downloads these files can break without warning.</p>
+    <div class="two">
+      <div class="panel"><h3 data-i18n="hosts_h">Resource URLs by server, today</h3><div class="bars" id="hosts"></div></div>
+      <div class="panel"><h3 data-i18n="moves_h">Moves and packaging changes</h3>
+        <div class="table-wrap"><table class="files" id="moves"></table></div>
+        <div class="kv" id="packaging" style="margin-top:10px"></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2 data-i18n="latest_h">Latest changes</h2>
+      <div class="filters">
+        <input type="search" id="ev-search" data-i18n-placeholder="search_ev" placeholder="Search datasets or changes">
+        <select id="ev-type"><option value="" data-i18n="all_types">All types</option></select>
+      </div>
+    </div>
+    <div class="table-wrap"><table class="files" id="events"></table></div>
+    <button class="showmore" id="ev-more" hidden></button>
+  </section>
+
+  <section>
+    <div class="section-head"><h2 data-i18n="health_h">Monitoring health</h2></div>
+    <p class="muted" data-i18n="health_note">Monitoring cycles per day over the last 90 days (four are scheduled). A missing
+      cycle delays when a change is seen, never what is recorded: the next cycle compares with the last stored reading.</p>
+    <div class="chart" id="cycles-chart"></div>
+    <div class="two">
+      <div class="panel"><h3 data-i18n="cc_h">Independent cross-check</h3><div id="cross-check"></div></div>
+      <div class="panel"><h3 data-i18n="mon_h">Cycles</h3><div class="kv" id="monitoring"></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head" id="datasets-head">
+      <h2 data-i18n="datasets_h">Datasets</h2>
+      <div class="filters">
+        <input type="search" id="search" data-i18n-placeholder="search" placeholder="Search datasets">
+        <label class="muted"><input type="checkbox" id="only-changed"> <span data-i18n="only_changed">only datasets that changed</span></label>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="datasets">
+        <thead><tr>
+          <th data-i18n="col_dataset">Dataset</th><th data-i18n="col_org">Custodian</th>
+          <th class="num" data-i18n="col_resources">Resources</th><th class="num" data-i18n="col_changes">Changes</th>
+          <th class="num" data-i18n="col_records">PROV records</th><th data-i18n="col_last">Last change</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="muted small" data-i18n="click_note">Click a dataset to see its changes.</p>
+  </section>
+</main>
+
+<footer class="muted small" id="footer"></footer>
+<div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

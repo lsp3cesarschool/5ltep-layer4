@@ -1,12 +1,12 @@
 name: 5L-TEP Layer 4 Cross-Check
 on:
   schedule:
-    - cron: '30 3 * * *'
+    # Daily, ~3.5 h after the 06:10 monitoring cycle (tolerance: 7 h)
+    - cron: '40 9 * * *'
   workflow_dispatch:
 
+# Same portal as the monitoring workflow (portal.json)
 env:
-  # Same portal as the monitoring workflow (see monitor.yml)
-  CKAN_PORTAL_URL: ${{ vars.CKAN_PORTAL_URL || 'https://dadosabertos.ibama.gov.br' }}
   PYTHON_VERSION: '3.11'
 
 jobs:
@@ -29,11 +29,11 @@ jobs:
         run: python cross_check.py
         continue-on-error: true
 
-      - name: Commit cross-check report and README/LEIAME status
+      - name: Commit cross-check report, dashboard panel and badges
         run: |
           git config user.name "5L-TEP L4 Bot"
           git config user.email "5ltep-l4-bot@users.noreply.github.com"
-          git add data/cross_check_report.json README.md LEIAME.md
+          git add data/cross_check_report.json docs/data/
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
@@ -61,5 +61,5 @@ jobs:
           else
             echo "::error::Cross-check STALE — ${DIVERGENCES} unreconciled divergence(s) (added=${ADDED} removed=${REMOVED} modified=${MODIFIED}); snapshot ${AGE}h old (tolerance ${TOLERANCE}h). See ${REPORT}."
           fi
-          echo "Details committed to README status badge and ${REPORT}."
+          echo "Details committed to ${REPORT} and the cross-check badge (docs/data)."
           exit 1

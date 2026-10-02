@@ -1,14 +1,18 @@
 name: 5L-TEP Layer 4 Monitoring Workflow
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    # Every 6 h, off the top of the hour (the busiest minute on GitHub's runners)
+    # and away from the other 5L-TEP layers' schedules.
+    - cron: '10 */6 * * *'
   workflow_dispatch:
 
+# The monitored portal is declared in portal.json (versioned); forks change it there.
 env:
-  # Portal monitored by this repository. Forks: set the repository variable
-  # CKAN_PORTAL_URL (Settings > Secrets and variables > Actions > Variables).
-  CKAN_PORTAL_URL: ${{ vars.CKAN_PORTAL_URL || 'https://dadosabertos.ibama.gov.br' }}
   PYTHON_VERSION: '3.11'
+
+concurrency:
+  group: layer4-monitor
+  cancel-in-progress: false
 
 jobs:
   monitor:
@@ -31,18 +35,19 @@ jobs:
 
       - name: Run monitoring cycle
         id: monitor
-        run: python main.py --portal ${{ env.CKAN_PORTAL_URL }}
+        run: python main.py
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_SHA: ${{ github.sha }}
 
-      - name: Commit provenance logs
+      - name: Commit provenance logs, change log and dashboard data
         id: commit
         run: |
           git config user.name "5L-TEP L4 Bot"
           git config user.email "5ltep-l4-bot@users.noreply.github.com"
-          git add provenance_logs/ data/ changes.md
+          git add provenance_logs/ data/ changes.md docs/data/
           git diff --cached --quiet || git commit -m "chore: update provenance logs [$(date -u +%Y-%m-%dT%H:%M:%SZ)]"
+          git pull --rebase
           git push
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 

@@ -47,7 +47,7 @@ PROV_CONTEXT = {
 }
 
 # Toolkit version for agent identification
-TOOLKIT_VERSION = "1.0.2"
+TOOLKIT_VERSION = "1.1.0"
 TOOLKIT_SCOPE = "Layer 4 — Observability & Provenance"
 
 

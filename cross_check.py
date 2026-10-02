@@ -8,8 +8,11 @@ by this toolkit. This provides empirical triangulation of the main
 pipeline's change-detection results.
 
 Runs in parallel to main.py (separate workflow, no shared state at runtime),
-writes data/cross_check_report.json, and updates a status sentence in
-README.md (English) and LEIAME.md (Portuguese) between dedicated markers.
+writes data/cross_check_report.json, and publishes the result for people:
+docs/data/cross_check.json (the dashboard's panel, with an English and a
+Portuguese sentence) and docs/data/status-cross-check[.pt].json (shields.io
+endpoint badges shown in README.md and LEIAME.md). The READMEs themselves are
+never rewritten, so they stay identical across instances of the toolkit.
 
 Exit codes:
   0  IN_SYNC   — live matches latest snapshot exactly
@@ -29,21 +32,32 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Same portal as the monitoring workflow (repository variable CKAN_PORTAL_URL)
-PORTAL = os.environ.get("CKAN_PORTAL_URL", "https://dadosabertos.ibama.gov.br").rstrip("/")
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+from portal_config import load_portal  # noqa: E402
+
+# Same portal as the monitoring workflow (portal.json)
+PORTAL = load_portal()["portal_url"]
 MANIFEST = Path("data/snapshots/manifest.json")
 SNAPSHOTS_DIR = Path("data/snapshots")
 REPORT = Path("data/cross_check_report.json")
-README = Path("README.md")
-LEIAME = Path("LEIAME.md")
+DOCS_DATA = Path("docs/data")
+PANEL = DOCS_DATA / "cross_check.json"
+BADGES = {"en": DOCS_DATA / "status-cross-check.json", "pt": DOCS_DATA / "status-cross-check.pt.json"}
 USER_AGENT = "5LTEP-Layer4/1.0 (parallel cross-check)"
 MONITOR_TOLERANCE_HOURS = 7
 MIN_COVERAGE_RATIO = 0.90
 FETCH_RETRIES = 3
 FETCH_BACKOFF_SECONDS = 1.5
 
-MARKER_START = "<!-- CROSS_CHECK_STATUS:START -->"
-MARKER_END = "<!-- CROSS_CHECK_STATUS:END -->"
+# Badge text and shields.io colour per status: (English, Portuguese, colour)
+BADGE = {
+    "IN_SYNC": ("in sync", "sincronizada", "brightgreen"),
+    "DEGRADED": ("in sync, {cov}% reached", "sincronizada, {cov}% consultados", "yellow"),
+    "PENDING": ("pending: {div} divergence(s)", "pendente: {div} divergência(s)", "yellow"),
+    "STALE": ("stale: {div} divergence(s)", "desatualizada: {div} divergência(s)", "orange"),
+    "ERROR": ("error: {cov}% reached", "erro: {cov}% consultados", "red"),
+    "WAITING": ("waiting for the first cycle", "aguardando o primeiro ciclo", "lightgrey"),
+}
 
 
 def fetch(url: str) -> dict:
@@ -138,16 +152,25 @@ def render_status(divergences, snapshot_age_h, shared, errors, coverage, ended):
     )
 
 
-def update_readme(sentence: str, path: Path = README) -> bool:
-    if not path.exists():
-        return False
-    text = path.read_text(encoding="utf-8")
-    if MARKER_START not in text or MARKER_END not in text:
-        return False
-    head, _, rest = text.partition(MARKER_START)
-    _, _, tail = rest.partition(MARKER_END)
-    path.write_text(f"{head}{MARKER_START}\n{sentence}\n{MARKER_END}{tail}", encoding="utf-8")
-    return True
+def badges(status: str, divergences: int = 0, coverage: float = 1.0, day: str = "") -> dict:
+    """shields.io endpoint badges ({"en": ..., "pt": ...}) for a cross-check status."""
+    en, pt, color = BADGE[status]
+    out = {}
+    for lang, text, label in (("en", en, "cross-check"), ("pt", pt, "verificação cruzada")):
+        message = text.format(div=divergences, cov=f"{coverage * 100:.0f}")
+        out[lang] = {"schemaVersion": 1, "label": label,
+                     "message": f"{message} · {day}" if day else message, "color": color}
+    return out
+
+
+def publish(status: str, panel: dict, divergences: int = 0, coverage: float = 1.0,
+            day: str = "") -> None:
+    """Write the dashboard panel and the two badges under docs/data."""
+    DOCS_DATA.mkdir(parents=True, exist_ok=True)
+    PANEL.write_text(json.dumps(panel, indent=1, ensure_ascii=False), encoding="utf-8", newline="\n")
+    for lang, badge in badges(status, divergences, coverage, day).items():
+        BADGES[lang].write_text(json.dumps(badge, indent=1, ensure_ascii=False),
+                                encoding="utf-8", newline="\n")
 
 
 def main() -> int:
@@ -157,6 +180,8 @@ def main() -> int:
     if not MANIFEST.exists():
         # Fresh repository/fork: the monitoring workflow has not run yet.
         print("  no snapshot yet (first monitoring cycle pending); nothing to cross-check")
+        publish("WAITING", {"status": "WAITING", "portal_url": PORTAL,
+                            "checked_at": started.isoformat()})
         return 0
 
     latest_run, snap_path = latest_snapshot_path()
@@ -198,7 +223,7 @@ def main() -> int:
         divergences, snapshot_age_h, len(shared), len(errors), coverage, ended
     )
 
-    REPORT.write_text(json.dumps({
+    report = {
         "status": status, "checked_at": ended.isoformat(),
         "duration_seconds": round((ended - started).total_seconds(), 2),
         "portal_url": PORTAL, "snapshot_run_id": latest_run, "snapshot_file": snap_path.name,
@@ -209,11 +234,11 @@ def main() -> int:
         "datasets": {"snapshot": len(local), "live": len(live_set),
                      "shared": len(shared), "added": added, "removed": removed},
         "modified": modified, "errors": errors,
-    }, indent=2, ensure_ascii=False), encoding="utf-8")
-
-    updated = update_readme(sentence)
-    update_readme(sentence_pt, LEIAME)
-    print(f"  status={status} divergences={divergences} errors={len(errors)} readme_updated={updated}")
+    }
+    REPORT.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+    publish(status, {**report, "sentence": sentence, "sentence_pt": sentence_pt},
+            divergences, coverage, ended.strftime("%Y-%m-%d"))
+    print(f"  status={status} divergences={divergences} errors={len(errors)}")
     return exit_code
 
 
