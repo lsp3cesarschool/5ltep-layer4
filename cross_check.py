@@ -27,10 +27,10 @@ import json
 import os
 import sys
 import time
-import urllib.error
-import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+
+import requests
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from portal_config import load_portal  # noqa: E402
@@ -48,6 +48,12 @@ MONITOR_TOLERANCE_HOURS = 7
 MIN_COVERAGE_RATIO = 0.90
 FETCH_RETRIES = 3
 FETCH_BACKOFF_SECONDS = 1.5
+# One kept-alive connection, and a short limit to open one: some portals (Recife)
+# intermittently refuse new connections from cloud runners (same lesson as the harvester).
+CONNECT_TIMEOUT = 10
+READ_TIMEOUT = 30
+SESSION = requests.Session()
+SESSION.headers["User-Agent"] = USER_AGENT
 
 # Badge text and shields.io colour per status: (English, Portuguese, colour)
 BADGE = {
@@ -61,23 +67,20 @@ BADGE = {
 
 
 def fetch(url: str) -> dict:
-    last_exc = None
+    """GET a CKAN API answer; retries server errors and failed connections, not 4xx."""
     for attempt in range(FETCH_RETRIES):
+        last = attempt == FETCH_RETRIES - 1
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-            with urllib.request.urlopen(req, timeout=30) as r:
-                return json.loads(r.read())
-        except urllib.error.HTTPError as e:
-            last_exc = e
-            if e.code < 500 or attempt == FETCH_RETRIES - 1:
+            r = SESSION.get(url, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
+            if r.status_code >= 500 and not last:
+                time.sleep(FETCH_BACKOFF_SECONDS * (2 ** attempt))
+                continue
+            r.raise_for_status()
+            return r.json()
+        except (requests.ConnectionError, requests.Timeout):
+            if last:
                 raise
             time.sleep(FETCH_BACKOFF_SECONDS * (2 ** attempt))
-        except (urllib.error.URLError, TimeoutError) as e:
-            last_exc = e
-            if attempt == FETCH_RETRIES - 1:
-                raise
-            time.sleep(FETCH_BACKOFF_SECONDS * (2 ** attempt))
-    raise last_exc
 
 
 def load_snapshot(path: Path) -> list:
