@@ -9,9 +9,22 @@ const I18N = {
     subtitle: "Monitored since {since} · last cycle {last} · page data from {gen}",
     t_datasets: "Datasets monitored", t_datasets_note: "{r} resources · {o} custodian(s)",
     t_cycles: "Monitoring cycles", t_cycles_note: "{n} in the last 30 days · longest gap {g} h",
-    t_events: "Changes recorded in PROV", t_events_note: "{n} datasets changed at least once",
-    t_critical: "critical", t_critical_tip: "SCHEMA_DRIFT or RETRO_ALTER", t_last: "Last change", t_none: "none yet",
+    t_events: "Changes recorded in PROV", t_events_note: "in {n} of the {total} datasets",
+    t_critical: "critical", t_critical_tip: "SCHEMA_DRIFT or RETRO_ALTER", t_no_critical: "no critical change",
+    t_events_go: "Click to list the datasets that changed",
+    t_last: "Last change", t_none: "none yet",
     t_cc: "Cross-check", t_cc_note: "checked {d}",
+    details: "Details",
+    d_datasets: "Datasets the portal lists (`package_list`) and that the last cycle read (`package_show`). Resources are the files and links each dataset publishes. The custodian is the CKAN organization that publishes a dataset: every PROV record attributes the dataset to it (`prov:wasAttributedTo`), apart from this toolkit, which only observes.",
+    d_cycles: "A cycle reads the whole portal and compares each dataset with the previous reading. Four cycles a day are scheduled (every 6 h); GitHub sometimes delays or skips one. Since {since}: {n} cycles, {n30} in the last 30 days (about 120 expected); the longest gap in that period was {g} h. A missed cycle delays when a change is seen but loses nothing: the next cycle compares with the last stored reading. Identical readings are stored once: {snaps} distinct snapshots so far.",
+    d_events: "Each time a dataset's fingerprint changes, the classifier gives the change a type and the toolkit writes a W3C PROV-DM record: a new version of the dataset, linked to the one before it. The bar shows the share of datasets with at least one change ({n} of {total}, {pct}); the others only have the baseline of their first observation. New datasets are not counted here.",
+    d_by_type: "By type:", d_content: "content changed, with a new modification date (warning)",
+    d_drift: "resources added, removed, renamed or re-formatted (critical)", d_retro: "changed without a new modification date (critical)",
+    d_critical: "A critical change makes the monitoring workflow fail on purpose, after the record is saved, so GitHub e-mails the maintainer.",
+    d_see_changed: "List the datasets that changed", d_see_latest: "latest changes", d_see_records: "records in the repository",
+    d_last: "When the most recent change recorded in PROV was detected (the cycle that saw it, not a date given by the portal) and in which dataset. New datasets are not counted.",
+    d_cc: "Once a day a separate script reads the portal again and compares, for every dataset, two fields its custodian sets (last modification date and number of resources) with the latest snapshot. In sync: everything matches. Pending: differences the next cycle should record (snapshot up to 7 h old). Stale: older differences (monitoring may have stopped). Error: fewer than 90% of the datasets could be read. Stale and error make the workflow fail, which e-mails the maintainer.",
+    d_cc_last: "Last result:",
     months_h: "Changes per month",
     months_note: "The classifier described in the paper has four types: CLEAN_UPDATE (no change; not charted), CONTENT_MOD, SCHEMA_DRIFT and RETRO_ALTER; changes of the last two types are critical. Each change of the last three types becomes a W3C PROV-DM record. New datasets (recorded as a baseline on their first observation) and removed datasets are also shown, by month of detection; they are not change types and produce no PROV record.",
     table_view: "Table view", month: "Month", total: "Total",
@@ -50,9 +63,22 @@ const I18N = {
     subtitle: "Monitorado desde {since} · último ciclo {last} · dados da página de {gen}",
     t_datasets: "Conjuntos monitorados", t_datasets_note: "{r} recursos · {o} custodiante(s)",
     t_cycles: "Ciclos de monitoramento", t_cycles_note: "{n} nos últimos 30 dias · maior intervalo {g} h",
-    t_events: "Mudanças registradas em PROV", t_events_note: "{n} conjuntos mudaram ao menos uma vez",
-    t_critical: "críticas", t_critical_tip: "SCHEMA_DRIFT ou RETRO_ALTER", t_last: "Última mudança", t_none: "nenhuma ainda",
+    t_events: "Mudanças registradas em PROV", t_events_note: "em {n} dos {total} conjuntos",
+    t_critical: "críticas", t_critical_tip: "SCHEMA_DRIFT ou RETRO_ALTER", t_no_critical: "nenhuma mudança crítica",
+    t_events_go: "Clique para listar os conjuntos que mudaram",
+    t_last: "Última mudança", t_none: "nenhuma ainda",
     t_cc: "Verificação cruzada", t_cc_note: "verificada em {d}",
+    details: "Detalhes",
+    d_datasets: "Conjuntos que o portal lista (`package_list`) e que o último ciclo leu (`package_show`). Recursos são os arquivos e links que cada conjunto publica. Custodiante é a organização do CKAN que publica o conjunto: cada registro PROV atribui o conjunto a ela (`prov:wasAttributedTo`), separada deste kit, que só observa.",
+    d_cycles: "Um ciclo lê o portal inteiro e compara cada conjunto com a leitura anterior. São agendados quatro ciclos por dia (a cada 6 h); o GitHub às vezes atrasa ou pula um. Desde {since}: {n} ciclos, {n30} nos últimos 30 dias (cerca de 120 esperados); o maior intervalo nesse período foi de {g} h. Um ciclo perdido atrasa quando a mudança é vista, mas não perde nada: o ciclo seguinte compara com a última leitura guardada. Leituras idênticas são guardadas uma vez só: {snaps} snapshots distintos até agora.",
+    d_events: "Sempre que a impressão digital de um conjunto muda, o classificador dá um tipo à mudança e o kit grava um registro W3C PROV-DM: uma nova versão do conjunto, ligada à anterior. A barra mostra a parcela de conjuntos com ao menos uma mudança ({n} de {total}, {pct}); os demais só têm a linha de base da primeira observação. Conjuntos novos não entram nesta conta.",
+    d_by_type: "Por tipo:", d_content: "conteúdo mudou, com nova data de modificação (aviso)",
+    d_drift: "recursos adicionados, removidos, renomeados ou com outro formato (crítica)", d_retro: "mudou sem nova data de modificação (crítica)",
+    d_critical: "Uma mudança crítica faz o workflow de monitoramento falhar de propósito, depois de gravar o registro, e o GitHub avisa o mantenedor por e-mail.",
+    d_see_changed: "Listar os conjuntos que mudaram", d_see_latest: "últimas mudanças", d_see_records: "registros no repositório",
+    d_last: "Quando foi detectada a mudança mais recente registrada em PROV (no ciclo que a viu, não uma data informada pelo portal) e em qual conjunto. Conjuntos novos não entram nesta conta.",
+    d_cc: "Uma vez por dia, um script separado lê o portal de novo e compara, para cada conjunto, dois campos que o custodiante define (data da última modificação e número de recursos) com o snapshot mais recente. Sincronizada: tudo bate. Pendente: diferenças que o próximo ciclo deve registrar (snapshot com até 7 h). Desatualizada: diferenças mais antigas (o monitoramento pode ter parado). Erro: menos de 90% dos conjuntos puderam ser lidos. Desatualizada e erro fazem o workflow falhar, e o GitHub avisa o mantenedor por e-mail.",
+    d_cc_last: "Último resultado:",
     months_h: "Mudanças por mês",
     months_note: "O classificador descrito no artigo tem quatro tipos: CLEAN_UPDATE (sem mudança; fora do gráfico), CONTENT_MOD, SCHEMA_DRIFT e RETRO_ALTER; as mudanças dos dois últimos tipos são críticas. Cada mudança dos três últimos tipos vira um registro W3C PROV-DM. Conjuntos novos (registrados como linha de base na primeira observação) e conjuntos removidos também aparecem, por mês de detecção; não são tipos de mudança e não geram registro PROV.",
     table_view: "Ver como tabela", month: "Mês", total: "Total",
@@ -104,6 +130,7 @@ const t = (key, vars = {}) => String(T[key] ?? I18N.en[key] ?? key).replace(/\{(
 const el = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const fmt = (n) => (n == null ? "—" : Number(n).toLocaleString(LANG === "pt" ? "pt-BR" : "en"));
+const pct = (x) => (x == null ? "—" : (x * 100).toLocaleString(LANG === "pt" ? "pt-BR" : "en", { maximumFractionDigits: 0 }) + "%");
 const day = (iso) => (iso || "").slice(0, 10);
 const stamp = (iso) => (iso ? `${iso.slice(0, 10)} ${iso.slice(11, 16)}` : "—");
 const safeUrl = (u) => (/^https?:\/\//i.test(u || "") ? u : "#");
@@ -181,28 +208,70 @@ const STATUS_ICON = { IN_SYNC: "✓", DEGRADED: "◐", PENDING: "⏳", STALE: "�
 const statusClass = (s) => (s === "IN_SYNC" ? "good" : s === "STALE" || s === "ERROR" ? "bad" : "");
 
 // --- tiles -------------------------------------------------------------------------
-function tile(label, value, note = "", meter = null, extra = "") {
-  return `<div class="tile"><div class="label">${esc(label)}</div><div class="value">${value}</div>`
+// `code` in a translated text becomes <code>; everything else is escaped.
+const md = (text) => esc(text).replace(/`([^`]+)`/g, "<code>$1</code>");
+const plainSentence = (text) => (text || "").replace(/\*\*/g, "").replace(/`/g, "").replace(/^[^\p{L}]+/u, "");
+
+function tile(label, value, note = "", meter = null, extra = "", details = "", attrs = "") {
+  return `<div ${attrs.includes("class=") ? "" : 'class="tile"'}${attrs}><div class="label">${esc(label)}</div><div class="value">${value}</div>`
     + (meter == null ? "" : `<div class="meter"><span style="width:${Math.max(0, Math.min(1, meter)) * 100}%"></span></div>`)
-    + `<div class="note">${note}</div>${extra}</div>`;
+    + `<div class="note">${note}</div>${extra}`
+    + (details ? `<details class="tile-more"><summary>${esc(t("details"))}</summary>${details}</details>` : "")
+    + "</div>";
+}
+
+// The datasets table, filtered to the ones that changed (from the PROV tile).
+function showChangedDatasets() {
+  el("only-changed").checked = true;
+  el("search").value = "";
+  renderDatasets();
+  el("datasets-head").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function renderTiles(d, cc) {
-  const s = d.totals, m = d.monitoring;
-  const last = d.events.find((e) => e.type !== "NEW") || null;
+  const s = d.totals, m = d.monitoring, by = s.by_type || {};
+  const last = d.events.find((e) => PROV_TYPES.has(e.type)) || null;
   const ccStatus = cc ? cc.status : "WAITING";
+  const share = s.datasets ? s.datasets_changed / s.datasets : null;
   const crit = s.critical
     ? `<div class="status bad" title="${esc(t("t_critical_tip"))}">⚠ ${fmt(s.critical)} ${esc(t("t_critical"))}</div>`
-    : `<div class="status good" title="${esc(t("t_critical_tip"))}">✓ 0 ${esc(t("t_critical"))}</div>`;
+    : `<div class="status good" title="${esc(t("t_critical_tip"))}">✓ ${esc(t("t_no_critical"))}</div>`;
+  const r = repo();
+  const eventsDetails = `<p>${md(t("d_events", { n: fmt(s.datasets_changed), total: fmt(s.datasets), pct: pct(share) }))}</p>`
+    + `<p>${esc(t("d_by_type"))}</p><ul>`
+    + [["CONTENT_MOD", "d_content"], ["SCHEMA_DRIFT", "d_drift"], ["RETRO_ALTER", "d_retro"]].map(([ty, key]) =>
+      `<li>${swatch(ty)}<code>${ty}</code> <strong>${fmt(by[ty] || 0)}</strong>: ${esc(t(key))}</li>`).join("")
+    + `</ul><p>${esc(t("d_critical"))}</p>`
+    + `<p><a href="#datasets-head" data-go="changed">${esc(t("d_see_changed"))}</a> · <a href="#latest">${esc(t("d_see_latest"))}</a>`
+    + ` · <a href="${r}/tree/main/provenance_logs" rel="noopener">${esc(t("d_see_records"))}</a></p>`;
+  const lastDetails = `<p>${esc(t("d_last"))}</p>` + (last
+    ? `<p>${typeLabel(last.type)}<br>${esc(stamp(last.when))} UTC · ${esc(LANG === "pt" ? last.summary_pt || last.summary : last.summary)}</p>` : "");
+  const ccDetails = `<p>${esc(t("d_cc"))}</p>` + (cc && cc.sentence
+    ? `<p>${esc(t("d_cc_last"))} ${esc(plainSentence(LANG === "pt" ? cc.sentence_pt : cc.sentence))}</p>` : "");
   el("tiles").innerHTML = [
-    tile(t("t_datasets"), fmt(s.datasets), esc(t("t_datasets_note", { r: fmt(s.resources), o: fmt(s.organizations) }))),
-    tile(t("t_cycles"), fmt(m.cycles), esc(t("t_cycles_note", { n: fmt(m.cycles_30d), g: fmt(m.max_gap_hours_30d) }))),
-    tile(t("t_events"), fmt(s.prov_events), esc(t("t_events_note", { n: fmt(s.datasets_changed) })),
-      s.datasets ? s.datasets_changed / s.datasets : null, crit),
-    tile(t("t_last"), last ? day(last.when) : esc(t("t_none")), last ? esc(last.title) : ""),
+    tile(t("t_datasets"), fmt(s.datasets), esc(t("t_datasets_note", { r: fmt(s.resources), o: fmt(s.organizations) })),
+      null, "", `<p>${md(t("d_datasets"))}</p>`),
+    tile(t("t_cycles"), fmt(m.cycles), esc(t("t_cycles_note", { n: fmt(m.cycles_30d), g: fmt(m.max_gap_hours_30d) })),
+      null, "", `<p>${md(t("d_cycles", { since: day(m.since), n: fmt(m.cycles), n30: fmt(m.cycles_30d),
+        g: fmt(m.max_gap_hours_30d), snaps: fmt(m.distinct_snapshots) }))}</p>`),
+    tile(t("t_events"), fmt(s.prov_events), esc(t("t_events_note", { n: fmt(s.datasets_changed), total: fmt(s.datasets) })),
+      share, crit, eventsDetails,
+      ` id="tile-events" class="tile go" role="link" tabindex="0" title="${esc(t("t_events_go"))}"`),
+    tile(t("t_last"), last ? day(last.when) : esc(t("t_none")), last ? esc(last.title) : "", null, "", lastDetails),
     tile(t("t_cc"), `<span class="status ${statusClass(ccStatus)}">${STATUS_ICON[ccStatus] || ""} ${esc(t(`s_${ccStatus}`))}</span>`,
-      cc && cc.checked_at ? esc(t("t_cc_note", { d: day(cc.checked_at) })) : ""),
+      cc && cc.checked_at ? esc(t("t_cc_note", { d: day(cc.checked_at) })) : "", null, "", ccDetails),
   ].join("");
+  // The PROV tile opens the changed datasets; its Details and links keep their own behaviour.
+  const go = el("tile-events");
+  go.addEventListener("click", (ev) => {
+    if (ev.target.closest("summary, .tile-more") && !ev.target.closest("[data-go]")) return;
+    if (ev.target.closest("a") && !ev.target.closest("[data-go]")) return;
+    ev.preventDefault();
+    showChangedDatasets();
+  });
+  go.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter" && ev.target === go) showChangedDatasets();
+  });
 }
 
 // --- changes per month: stacked bars, one axis, 2px surface gaps -----------------

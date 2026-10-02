@@ -183,3 +183,15 @@ h3.sub { margin-top: 18px; }
 .cc-sentence { margin: 6px 0 0; }
 .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 18px; }
 #moves td:nth-child(-n+2) { overflow-wrap: anywhere; min-width: 9em; }
+
+/* tiles: "Details" expands in place without stretching the other tiles of the row */
+section.tiles { align-items: start; }
+.tile-more { margin-top: 8px; font-size: .82rem; color: var(--text-2); overflow-wrap: anywhere; }
+.tile-more summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.tile-more p { margin: 6px 0 0; }
+.tile-more ul { margin: 4px 0 0; padding-left: 0; list-style: none; }
+.tile-more li { margin: 3px 0; }
+/* the PROV tile is a link to the datasets that changed */
+.tile.go { cursor: pointer; }
+.tile.go:hover, .tile.go:focus-visible { border-color: var(--accent); }
+#datasets-head { scroll-margin-top: 16px; }
