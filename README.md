@@ -7,6 +7,8 @@
 [![Cross-Check](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/cross_check.yml/badge.svg)](https://github.com/lsp3cesarschool/5ltep-layer4/actions/workflows/cross_check.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+**English** · [Português](LEIAME.md)
+
 <!-- CROSS_CHECK_STATUS:START -->
 ✅ **Cross-check passing** — last verified 2026-10-02 09:58 UTC. All 79 reachable datasets in sync with the live portal (dadosabertos.ibama.gov.br); latest snapshot is 5.4h old.
 <!-- CROSS_CHECK_STATUS:END -->
@@ -218,6 +220,7 @@ When a retroactive alteration is detected:
 ├── requirements.txt                 # Python dependencies
 ├── LICENSE                          # MIT License
 ├── README.md                        # This file
+├── LEIAME.md                        # This file, in Portuguese
 ├── changes.md                       # Human-readable change log (generated each cycle)
 ├── compress_snapshots.py            # Weekly gzip of snapshots older than 90 days
 ├── cross_check.py                   # Independent validator vs. live CKAN portal

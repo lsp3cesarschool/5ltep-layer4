@@ -9,7 +9,7 @@ pipeline's change-detection results.
 
 Runs in parallel to main.py (separate workflow, no shared state at runtime),
 writes data/cross_check_report.json, and updates a status sentence in
-README.md between dedicated markers.
+README.md (English) and LEIAME.md (Portuguese) between dedicated markers.
 
 Exit codes:
   0  IN_SYNC   — live matches latest snapshot exactly
@@ -35,6 +35,7 @@ MANIFEST = Path("data/snapshots/manifest.json")
 SNAPSHOTS_DIR = Path("data/snapshots")
 REPORT = Path("data/cross_check_report.json")
 README = Path("README.md")
+LEIAME = Path("LEIAME.md")
 USER_AGENT = "5LTEP-Layer4/1.0 (parallel cross-check)"
 MONITOR_TOLERANCE_HOURS = 7
 MIN_COVERAGE_RATIO = 0.90
@@ -79,43 +80,73 @@ def latest_snapshot_path():
     return latest_run, SNAPSHOTS_DIR / manifest["snapshots"][snap_hash]
 
 
+def _pt(value: float, fmt: str) -> str:
+    """Format a number with the Portuguese decimal comma."""
+    return format(value, fmt).replace(".", ",")
+
+
 def render_status(divergences, snapshot_age_h, shared, errors, coverage, ended):
+    """Return (status, exit_code, English sentence, Portuguese sentence)."""
     ts = ended.strftime("%Y-%m-%d %H:%M UTC")
     cov_pct = coverage * 100
+    host = PORTAL.split('//')[-1]
+    age, age_pt = f"{snapshot_age_h:.1f}h", f"{_pt(snapshot_age_h, '.1f')} h"
     if coverage < MIN_COVERAGE_RATIO:
         return "ERROR", 1, (
             f"❌ **Cross-check error** — last attempt {ts}; coverage {cov_pct:.0f}% "
             f"below {MIN_COVERAGE_RATIO * 100:.0f}% threshold ({errors} fetch failure(s)). "
             f"See `data/cross_check_report.json`."
+        ), (
+            f"❌ **Erro na verificação cruzada** — última tentativa em {ts}; cobertura de "
+            f"{cov_pct:.0f}%, abaixo do limite de {MIN_COVERAGE_RATIO * 100:.0f}% "
+            f"({errors} falha(s) de consulta). Veja `data/cross_check_report.json`."
         )
     note = "" if errors == 0 else f" Coverage: {cov_pct:.0f}% ({errors} transient fetch error(s))."
+    note_pt = "" if errors == 0 else f" Cobertura: {cov_pct:.0f}% ({errors} erro(s) transitório(s) de consulta)."
     if divergences == 0:
         emoji = "✅" if errors == 0 else "🟡"
         label = "passing" if errors == 0 else "degraded"
+        label_pt = "aprovada" if errors == 0 else "degradada"
         return ("IN_SYNC" if errors == 0 else "DEGRADED"), 0, (
             f"{emoji} **Cross-check {label}** — last verified {ts}. All {shared} reachable "
-            f"datasets in sync with the live portal ({PORTAL.split('//')[-1]}); latest snapshot is {snapshot_age_h:.1f}h old.{note}"
+            f"datasets in sync with the live portal ({host}); latest snapshot is {age} old.{note}"
+        ), (
+            f"{emoji} **Verificação cruzada {label_pt}** — última verificação em {ts}. Todos os "
+            f"{shared} conjuntos de dados acessíveis estão sincronizados com o portal ao vivo "
+            f"({host}); o snapshot mais recente tem {age_pt}.{note_pt}"
         )
     if snapshot_age_h <= MONITOR_TOLERANCE_HOURS:
         return "PENDING", 0, (
             f"⏳ **Cross-check pending** — last verified {ts}. {divergences} divergence(s) "
-            f"detected; next monitor run will reconcile (snapshot age {snapshot_age_h:.1f}h "
+            f"detected; next monitor run will reconcile (snapshot age {age} "
             f"≤ {MONITOR_TOLERANCE_HOURS}h tolerance).{note}"
+        ), (
+            f"⏳ **Verificação cruzada pendente** — última verificação em {ts}. "
+            f"{divergences} divergência(s) detectada(s); a próxima execução do monitoramento "
+            f"vai reconciliá-las (snapshot com {age_pt} ≤ tolerância de "
+            f"{MONITOR_TOLERANCE_HOURS} h).{note_pt}"
         )
     return "STALE", 1, (
         f"⚠️ **Cross-check stale** — last verified {ts}. {divergences} unreconciled "
-        f"divergence(s); latest snapshot is {snapshot_age_h:.1f}h old (> "
+        f"divergence(s); latest snapshot is {age} old (> "
         f"{MONITOR_TOLERANCE_HOURS}h). Monitor workflow may need attention.{note}"
+    ), (
+        f"⚠️ **Verificação cruzada desatualizada** — última verificação em {ts}. "
+        f"{divergences} divergência(s) não reconciliada(s); o snapshot mais recente tem "
+        f"{age_pt} (> {MONITOR_TOLERANCE_HOURS} h). O workflow de monitoramento pode "
+        f"precisar de atenção.{note_pt}"
     )
 
 
-def update_readme(sentence: str) -> bool:
-    text = README.read_text(encoding="utf-8")
+def update_readme(sentence: str, path: Path = README) -> bool:
+    if not path.exists():
+        return False
+    text = path.read_text(encoding="utf-8")
     if MARKER_START not in text or MARKER_END not in text:
         return False
     head, _, rest = text.partition(MARKER_START)
     _, _, tail = rest.partition(MARKER_END)
-    README.write_text(f"{head}{MARKER_START}\n{sentence}\n{MARKER_END}{tail}", encoding="utf-8")
+    path.write_text(f"{head}{MARKER_START}\n{sentence}\n{MARKER_END}{tail}", encoding="utf-8")
     return True
 
 
@@ -163,7 +194,7 @@ def main() -> int:
     snapshot_age_h = (ended - snap_dt).total_seconds() / 3600
     divergences = len(added) + len(removed) + len(modified)
     coverage = (len(shared) - len(errors)) / len(shared) if shared else 0.0
-    status, exit_code, sentence = render_status(
+    status, exit_code, sentence, sentence_pt = render_status(
         divergences, snapshot_age_h, len(shared), len(errors), coverage, ended
     )
 
@@ -181,6 +212,7 @@ def main() -> int:
     }, indent=2, ensure_ascii=False), encoding="utf-8")
 
     updated = update_readme(sentence)
+    update_readme(sentence_pt, LEIAME)
     print(f"  status={status} divergences={divergences} errors={len(errors)} readme_updated={updated}")
     return exit_code
 
