@@ -121,16 +121,20 @@ class HashEngine:
     any single resource propagates to the dataset-level event.
     """
 
-    def __init__(self, hash_store_path: str = "data/hash_store.json", portal_url: str = ""):
+    def __init__(self, hash_store_path: str = "data/hash_store.json", portal_url: str = "",
+                 persist: bool = True):
         """
         Initialize the Hash Engine.
 
         Args:
             hash_store_path: Path to the JSON file storing previous hashes.
             portal_url: Base URL of the monitored CKAN portal.
+            persist: If False (dry runs), the hash store on disk is never
+                updated, so a trial cannot hide a change from the next cycle.
         """
         self.hash_store_path = Path(hash_store_path)
         self.portal_url = portal_url
+        self.persist = persist
         self.hash_store = self._load_store()
 
     def _load_store(self) -> dict:
@@ -288,6 +292,7 @@ class HashEngine:
                 "last_checked": event.detected_at,
             }
 
-        self.save_store()
+        if self.persist:
+            self.save_store()
         logger.info(f"Processed {len(events)} datasets for change detection")
         return events
