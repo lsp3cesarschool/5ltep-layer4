@@ -37,7 +37,8 @@ const I18N = {
     hosts_h: "Resource URLs by server, today", moves_h: "Moves and packaging changes",
     m_from: "From", m_to: "To", m_urls: "URLs", m_datasets: "Datasets", m_last: "Last seen", m_none: "No resource has moved to another server yet.",
     zip_to_plain: "zip → plain file", plain_to_zip: "plain file → zip",
-    latest_h: "Latest changes", search_ev: "Search datasets or changes", all_types: "All types",
+    latest_h: "Latest changes", f_period: "Period: {p}", clear_filter: "Remove this filter",
+    click_bar: "Click to see these changes", search_ev: "Search datasets or changes", all_types: "All types",
     c_when: "Detected (UTC)", c_dataset: "Dataset", c_type: "Type", c_what: "What changed", c_prov: "Provenance",
     log: "PROV log", critical: "critical", show_more: "Show all {n}", ev_none: "No change matches.",
     health_h: "Monitoring health",
@@ -95,7 +96,8 @@ const I18N = {
     hosts_h: "URLs de recursos por servidor, hoje", moves_h: "Mudanças de servidor e de empacotamento",
     m_from: "De", m_to: "Para", m_urls: "URLs", m_datasets: "Conjuntos", m_last: "Última vez", m_none: "Nenhum recurso mudou de servidor até agora.",
     zip_to_plain: "zip → arquivo simples", plain_to_zip: "arquivo simples → zip",
-    latest_h: "Últimas mudanças", search_ev: "Buscar conjuntos ou mudanças", all_types: "Todos os tipos",
+    latest_h: "Últimas mudanças", f_period: "Período: {p}", clear_filter: "Remover este filtro",
+    click_bar: "Clique para ver estas mudanças", search_ev: "Buscar conjuntos ou mudanças", all_types: "Todos os tipos",
     c_when: "Detectada (UTC)", c_dataset: "Conjunto", c_type: "Tipo", c_what: "O que mudou", c_prov: "Proveniência",
     log: "registro PROV", critical: "crítica", show_more: "Mostrar todas as {n}", ev_none: "Nenhuma mudança corresponde.",
     health_h: "Saúde do monitoramento",
@@ -165,6 +167,7 @@ function translatePage() {
   document.documentElement.lang = LANG === "pt" ? "pt-BR" : "en";
   document.querySelectorAll("[data-i18n]").forEach((n) => { n.textContent = t(n.dataset.i18n); });
   document.querySelectorAll("[data-i18n-placeholder]").forEach((n) => { n.placeholder = t(n.dataset.i18nPlaceholder); });
+  document.querySelectorAll("[data-i18n-aria]").forEach((n) => { n.setAttribute("aria-label", t(n.dataset.i18nAria)); });
   for (const lang of ["en", "pt"]) {
     const link = el(`lang-${lang}`);
     const u = new URL(location.href);
@@ -251,6 +254,7 @@ const TILE_GO = {
     run: () => {                       // unfiltered, so the first row is the last change
       el("ev-search").value = "";
       el("ev-type").value = "";
+      EV_PERIOD = null;
       SHOW_ALL = false;
       renderEvents();
       scrollToId("latest");
@@ -402,15 +406,19 @@ function renderMonths(d) {
   ms.forEach((m, i) => {
     let acc = 0;
     const segs = TYPES.filter((ty) => counts[m][ty]);
+    // the column's hit area first, so the blocks drawn after it receive their own clicks
+    svg += `<rect class="hit${totals[i] ? " has" : ""}" data-i="${i}" data-key="${esc(m)}" x="${x(i) - pw / ms.length / 2}" y="${Tp}"`
+      + ` width="${pw / ms.length}" height="${ph}"${totals[i] ? ' tabindex="0" role="link"' : ""}/>`;
     segs.forEach((ty, j) => {
       const v = counts[m][ty];
       const y0 = y(acc), y1 = y(acc + v);
       const top = j === segs.length - 1;
       const h = Math.max(1, y0 - y1 - (top ? 0 : 2));      // 2px surface gap between segments
       const r = top ? 4 : 0;
+      const seg = `class="seg" data-i="${i}" data-key="${esc(m)}" data-ty="${ty}" style="fill:${typeColor(ty)}"`;
       svg += top
-        ? `<path d="M${x(i) - bw / 2},${y0} V${y1 + r} q0,-${r} ${r},-${r} H${x(i) + bw / 2 - r} q${r},0 ${r},${r} V${y0} Z" style="fill:${typeColor(ty)}"/>`
-        : `<rect x="${x(i) - bw / 2}" y="${y0 - h}" width="${bw}" height="${h}" style="fill:${typeColor(ty)}"/>`;
+        ? `<path d="M${x(i) - bw / 2},${y0} V${y1 + r} q0,-${r} ${r},-${r} H${x(i) + bw / 2 - r} q${r},0 ${r},${r} V${y0} Z" ${seg}/>`
+        : `<rect x="${x(i) - bw / 2}" y="${y0 - h}" width="${bw}" height="${h}" ${seg}/>`;
       acc += v;
     });
     if (totals[i] && fits) svg += `<text class="label" x="${x(i)}" y="${y(totals[i]) - 4}" text-anchor="middle">${fmt(totals[i])}</text>`;
@@ -418,15 +426,15 @@ function renderMonths(d) {
     if (i % step === 0 || lastFits) {
       svg += `<text class="axis-label" x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(short(m))}</text>`;
     }
-    svg += `<rect class="hit" data-i="${i}" x="${x(i) - pw / ms.length / 2}" y="${Tp}" width="${pw / ms.length}" height="${ph}" tabindex="0"/>`;
     hits.push(`<strong>${esc(m)}</strong> · ${esc(t("total"))} ${fmt(totals[i])}<br>`
-      + segs.map((ty) => `${swatch(ty)}${esc(typeName(ty))}: ${fmt(counts[m][ty])}`).join("<br>"));
+      + segs.map((ty) => `${swatch(ty)}${esc(typeName(ty))}: ${fmt(counts[m][ty])}`).join("<br>")
+      + (totals[i] ? `<br><em>${esc(t("click_bar"))}</em>` : ""));
   });
   if (!totals.some(Boolean)) {
     svg += `<text class="label" x="${L + pw / 2}" y="${Tp + ph / 2}" text-anchor="middle">${esc(t("no_change_period"))}</text>`;
   }
   el("months-chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(el("months-title").textContent)}">${HATCH}${svg}</svg>`;
-  el("months-chart").querySelectorAll("rect.hit").forEach((n) => bindTip(n, hits[Number(n.dataset.i)]));
+  el("months-chart").querySelectorAll(".hit, .seg").forEach((n) => bindTip(n, hits[Number(n.dataset.i)]));
 
   el("months-table").innerHTML = `<thead><tr><th>${esc(t(byMonth ? "month" : "day"))}</th>${present.map((ty) => `<th>${esc(typeName(ty))}</th>`).join("")}`
     + `<th>${esc(t("total"))}</th></tr></thead><tbody>`
@@ -455,6 +463,35 @@ function renderWhere(d) {
 // --- latest changes ----------------------------------------------------------------
 const PAGE = 50;
 let SHOW_ALL = false;
+let EV_PERIOD = null;          // "2026-08" or "2026-08-14", set by clicking the changes chart
+
+// From the changes chart: Latest changes for one period, and one type when a coloured block was clicked.
+function showEvents(period, type) {
+  EV_PERIOD = period;
+  el("ev-search").value = "";
+  el("ev-type").value = [...el("ev-type").options].some((o) => o.value === type) ? type : "";
+  SHOW_ALL = false;
+  renderEvents();
+  tip.hidden = true;
+  scrollToId("latest");
+}
+
+function bindChartLinks() {
+  const chart = el("months-chart");
+  chart.addEventListener("click", (ev) => {
+    const seg = ev.target.closest(".seg");
+    const col = ev.target.closest(".hit.has");
+    if (seg) showEvents(seg.dataset.key, seg.dataset.ty);
+    else if (col) showEvents(col.dataset.key, "");
+  });
+  chart.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter" && ev.target.matches(".hit.has")) showEvents(ev.target.dataset.key, "");
+  });
+  el("ev-period-clear").addEventListener("click", () => {
+    EV_PERIOD = null;
+    renderEvents();
+  });
+}
 
 function eventRow(e, portal, withDataset = true) {
   const summary = LANG === "pt" ? e.summary_pt || e.summary : e.summary;
@@ -468,7 +505,10 @@ function renderEvents() {
   const q = el("ev-search").value.trim().toLowerCase();
   const ty = el("ev-type").value;
   const rows = DATA.events.filter((e) => (!ty || e.type === ty)
+    && (!EV_PERIOD || e.when.startsWith(EV_PERIOD))
     && (!q || `${e.title} ${e.name} ${e.summary} ${e.summary_pt}`.toLowerCase().includes(q)));
+  el("ev-period").hidden = !EV_PERIOD;
+  el("ev-period-label").textContent = EV_PERIOD ? t("f_period", { p: EV_PERIOD }) : "";
   const shown = SHOW_ALL ? rows : rows.slice(0, PAGE);
   el("events").innerHTML = `<thead><tr><th>${esc(t("c_when"))}</th><th>${esc(t("c_dataset"))}</th><th>${esc(t("c_type"))}</th>`
     + `<th>${esc(t("c_what"))}</th><th>${esc(t("c_prov"))}</th></tr></thead><tbody>`
@@ -595,6 +635,7 @@ async function main() {
   bindTileLinks();
   el("period").value = defaultPeriod(DATA);
   el("period").addEventListener("input", () => renderMonths(DATA));
+  bindChartLinks();
   renderMonths(DATA);
   renderWhere(DATA);
   const types = [...new Set(DATA.events.map((e) => e.type))];

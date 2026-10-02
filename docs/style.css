@@ -197,3 +197,11 @@ section.tiles { align-items: start; }
 .tile.go { cursor: pointer; }
 .tile.go:hover, .tile.go:focus-visible { border-color: var(--accent); }
 #datasets-head, #latest, #health, #cross-check-panel { scroll-margin-top: 16px; }
+
+/* changes chart: each coloured block opens Latest changes for its period and type */
+.chart .seg { cursor: pointer; }
+.chart .seg:hover, .chart .seg:focus { opacity: .8; }
+.chart .hit.has { cursor: pointer; }
+.chip-filter { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--accent); border-radius: 14px;
+  padding: 2px 4px 2px 10px; font-size: .85rem; color: var(--text); }
+.chip-filter button { border: 0; background: none; color: var(--accent); cursor: pointer; font: inherit; padding: 0 4px; }
