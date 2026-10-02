@@ -14,6 +14,7 @@ each change, and appends it to a per-dataset derivation chain that git makes tam
 | 📄 **Change log** | [`changes.md`](changes.md): every detected change in plain words, rebuilt each cycle |
 | 🔗 **Provenance records** | [`provenance_logs/`](provenance_logs/): one append-only W3C PROV-DM (JSON-LD) chain per dataset |
 | ✅ **Cross-check** | [`data/cross_check_report.json`](data/cross_check_report.json): a daily, independent comparison with the live portal (badge above) |
+| 🔁 **Control experiments** | [5ltep-layer4-aneel](https://github.com/lsp3cesarschool/5ltep-layer4-aneel) and [5ltep-layer4-recife](https://github.com/lsp3cesarschool/5ltep-layer4-recife): the same code on two other portals (a federal regulator and a municipality) |
 | 🧪 **Evaluation** | [`evaluation/`](evaluation/): scripts that reproduce the paper's evaluation |
 
 > **Status: research demonstration.** This toolkit is part of a master's research project and is

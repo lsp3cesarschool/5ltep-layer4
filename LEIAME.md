@@ -15,6 +15,7 @@ conjunto, que o git torna à prova de adulteração.
 | 📄 **Registro de mudanças** | [`changes.md`](changes.md) (em inglês): cada mudança detectada em palavras simples, reconstruído a cada ciclo |
 | 🔗 **Registros de proveniência** | [`provenance_logs/`](provenance_logs/): uma cadeia W3C PROV-DM (JSON-LD) somente por acréscimo, por conjunto |
 | ✅ **Verificação cruzada** | [`data/cross_check_report.json`](data/cross_check_report.json): comparação diária e independente com o portal ao vivo (selo acima) |
+| 🔁 **Experimentos de controle** | [5ltep-layer4-aneel](https://github.com/lsp3cesarschool/5ltep-layer4-aneel) e [5ltep-layer4-recife](https://github.com/lsp3cesarschool/5ltep-layer4-recife): o mesmo código em outros dois portais (uma agência reguladora federal e um município) |
 | 🧪 **Avaliação** | [`evaluation/`](evaluation/): scripts que reproduzem a avaliação do artigo |
 
 > **Situação: demonstração de pesquisa.** Este kit faz parte de uma pesquisa de mestrado e é mantido
