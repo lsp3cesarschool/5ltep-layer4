@@ -30,7 +30,7 @@ const I18N = {
     months_h: "Changes per month",
     months_note: "The classifier described in the paper has four types: CLEAN_UPDATE (no change; not charted), CONTENT_MOD, SCHEMA_DRIFT and RETRO_ALTER; changes of the last two types are critical. Each change of the last three types becomes a W3C PROV-DM record. New datasets (recorded as a baseline on their first observation) and removed datasets are also shown, by date of detection; they are not change types and produce no PROV record.",
     table_view: "Table view", month: "Month", day: "Day", total: "Total",
-    days_h: "Changes per day", period: "Period", p_m: "By month", p_d14: "By day, last 14 days",
+    days_h: "Changes per day", period: "Period", p_m: "By month, since monitoring began", p_dall: "By day, since monitoring began", p_d14: "By day, last 14 days",
     p_d30: "By day, last 30 days", p_d90: "By day, last 90 days", no_change_period: "No change detected in this period",
     where_h: "Where the files are",
     where_note: "The server each resource URL points to today, and the moves between servers seen since monitoring began. A move, or a switch between a zip and a plain file, usually keeps the format the portal declares: a program that downloads these files can break without warning.",
@@ -94,7 +94,7 @@ const I18N = {
     months_h: "Mudanças por mês",
     months_note: "O classificador descrito no artigo tem quatro tipos: CLEAN_UPDATE (sem mudança; fora do gráfico), CONTENT_MOD, SCHEMA_DRIFT e RETRO_ALTER; as mudanças dos dois últimos tipos são críticas. Cada mudança dos três últimos tipos vira um registro W3C PROV-DM. Conjuntos novos (registrados como linha de base na primeira observação) e conjuntos removidos também aparecem, pela data de detecção; não são tipos de mudança e não geram registro PROV.",
     table_view: "Ver como tabela", month: "Mês", day: "Dia", total: "Total",
-    days_h: "Mudanças por dia", period: "Período", p_m: "Por mês", p_d14: "Por dia, últimos 14 dias",
+    days_h: "Mudanças por dia", period: "Período", p_m: "Por mês, desde o início da coleta", p_dall: "Por dia, desde o início da coleta", p_d14: "Por dia, últimos 14 dias",
     p_d30: "Por dia, últimos 30 dias", p_d90: "Por dia, últimos 90 dias", no_change_period: "Nenhuma mudança detectada neste período",
     where_h: "Onde estão os arquivos",
     where_note: "O servidor para o qual aponta hoje a URL de cada recurso, e as mudanças de servidor vistas desde o início do monitoramento. Uma mudança de servidor, ou a troca entre zip e arquivo simples, costuma manter o formato que o portal declara: um programa que baixa esses arquivos pode quebrar sem aviso.",
@@ -339,7 +339,7 @@ function renderTiles(d, cc) {
 // --- changes per month: stacked bars, one axis, 2px surface gaps -----------------
 // Periods of the changes chart: by month since monitoring began, or by day over the last N days.
 // A repository monitored for less than 60 days opens by day, so a new instance shows its first changes.
-const PERIODS = ["m", "d14", "d30", "d90"];
+const PERIODS = ["m", "dall", "d14", "d30", "d90"];
 
 function defaultPeriod(d) {
   const asked = new URLSearchParams(location.search).get("period");
@@ -361,8 +361,9 @@ function buckets(d, period) {
     }
     return { keys: out, keyOf: (iso) => iso.slice(0, 7), short: (k) => k };
   }
-  const days = Number(period.slice(1));
   const last = new Date(end.slice(0, 10) + "T00:00:00Z");
+  const first = new Date(since.slice(0, 10) + "T00:00:00Z");
+  const days = period === "dall" ? Math.round((last - first) / 86400e3) + 1 : Number(period.slice(1));
   const out = [];
   for (let k = days - 1; k >= 0; k--) {
     const x = new Date(last);
@@ -432,7 +433,7 @@ function renderMonths(d) {
       acc += v;
     });
     if (totals[i] && fits) svg += `<text class="label" x="${x(i)}" y="${y(totals[i]) - 4}" text-anchor="middle">${fmt(totals[i])}</text>`;
-    const lastFits = i === ms.length - 1 && i % step >= step / 2;   // the last day, unless it would overlap
+    const lastFits = i === ms.length - 1 && (step === 1 || i % step >= step * 0.7);   // the last day, unless it would overlap
     if (i % step === 0 || lastFits) {
       svg += `<text class="axis-label" x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(short(m))}</text>`;
     }
