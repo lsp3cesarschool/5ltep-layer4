@@ -189,14 +189,21 @@ def main() -> int:
     local = {d["id"]: d for d in load_snapshot(snap_path)}
     name_to_id = {d["name"]: did for did, d in local.items()}
 
-    live_set = set(fetch(f"{PORTAL}/api/3/action/package_list")["result"])
+    modified, errors = [], []
+    try:
+        live_set = set(fetch(f"{PORTAL}/api/3/action/package_list")["result"])
+    except Exception as e:
+        # The portal did not list its datasets: nothing can be compared, so the
+        # result is ERROR (coverage 0), recorded like any other result.
+        print(f"  package_list failed: {e}")
+        errors.append({"name": "package_list", "error": str(e)})
+        live_set = None
     local_set = set(name_to_id.keys())
-    added = sorted(live_set - local_set)
-    removed = sorted(local_set - live_set)
-    shared = sorted(live_set & local_set)
+    added = sorted(live_set - local_set) if live_set is not None else []
+    removed = sorted(local_set - live_set) if live_set is not None else []
+    shared = sorted(live_set & local_set) if live_set is not None else []
     print(f"  added={len(added)} removed={len(removed)} shared={len(shared)}")
 
-    modified, errors = [], []
     for name in shared:
         try:
             d = fetch(f"{PORTAL}/api/3/action/package_show?id={name}")["result"]
@@ -231,7 +238,7 @@ def main() -> int:
         "monitor_tolerance_hours": MONITOR_TOLERANCE_HOURS,
         "coverage_ratio": round(coverage, 4),
         "min_coverage_ratio": MIN_COVERAGE_RATIO,
-        "datasets": {"snapshot": len(local), "live": len(live_set),
+        "datasets": {"snapshot": len(local), "live": len(live_set or ()),
                      "shared": len(shared), "added": added, "removed": removed},
         "modified": modified, "errors": errors,
     }

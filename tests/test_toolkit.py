@@ -810,3 +810,32 @@ class TestDocs:
         assert "(LEIAME.md)" in readme and "(README.md)" in leiame
         assert "docs%2Fdata%2Fstatus.json" in readme and "docs%2Fdata%2Fstatus.pt.json" in leiame
         assert "CROSS_CHECK_STATUS" not in readme + leiame  # no workflow rewrites the READMEs
+
+
+class TestCrossCheck:
+    def test_package_list_failure_is_recorded_as_error(self, sample_dataset, tmp_path, monkeypatch):
+        """A portal that refuses package_list yields an ERROR report and badge, not a crash."""
+        import urllib.error
+        import cross_check
+        snaps = tmp_path / "snapshots"
+        snaps.mkdir()
+        (snaps / "snapshot_20261002T000000Z.json").write_text(json.dumps([sample_dataset]), encoding="utf-8")
+        (snaps / "manifest.json").write_text(json.dumps(
+            {"runs": {"20261002T000000Z": "h"}, "snapshots": {"h": "snapshot_20261002T000000Z.json"}}),
+            encoding="utf-8")
+        docs = tmp_path / "docs_data"
+        monkeypatch.setattr(cross_check, "MANIFEST", snaps / "manifest.json")
+        monkeypatch.setattr(cross_check, "SNAPSHOTS_DIR", snaps)
+        monkeypatch.setattr(cross_check, "REPORT", tmp_path / "report.json")
+        monkeypatch.setattr(cross_check, "DOCS_DATA", docs)
+        monkeypatch.setattr(cross_check, "PANEL", docs / "cross_check.json")
+        monkeypatch.setattr(cross_check, "BADGES", {"en": docs / "b.json", "pt": docs / "b.pt.json"})
+
+        def refuse(url):
+            raise urllib.error.HTTPError(url, 403, "Forbidden", {}, None)
+
+        monkeypatch.setattr(cross_check, "fetch", refuse)
+        assert cross_check.main() == 1
+        report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+        assert report["status"] == "ERROR" and report["errors"][0]["name"] == "package_list"
+        assert json.loads((docs / "b.json").read_text(encoding="utf-8"))["color"] == "red"
