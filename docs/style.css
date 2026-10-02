@@ -157,15 +157,17 @@ h3.sub { margin-top: 18px; }
 .chart svg { max-width: 860px; }
 
 /* --- Layer 4 additions ------------------------------------------------------------- */
-/* change types: categorical slots 1-5 of the validated palette, fixed order */
-:root { --type-CONTENT_MOD: #2a78d6; --type-SCHEMA_DRIFT: #eb6834; --type-RETRO_ALTER: #1baf7a;
-  --type-NEW: #eda100; --type-REMOVED: #e87ba4; --type-NOT_FINGERPRINTED: #898781; }
+/* change types: a heat scale by severity (validated light and dark): info = cool blue, warning =
+   yellow, critical = red; SCHEMA_DRIFT is hatched red so it never relies on colour alone to differ from
+   RETRO_ALTER; REMOVED is a neutral grey (a dataset leaving the portal is not a content change). */
+:root { --type-NEW: #2a78d6; --type-REMOVED: #898781; --type-CONTENT_MOD: #eda100;
+  --type-SCHEMA_DRIFT: #d03b3b; --type-RETRO_ALTER: #d03b3b; --type-NOT_FINGERPRINTED: #898781; }
 @media (prefers-color-scheme: dark) {
-  :root:where(:not([data-theme="light"])) { --type-CONTENT_MOD: #3987e5; --type-SCHEMA_DRIFT: #d95926;
-    --type-RETRO_ALTER: #199e70; --type-NEW: #c98500; --type-REMOVED: #d55181; }
+  :root:where(:not([data-theme="light"])) { --type-NEW: #3987e5; --type-CONTENT_MOD: #c98500; }
 }
-:root[data-theme="dark"] { --type-CONTENT_MOD: #3987e5; --type-SCHEMA_DRIFT: #d95926;
-  --type-RETRO_ALTER: #199e70; --type-NEW: #c98500; --type-REMOVED: #d55181; }
+:root[data-theme="dark"] { --type-NEW: #3987e5; --type-CONTENT_MOD: #c98500; }
+.swatch.hatch { background: repeating-linear-gradient(45deg, var(--type-SCHEMA_DRIFT) 0 2.5px, var(--surface) 2.5px 4.5px) !important;
+  outline: 1px solid var(--type-SCHEMA_DRIFT); outline-offset: -1px; }
 
 .intro { max-width: 1200px; margin: 10px auto 0; padding: 0 16px; color: var(--text-2); }
 .chart .bar-seg { stroke: var(--surface); stroke-width: 1; }

@@ -106,10 +106,15 @@ const day = (iso) => (iso || "").slice(0, 10);
 const stamp = (iso) => (iso ? `${iso.slice(0, 10)} ${iso.slice(11, 16)}` : "—");
 const safeUrl = (u) => (/^https?:\/\//i.test(u || "") ? u : "#");
 
-// Fixed order = fixed colour (categorical slots 1-5); NOT_FINGERPRINTED is grey and never charted.
-const TYPES = ["CONTENT_MOD", "SCHEMA_DRIFT", "RETRO_ALTER", "NEW", "REMOVED"];
+// Heat by severity, bottom of the stack to top: NEW (info), REMOVED (neutral), CONTENT_MOD (warning),
+// SCHEMA_DRIFT and RETRO_ALTER (critical; the first hatched). NOT_FINGERPRINTED is grey and never charted.
+const TYPES = ["NEW", "REMOVED", "CONTENT_MOD", "SCHEMA_DRIFT", "RETRO_ALTER"];
 const PROV_TYPES = new Set(["CONTENT_MOD", "SCHEMA_DRIFT", "RETRO_ALTER"]);
-const typeColor = (ty) => `var(--type-${ty})`;
+const typeColor = (ty) => (ty === "SCHEMA_DRIFT" ? "url(#hatch-drift)" : `var(--type-${ty})`);
+const swatch = (ty) => `<span class="swatch${ty === "SCHEMA_DRIFT" ? " hatch" : ""}" style="background:var(--type-${ty})"></span>`;
+// 45° hatch in the critical red, on the chart surface (SVG pattern for SCHEMA_DRIFT bars)
+const HATCH = `<defs><pattern id="hatch-drift" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)">`
+  + `<rect width="5" height="5" style="fill:var(--surface)"/><rect width="3" height="5" style="fill:var(--type-SCHEMA_DRIFT)"/></pattern></defs>`;
 
 function repo() {
   // On GitHub Pages (<owner>.github.io/<repo>/) the repository is github.com/<owner>/<repo>.
@@ -159,7 +164,7 @@ function bindTip(node, html) {
 
 function typeLabel(ty) {
   const crit = ty === "SCHEMA_DRIFT" || ty === "RETRO_ALTER";
-  return `<span class="type" title="${esc(t(`type_${ty}`))}"><span class="swatch" style="background:${typeColor(ty)}"></span>`
+  return `<span class="type" title="${esc(t(`type_${ty}`))}">${swatch(ty)}`
     + `<code>${esc(ty)}</code></span>${crit ? ` <span class="crit">⚠ ${esc(t("critical"))}</span>` : ""}`;
 }
 
@@ -220,7 +225,7 @@ function renderMonths(d) {
   }
   const present = TYPES.filter((ty) => ms.some((m) => counts[m][ty]));
   el("months-legend").innerHTML = present.map((ty) =>
-    `<li><span class="swatch" style="background:${typeColor(ty)}"></span><code>${esc(ty)}</code> · ${esc(t(`type_${ty}`))}</li>`).join("");
+    `<li>${swatch(ty)}<code>${esc(ty)}</code> · ${esc(t(`type_${ty}`))}</li>`).join("");
 
   const totals = ms.map((m) => TYPES.reduce((a, ty) => a + counts[m][ty], 0));
   const max = niceMax(Math.max(1, ...totals));
@@ -246,17 +251,17 @@ function renderMonths(d) {
       const h = Math.max(1, y0 - y1 - (top ? 0 : 2));      // 2px surface gap between segments
       const r = top ? 4 : 0;
       svg += top
-        ? `<path d="M${x(i) - bw / 2},${y0} V${y1 + r} q0,-${r} ${r},-${r} H${x(i) + bw / 2 - r} q${r},0 ${r},${r} V${y0} Z" fill="${typeColor(ty)}"/>`
-        : `<rect x="${x(i) - bw / 2}" y="${y0 - h}" width="${bw}" height="${h}" fill="${typeColor(ty)}"/>`;
+        ? `<path d="M${x(i) - bw / 2},${y0} V${y1 + r} q0,-${r} ${r},-${r} H${x(i) + bw / 2 - r} q${r},0 ${r},${r} V${y0} Z" style="fill:${typeColor(ty)}"/>`
+        : `<rect x="${x(i) - bw / 2}" y="${y0 - h}" width="${bw}" height="${h}" style="fill:${typeColor(ty)}"/>`;
       acc += v;
     });
     if (totals[i]) svg += `<text class="label" x="${x(i)}" y="${y(totals[i]) - 4}" text-anchor="middle">${fmt(totals[i])}</text>`;
     svg += `<text class="axis-label" x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(m)}</text>`;
     svg += `<rect class="hit" data-i="${i}" x="${x(i) - pw / ms.length / 2}" y="${Tp}" width="${pw / ms.length}" height="${ph}" tabindex="0"/>`;
     hits.push(`<strong>${esc(m)}</strong> · ${esc(t("total"))} ${fmt(totals[i])}<br>`
-      + segs.map((ty) => `<span class="swatch" style="background:${typeColor(ty)}"></span>${esc(ty)}: ${fmt(counts[m][ty])}`).join("<br>"));
+      + segs.map((ty) => `${swatch(ty)}${esc(ty)}: ${fmt(counts[m][ty])}`).join("<br>"));
   });
-  el("months-chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("months_h"))}">${svg}</svg>`;
+  el("months-chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("months_h"))}">${HATCH}${svg}</svg>`;
   el("months-chart").querySelectorAll("rect.hit").forEach((n) => bindTip(n, hits[Number(n.dataset.i)]));
 
   el("months-table").innerHTML = `<thead><tr><th>${esc(t("month"))}</th>${present.map((ty) => `<th>${esc(ty)}</th>`).join("")}`
