@@ -427,7 +427,8 @@ function renderMonths(d) {
       svg += `<text class="axis-label" x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(short(m))}</text>`;
     }
     hits.push(`<strong>${esc(m)}</strong> · ${esc(t("total"))} ${fmt(totals[i])}<br>`
-      + segs.map((ty) => `${swatch(ty)}${esc(typeName(ty))}: ${fmt(counts[m][ty])}`).join("<br>")
+      // listed top to bottom as the bar is drawn: cool types above, hot ones below
+      + segs.slice().reverse().map((ty) => `${swatch(ty)}${esc(typeName(ty))}: ${fmt(counts[m][ty])}`).join("<br>")
       + (totals[i] ? `<br><em>${esc(t("click_bar"))}</em>` : ""));
   });
   if (!totals.some(Boolean)) {
