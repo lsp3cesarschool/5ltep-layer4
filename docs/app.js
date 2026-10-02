@@ -37,6 +37,11 @@ const I18N = {
     hosts_h: "Resource URLs by server, today", moves_h: "Moves and packaging changes",
     m_from: "From", m_to: "To", m_urls: "URLs", m_datasets: "Datasets", m_last: "Last seen", m_none: "No resource has moved to another server yet.",
     zip_to_plain: "zip → plain file", plain_to_zip: "plain file → zip",
+    no_url: "[NO URL]", bad_url: "[URL WITHOUT SERVER]",
+    h_tip: "{n} resource URL(s) point to {host}. The portal records each address exactly as it was entered, so the same server written in another way (with its port, for example) shows as a separate line.",
+    h_tip_port: "Here the port is written in the address ({port}; 80 is HTTP's default and 443 HTTPS's): the same server as {base}.",
+    h_tip_none: "{n} resource(s) published with an empty URL field: the portal records the address as entered, and nothing was entered, so there is no file to download.",
+    h_tip_bad: "{n} resource(s) whose URL has no server (no http:// or https://): the portal records the address as entered.",
     latest_h: "Latest changes", f_period: "Period: {p}", clear_filter: "Remove this filter",
     click_bar: "Click to see these changes", search_ev: "Search datasets or changes", all_types: "All types",
     c_when: "Detected (UTC)", c_dataset: "Dataset", c_type: "Type", c_what: "What changed", c_prov: "Provenance",
@@ -96,6 +101,11 @@ const I18N = {
     hosts_h: "URLs de recursos por servidor, hoje", moves_h: "Mudanças de servidor e de empacotamento",
     m_from: "De", m_to: "Para", m_urls: "URLs", m_datasets: "Conjuntos", m_last: "Última vez", m_none: "Nenhum recurso mudou de servidor até agora.",
     zip_to_plain: "zip → arquivo simples", plain_to_zip: "arquivo simples → zip",
+    no_url: "[SEM URL]", bad_url: "[URL SEM SERVIDOR]",
+    h_tip: "{n} URL(s) de recursos apontam para {host}. O portal grava cada endereço exatamente como foi cadastrado, então o mesmo servidor escrito de outro jeito (com a porta, por exemplo) aparece em outra linha.",
+    h_tip_port: "Aqui a porta está escrita no endereço ({port}; 80 é a padrão do HTTP e 443 a do HTTPS): é o mesmo servidor de {base}.",
+    h_tip_none: "{n} recurso(s) publicado(s) com o campo de URL vazio: o portal grava o endereço como foi cadastrado, e nada foi cadastrado, então não há arquivo para baixar.",
+    h_tip_bad: "{n} recurso(s) cuja URL não tem servidor (sem http:// ou https://): o portal grava o endereço como foi cadastrado.",
     latest_h: "Últimas mudanças", f_period: "Período: {p}", clear_filter: "Remover este filtro",
     click_bar: "Clique para ver estas mudanças", search_ev: "Buscar conjuntos ou mudanças", all_types: "Todos os tipos",
     c_when: "Detectada (UTC)", c_dataset: "Conjunto", c_type: "Tipo", c_what: "O que mudou", c_prov: "Proveniência",
@@ -447,8 +457,26 @@ function renderMonths(d) {
 function renderWhere(d) {
   const hosts = Object.entries(d.hosts_now || {});
   const max = Math.max(1, ...hosts.map(([, n]) => n));
-  el("hosts").innerHTML = hosts.map(([h, n]) => `<span class="lbl">${esc(h)}</span>`
-    + `<span class="bar"><span style="width:${(n / max) * 100}%"></span></span><span class="n">${fmt(n)}</span>`).join("");
+  const missing = d.urls_without_host || [];
+  const hostLabel = (h) => (h === "" ? t("no_url") : h === "?" ? t("bad_url") : h);
+  // The tooltip explains each line: as recorded by the portal, a written port, or no server at all.
+  const hostTip = (h, n) => {
+    if (h === "" || h === "?") {
+      const items = missing.filter((x) => x.host === h || (h === "?" && x.host === undefined));
+      return esc(t(h === "" ? "h_tip_none" : "h_tip_bad", { n: fmt(n) }))
+        + items.map((x) => `<br>· ${esc(x.title)}: ${esc(x.resource)}${x.format ? ` (${esc(x.format)})` : ""}`).join("");
+    }
+    const port = h.match(/^(.*):(\d+)$/);
+    return esc(t("h_tip", { n: fmt(n), host: h }))
+      + (port ? `<br>${esc(t("h_tip_port", { port: `:${port[2]}`, base: port[1] }))}` : "");
+  };
+  el("hosts").innerHTML = hosts.map(([h, n], i) => `<span class="lbl host-row" data-i="${i}" tabindex="0">${esc(hostLabel(h))}</span>`
+    + `<span class="bar host-row" data-i="${i}"><span style="width:${(n / max) * 100}%"></span></span>`
+    + `<span class="n host-row" data-i="${i}">${fmt(n)}</span>`).join("");
+  el("hosts").querySelectorAll(".host-row").forEach((node) => {
+    const [h, n] = hosts[Number(node.dataset.i)];
+    bindTip(node, hostTip(h, n));
+  });
   const moves = d.relocations || [];
   el("moves").innerHTML = moves.length
     ? `<thead><tr><th>${esc(t("m_from"))}</th><th>${esc(t("m_to"))}</th><th class="num">${esc(t("m_urls"))}</th>`

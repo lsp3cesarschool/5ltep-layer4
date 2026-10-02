@@ -720,7 +720,7 @@ class TestChangeSummary:
 # ---------------------------------------------------------------------------
 
 from portal_config import load_portal  # noqa: E402
-from dashboard import status_badges  # noqa: E402
+from dashboard import build_dashboard, status_badges  # noqa: E402
 
 
 class TestPortalConfig:
@@ -753,6 +753,24 @@ class TestPortalConfig:
     def test_repository_declares_a_portal(self, monkeypatch):
         monkeypatch.delenv("CKAN_PORTAL_URL", raising=False)
         assert load_portal()["portal_url"].startswith("https://")
+
+
+class TestDashboardHosts:
+    def test_hosts_as_recorded_and_resources_without_url(self, sample_dataset, tmp_path):
+        """Hosts keep a written port; an empty URL is "" and is listed by dataset and resource."""
+        snaps = tmp_path / "snapshots"
+        snaps.mkdir()
+        ds = json.loads(json.dumps(sample_dataset))
+        ds["resources"][1]["url"] = "http://ibama.gov.br:80/data/1.json"
+        ds["resources"][2]["url"] = ""
+        (snaps / "snapshot_20261002T000000Z.json").write_text(json.dumps([ds]), encoding="utf-8")
+        (snaps / "manifest.json").write_text(json.dumps(
+            {"runs": {"20261002T000000Z": "h"}, "snapshots": {"h": "snapshot_20261002T000000Z.json"}}),
+            encoding="utf-8")
+        data = build_dashboard([], snaps, tmp_path / "prov", {"portal_url": "https://x", "name": "x", "title": "x"})
+        assert data["hosts_now"] == {"ibama.gov.br": 1, "ibama.gov.br:80": 1, "": 1}
+        assert data["urls_without_host"] == [{"dataset": "embargos-ambientais", "title": "Embargos Ambientais Federais",
+                                              "resource": "embargos.xml", "format": "XML", "url": "", "host": ""}]
 
 
 class TestBadges:

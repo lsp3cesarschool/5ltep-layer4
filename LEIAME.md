@@ -180,7 +180,7 @@ python main.py --portal https://dadosabertos.ibama.gov.br --org ibama
 
 ```bash
 pytest tests/ -v
-# 53 testes cobrindo: determinismo do hash, os 4 tipos de mudança, modelo de dois
+# 54 testes cobrindo: determinismo do hash, os 4 tipos de mudança, modelo de dois
 # agentes, cadeias de derivação, persistência somente por acréscimo, pipeline de
 # ponta a ponta, alertas de mudança crítica (SCHEMA_DRIFT/RETRO_ALTER) e sinalização
 # para a CI, interoperabilidade PROV-O com a biblioteca `prov` (requer:
@@ -282,7 +282,7 @@ Quando uma alteração retroativa é detectada:
 │   └── prov_mapper.py              # ★ Gerador de JSON-LD W3C PROV-DM (núcleo da L4)
 ├── tests/
 │   ├── __init__.py
-│   └── test_toolkit.py             # 53 testes unitários e de integração
+│   └── test_toolkit.py             # 54 testes unitários e de integração
 ├── docs/                            # Painel (GitHub Pages): index.html, app.js, style.css
 │   └── data/                        # layer4.json, cross_check.json, selos (commit feito pelo bot)
 ├── evaluation/                      # Scripts e resultados que reproduzem a avaliação do artigo

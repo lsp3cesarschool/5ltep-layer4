@@ -176,7 +176,7 @@ python main.py --portal https://dadosabertos.ibama.gov.br --org ibama
 
 ```bash
 pytest tests/ -v
-# 53 tests covering: hash determinism, 4 change types, dual-agent model,
+# 54 tests covering: hash determinism, 4 change types, dual-agent model,
 # derivation chains, append-only persistence, end-to-end pipeline,
 # critical-change alerting (SCHEMA_DRIFT/RETRO_ALTER) and CI signalling,
 # PROV-O interoperability with the `prov` library (needs: pip install prov rdflib),
@@ -277,7 +277,7 @@ When a retroactive alteration is detected:
 │   └── prov_mapper.py              # ★ W3C PROV-DM JSON-LD generator (L4 core)
 ├── tests/
 │   ├── __init__.py
-│   └── test_toolkit.py             # 53 unit + integration tests
+│   └── test_toolkit.py             # 54 unit + integration tests
 ├── docs/                            # Dashboard (GitHub Pages): index.html, app.js, style.css
 │   └── data/                        # layer4.json, cross_check.json, badges (committed by bot)
 ├── evaluation/                      # Scripts + results reproducing the paper's evaluation

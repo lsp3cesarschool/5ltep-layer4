@@ -41,6 +41,17 @@ def _log_name(dataset_id: str) -> str:
     return dataset_id.replace("/", "_").replace("\\", "_") + ".jsonld"
 
 
+def _host(url: Optional[str]) -> str:
+    """Server part of a resource URL, exactly as the portal records it (a port, if written, is kept).
+
+    "" when the portal records no URL at all; "?" when the URL has no scheme://host.
+    """
+    url = (url or "").strip()
+    if not url:
+        return ""
+    return url.split("/")[2] if "://" in url else "?"
+
+
 def _chain_lengths(prov_dir: Path) -> Dict[str, int]:
     lengths = {}
     for path in Path(prov_dir).glob("*.jsonld"):
@@ -120,8 +131,14 @@ def build_dashboard(history: List[dict], snapshots_dir: Path, prov_dir: Path,
     datasets.sort(key=lambda d: (d["last_change"] or "", d["title"]), reverse=True)
 
     hosts_now = collections.Counter(
-        (r.get("url") or "").split("/")[2] if "://" in (r.get("url") or "") else "?"
-        for meta in current.values() for r in (meta.get("resources") or []))
+        _host(r.get("url")) for meta in current.values() for r in (meta.get("resources") or []))
+    # Resources whose URL has no server ("" or "?"): listed so the dashboard can name them.
+    urls_without_host = sorted((
+        {"dataset": meta.get("name"), "title": meta.get("title") or meta.get("name"),
+         "resource": r.get("name") or r.get("id"), "format": r.get("format"), "url": (r.get("url") or "").strip(),
+         "host": _host(r.get("url"))}
+        for meta in current.values() for r in (meta.get("resources") or []) if _host(r.get("url")) in ("", "?")),
+        key=lambda x: (x["title"] or "", x["resource"] or ""))
     moves = {}
     for e in events:
         for old, new, n in e["host_pairs"]:
@@ -156,6 +173,7 @@ def build_dashboard(history: List[dict], snapshots_dir: Path, prov_dir: Path,
         "events": events,
         "datasets": datasets,
         "hosts_now": dict(hosts_now.most_common()),
+        "urls_without_host": urls_without_host,
         "relocations": relocations,
         "packaging": {"zip_to_plain": sum(e["zip_to_plain"] for e in events),
                       "plain_to_zip": sum(e["plain_to_zip"] for e in events)},
