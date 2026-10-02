@@ -13,7 +13,7 @@ const I18N = {
     t_critical: "critical", t_critical_tip: "SCHEMA_DRIFT or RETRO_ALTER", t_last: "Last change", t_none: "none yet",
     t_cc: "Cross-check", t_cc_note: "checked {d}",
     months_h: "Changes per month",
-    months_note: "Each change detected in a dataset, by month of detection and type. CONTENT_MOD, SCHEMA_DRIFT and RETRO_ALTER become PROV records; the last two are critical. NEW and REMOVED are datasets that appeared in or left the portal.",
+    months_note: "The classifier described in the paper has four types: CLEAN_UPDATE (no change; not charted), CONTENT_MOD, SCHEMA_DRIFT and RETRO_ALTER, the last two critical. Each change of the last three types becomes a W3C PROV-DM record. New datasets (recorded as a baseline on their first observation) and removed datasets are also shown, by month of detection; they are not change types and produce no PROV record.",
     table_view: "Table view", month: "Month", total: "Total",
     where_h: "Where the files are",
     where_note: "The server each resource URL points to today, and the moves between servers seen since monitoring began. A move, or a switch between a zip and a plain file, usually keeps the format the portal declares: a program that downloads these files can break without warning.",
@@ -41,6 +41,7 @@ const I18N = {
     type_CONTENT_MOD: "content changed, with a new timestamp", type_SCHEMA_DRIFT: "resources added, removed, renamed or re-formatted",
     type_RETRO_ALTER: "changed without a new timestamp", type_NEW: "dataset published", type_REMOVED: "dataset no longer listed",
     type_NOT_FINGERPRINTED: "only fields outside the fingerprint changed (no PROV record)",
+    inv_NEW: "new dataset (baseline)", inv_REMOVED: "removed dataset", inv_NOT_FINGERPRINTED: "outside the fingerprint",
   },
   pt: {
     back: "← Voltar ao repositório", eyebrow: "5L-TEP · Camada 4 · Observabilidade e Proveniência", loading: "Carregando…",
@@ -53,7 +54,7 @@ const I18N = {
     t_critical: "críticas", t_critical_tip: "SCHEMA_DRIFT ou RETRO_ALTER", t_last: "Última mudança", t_none: "nenhuma ainda",
     t_cc: "Verificação cruzada", t_cc_note: "verificada em {d}",
     months_h: "Mudanças por mês",
-    months_note: "Cada mudança detectada num conjunto, por mês de detecção e tipo. CONTENT_MOD, SCHEMA_DRIFT e RETRO_ALTER viram registros PROV; as duas últimas são críticas. NEW e REMOVED são conjuntos que entraram no portal ou saíram dele.",
+    months_note: "O classificador descrito no artigo tem quatro tipos: CLEAN_UPDATE (sem mudança; fora do gráfico), CONTENT_MOD, SCHEMA_DRIFT e RETRO_ALTER, os dois últimos críticos. Cada mudança dos três últimos tipos vira um registro W3C PROV-DM. Conjuntos novos (registrados como linha de base na primeira observação) e conjuntos removidos também aparecem, por mês de detecção; não são tipos de mudança e não geram registro PROV.",
     table_view: "Ver como tabela", month: "Mês", total: "Total",
     where_h: "Onde estão os arquivos",
     where_note: "O servidor para o qual aponta hoje a URL de cada recurso, e as mudanças de servidor vistas desde o início do monitoramento. Uma mudança de servidor, ou a troca entre zip e arquivo simples, costuma manter o formato que o portal declara: um programa que baixa esses arquivos pode quebrar sem aviso.",
@@ -81,6 +82,7 @@ const I18N = {
     type_CONTENT_MOD: "conteúdo mudou, com nova data", type_SCHEMA_DRIFT: "recursos adicionados, removidos, renomeados ou com outro formato",
     type_RETRO_ALTER: "mudou sem nova data", type_NEW: "conjunto publicado", type_REMOVED: "conjunto deixou de ser listado",
     type_NOT_FINGERPRINTED: "só mudaram campos fora da impressão digital (sem registro PROV)",
+    inv_NEW: "conjunto novo (linha de base)", inv_REMOVED: "conjunto removido", inv_NOT_FINGERPRINTED: "fora da impressão digital",
   },
 };
 
@@ -162,10 +164,16 @@ function bindTip(node, html) {
   node.addEventListener("blur", () => { tip.hidden = true; });
 }
 
+// The paper's change types are shown as code (CONTENT_MOD...); dataset arrivals and removals, which
+// are not change types and have no PROV record, are shown in words.
+const isType = (ty) => PROV_TYPES.has(ty);
+const typeName = (ty) => (isType(ty) ? ty : t(`inv_${ty}`));
+const typeHtml = (ty) => (isType(ty) ? `<code>${esc(ty)}</code>` : esc(t(`inv_${ty}`)));
+
 function typeLabel(ty) {
   const crit = ty === "SCHEMA_DRIFT" || ty === "RETRO_ALTER";
   return `<span class="type" title="${esc(t(`type_${ty}`))}">${swatch(ty)}`
-    + `<code>${esc(ty)}</code></span>${crit ? ` <span class="crit">⚠ ${esc(t("critical"))}</span>` : ""}`;
+    + `${typeHtml(ty)}</span>${crit ? ` <span class="crit">⚠ ${esc(t("critical"))}</span>` : ""}`;
 }
 
 const STATUS_ICON = { IN_SYNC: "✓", DEGRADED: "◐", PENDING: "⏳", STALE: "⚠", ERROR: "✕", WAITING: "…" };
@@ -225,7 +233,7 @@ function renderMonths(d) {
   }
   const present = TYPES.filter((ty) => ms.some((m) => counts[m][ty]));
   el("months-legend").innerHTML = present.map((ty) =>
-    `<li>${swatch(ty)}<code>${esc(ty)}</code> · ${esc(t(`type_${ty}`))}</li>`).join("");
+    `<li>${swatch(ty)}${typeHtml(ty)}${isType(ty) ? ` · ${esc(t(`type_${ty}`))}` : ""}</li>`).join("");
 
   const totals = ms.map((m) => TYPES.reduce((a, ty) => a + counts[m][ty], 0));
   const max = niceMax(Math.max(1, ...totals));
@@ -259,12 +267,12 @@ function renderMonths(d) {
     svg += `<text class="axis-label" x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(m)}</text>`;
     svg += `<rect class="hit" data-i="${i}" x="${x(i) - pw / ms.length / 2}" y="${Tp}" width="${pw / ms.length}" height="${ph}" tabindex="0"/>`;
     hits.push(`<strong>${esc(m)}</strong> · ${esc(t("total"))} ${fmt(totals[i])}<br>`
-      + segs.map((ty) => `${swatch(ty)}${esc(ty)}: ${fmt(counts[m][ty])}`).join("<br>"));
+      + segs.map((ty) => `${swatch(ty)}${esc(typeName(ty))}: ${fmt(counts[m][ty])}`).join("<br>"));
   });
   el("months-chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("months_h"))}">${HATCH}${svg}</svg>`;
   el("months-chart").querySelectorAll("rect.hit").forEach((n) => bindTip(n, hits[Number(n.dataset.i)]));
 
-  el("months-table").innerHTML = `<thead><tr><th>${esc(t("month"))}</th>${present.map((ty) => `<th>${esc(ty)}</th>`).join("")}`
+  el("months-table").innerHTML = `<thead><tr><th>${esc(t("month"))}</th>${present.map((ty) => `<th>${esc(typeName(ty))}</th>`).join("")}`
     + `<th>${esc(t("total"))}</th></tr></thead><tbody>`
     + ms.slice().reverse().map((m) => `<tr><td>${esc(m)}</td>${present.map((ty) => `<td>${fmt(counts[m][ty])}</td>`).join("")}`
       + `<td>${fmt(TYPES.reduce((a, ty) => a + counts[m][ty], 0))}</td></tr>`).join("") + "</tbody>";
@@ -431,7 +439,7 @@ async function main() {
   renderMonths(DATA);
   renderWhere(DATA);
   const types = [...new Set(DATA.events.map((e) => e.type))];
-  el("ev-type").insertAdjacentHTML("beforeend", types.map((ty) => `<option value="${esc(ty)}">${esc(ty)}</option>`).join(""));
+  el("ev-type").insertAdjacentHTML("beforeend", types.map((ty) => `<option value="${esc(ty)}">${esc(typeName(ty))}</option>`).join(""));
   renderEvents();
   ["ev-search", "ev-type"].forEach((id) => el(id).addEventListener("input", () => { SHOW_ALL = false; renderEvents(); }));
   el("ev-more").addEventListener("click", () => { SHOW_ALL = true; renderEvents(); });
