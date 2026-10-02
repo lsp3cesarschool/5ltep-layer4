@@ -1,0 +1,106 @@
+[
+ {
+  "run_id": 32204419054,
+  "when": "2026-08-19T01:17:49+00:00",
+  "category": "dns",
+  "detail": "NameResolutionError (dadosabertos.ibama.gov.br)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 32224684031,
+  "when": "2026-08-19T06:44:21+00:00",
+  "category": "dns",
+  "detail": "NameResolutionError (dadosabertos.ibama.gov.br)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 32254615560,
+  "when": "2026-08-19T12:48:43+00:00",
+  "category": "dns",
+  "detail": "NameResolutionError (dadosabertos.ibama.gov.br)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 32573599749,
+  "when": "2026-08-22T12:39:56+00:00",
+  "category": "blocked",
+  "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 32658274378,
+  "when": "2026-08-23T18:30:48+00:00",
+  "category": "blocked",
+  "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 32679483340,
+  "when": "2026-08-24T01:20:39+00:00",
+  "category": "blocked",
+  "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 33916033395,
+  "when": "2026-09-04T20:24:03+00:00",
+  "category": "blocked",
+  "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 34118545348,
+  "when": "2026-09-07T11:48:49+00:00",
+  "category": "blocked",
+  "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 34433685764,
+  "when": "2026-09-10T03:31:59+00:00",
+  "category": "blocked",
+  "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 34499084979,
+  "when": "2026-09-10T15:58:10+00:00",
+  "category": "blocked",
+  "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 35466561642,
+  "when": "2026-09-19T20:10:17+00:00",
+  "category": "blocked",
+  "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 35520139511,
+  "when": "2026-09-20T15:36:59+00:00",
+  "category": "blocked",
+  "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ },
+ {
+  "run_id": 37071032525,
+  "when": "2026-10-02T22:10:23+00:00",
+  "category": "portal_down",
+  "detail": "HTTP 502 Bad Gateway (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "log"
+ }
+]

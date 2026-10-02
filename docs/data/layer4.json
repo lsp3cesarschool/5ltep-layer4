@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-10-02T16:21:28.736472+00:00",
+ "generated_at": "2026-10-02T22:49:26.850682+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-10-02T16:18:47+00:00",
-  "cycles": 437,
+  "last_cycle": "2026-10-02T22:29:04+00:00",
+  "cycles": 438,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -128,26 +128,200 @@
    "2026-09-29": 3,
    "2026-09-30": 3,
    "2026-10-01": 3,
-   "2026-10-02": 5
+   "2026-10-02": 6
   },
   "cycles_30d": 110,
   "max_gap_hours_30d": 14.2,
-  "distinct_snapshots": 31
+  "distinct_snapshots": 32,
+  "failures": [
+   {
+    "run_id": 37071032525,
+    "when": "2026-10-02T22:10:23+00:00",
+    "category": "portal_down",
+    "detail": "HTTP 502 Bad Gateway (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 35520139511,
+    "when": "2026-09-20T15:36:59+00:00",
+    "category": "blocked",
+    "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 35466561642,
+    "when": "2026-09-19T20:10:17+00:00",
+    "category": "blocked",
+    "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 34499084979,
+    "when": "2026-09-10T15:58:10+00:00",
+    "category": "blocked",
+    "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 34433685764,
+    "when": "2026-09-10T03:31:59+00:00",
+    "category": "blocked",
+    "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 34118545348,
+    "when": "2026-09-07T11:48:49+00:00",
+    "category": "blocked",
+    "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 33916033395,
+    "when": "2026-09-04T20:24:03+00:00",
+    "category": "blocked",
+    "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 32679483340,
+    "when": "2026-08-24T01:20:39+00:00",
+    "category": "blocked",
+    "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 32658274378,
+    "when": "2026-08-23T18:30:48+00:00",
+    "category": "blocked",
+    "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 32573599749,
+    "when": "2026-08-22T12:39:56+00:00",
+    "category": "blocked",
+    "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 32254615560,
+    "when": "2026-08-19T12:48:43+00:00",
+    "category": "dns",
+    "detail": "NameResolutionError (dadosabertos.ibama.gov.br)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 32224684031,
+    "when": "2026-08-19T06:44:21+00:00",
+    "category": "dns",
+    "detail": "NameResolutionError (dadosabertos.ibama.gov.br)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   },
+   {
+    "run_id": 32204419054,
+    "when": "2026-08-19T01:17:49+00:00",
+    "category": "dns",
+    "detail": "NameResolutionError (dadosabertos.ibama.gov.br)",
+    "step": "Run monitoring cycle",
+    "source": "log"
+   }
+  ],
+  "failures_by_category": {
+   "blocked": 9,
+   "dns": 3,
+   "portal_down": 1
+  },
+  "unread_last_cycle": [
+   "fiscalizacao-termo-de-embargo",
+   "residuos-solidos-transportador",
+   "volumes-explorados-if-100",
+   "volumes-explorados-inventario-amostral"
+  ]
  },
  "totals": {
-  "datasets": 79,
-  "resources": 474,
+  "datasets": 75,
+  "resources": 440,
   "organizations": 1,
   "prov_events": 32,
   "prov_records": 32,
   "critical": 0,
   "datasets_changed": 23,
   "by_type": {
+   "REMOVED": 4,
    "CONTENT_MOD": 32,
    "NEW": 8
   }
  },
  "events": [
+  {
+   "when": "2026-10-02T22:29:04+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "e9fb8ec2-d676-49f3-85e8-6751ebed36e7",
+   "name": "volumes-explorados-inventario-amostral",
+   "title": "Volumes Explorados - Inventário Amostral",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-02T22:29:04+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "08bac698-0921-47d7-b20a-83b9bf5a474c",
+   "name": "volumes-explorados-if-100",
+   "title": "Volumes Explorados - IF 100%",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-02T22:29:04+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "2f82348f-c531-42b7-bc57-c3cea8dc4bc7",
+   "name": "residuos-solidos-transportador",
+   "title": "Resíduos Sólidos – Transportador",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-02T22:29:04+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "4b292c2e-56bb-4639-9ea2-a9b02fea9558",
+   "name": "fiscalizacao-termo-de-embargo",
+   "title": "Fiscalização - termo de embargo",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
   {
    "when": "2026-09-28T23:00:33+00:00",
    "type": "CONTENT_MOD",
@@ -862,19 +1036,6 @@
    "last_type": "CONTENT_MOD"
   },
   {
-   "id": "4b292c2e-56bb-4639-9ea2-a9b02fea9558",
-   "name": "fiscalizacao-termo-de-embargo",
-   "title": "Fiscalização - termo de embargo",
-   "organization": "Dados Abertos",
-   "resources": 24,
-   "metadata_modified": "2026-09-22T14:03:01.895563",
-   "prov_records": 8,
-   "prov_log": "4b292c2e-56bb-4639-9ea2-a9b02fea9558.jsonld",
-   "changes": 8,
-   "last_change": "2026-09-22T16:28:15+00:00",
-   "last_type": "CONTENT_MOD"
-  },
-  {
    "id": "8639bdcd-0fb9-42c6-b8ca-2eac6b339a7a",
    "name": "sinaflor-poa-amazonia-legal",
    "title": "Sinaflor - POA Amazônia Legal",
@@ -937,19 +1098,6 @@
    "prov_log": "b705b94b-e5b9-4246-9038-eaf1ecd4ff04.jsonld",
    "changes": 1,
    "last_change": "2026-08-17T18:40:16+00:00",
-   "last_type": "CONTENT_MOD"
-  },
-  {
-   "id": "e9fb8ec2-d676-49f3-85e8-6751ebed36e7",
-   "name": "volumes-explorados-inventario-amostral",
-   "title": "Volumes Explorados - Inventário Amostral",
-   "organization": "Dados Abertos",
-   "resources": 3,
-   "metadata_modified": "2026-08-14T17:40:55.569206",
-   "prov_records": 1,
-   "prov_log": "e9fb8ec2-d676-49f3-85e8-6751ebed36e7.jsonld",
-   "changes": 1,
-   "last_change": "2026-08-14T18:55:10+00:00",
    "last_type": "CONTENT_MOD"
   },
   {
@@ -1146,19 +1294,6 @@
    "changes": 1,
    "last_change": "2026-06-11T16:05:34+00:00",
    "last_type": "CONTENT_MOD"
-  },
-  {
-   "id": "08bac698-0921-47d7-b20a-83b9bf5a474c",
-   "name": "volumes-explorados-if-100",
-   "title": "Volumes Explorados - IF 100%",
-   "organization": "Dados Abertos",
-   "resources": 3,
-   "metadata_modified": "2025-01-24T12:33:11.303923",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
   },
   {
    "id": "6dc5f349-b474-484a-b8be-9012f952fd99",
@@ -1362,19 +1497,6 @@
    "organization": "Dados Abertos",
    "resources": 3,
    "metadata_modified": "2024-07-11T18:05:19.462809",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
-   "id": "2f82348f-c531-42b7-bc57-c3cea8dc4bc7",
-   "name": "residuos-solidos-transportador",
-   "title": "Resíduos Sólidos – Transportador",
-   "organization": "Dados Abertos",
-   "resources": 4,
-   "metadata_modified": "2021-09-18T12:40:08.741509",
    "prov_records": 0,
    "prov_log": null,
    "changes": 0,
@@ -1877,8 +1999,8 @@
   }
  ],
  "hosts_now": {
-  "stibamadadosabertosprd.blob.core.windows.net": 244,
-  "dadosabertos.ibama.gov.br": 196,
+  "stibamadadosabertosprd.blob.core.windows.net": 217,
+  "dadosabertos.ibama.gov.br": 189,
   "siscom.ibama.gov.br": 29,
   "siscom.ibama.gov.br:80": 3,
   "": 1,
