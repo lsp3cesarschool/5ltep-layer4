@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-10-02T14:01:45.013957+00:00",
+ "generated_at": "2026-10-02T16:21:28.736472+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-10-02T14:00:04+00:00",
-  "cycles": 436,
+  "last_cycle": "2026-10-02T16:18:47+00:00",
+  "cycles": 437,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -128,7 +128,7 @@
    "2026-09-29": 3,
    "2026-09-30": 3,
    "2026-10-01": 3,
-   "2026-10-02": 4
+   "2026-10-02": 5
   },
   "cycles_30d": 110,
   "max_gap_hours_30d": 14.2,
@@ -1881,9 +1881,19 @@
   "dadosabertos.ibama.gov.br": 196,
   "siscom.ibama.gov.br": 29,
   "siscom.ibama.gov.br:80": 3,
-  "?": 1,
+  "": 1,
   "pamgia.ibama.gov.br": 1
  },
+ "urls_without_host": [
+  {
+   "dataset": "rapp-pilhas-e-baterias-fabricante-nacional",
+   "title": "Rapp Pilhas e Baterias - Fabricante Nacional",
+   "resource": "Pontos de Coleta",
+   "format": "CSV",
+   "url": "",
+   "host": ""
+  }
+ ],
  "relocations": [
   {
    "from": "dadosabertos.ibama.gov.br",
