@@ -93,8 +93,7 @@
 
   <section id="health">
     <div class="section-head"><h2 data-i18n="health_h">Monitoring health</h2></div>
-    <p class="muted" data-i18n="health_note">Monitoring cycles per day over the last 90 days (four are scheduled). A missing
-      cycle delays when a change is seen, never what is recorded: the next cycle compares with the last stored reading.</p>
+    <p class="muted" data-i18n="health_note">Monitoring cycles per day over the last 90 days. The standard is four a day, scheduled every 6 h (dashed line). More than four means the workflow was also run by hand (Actions → Run workflow), for example to test a change or refresh the dashboard; fewer means GitHub delayed or skipped a scheduled cycle. A missing cycle delays when a change is seen, never what is recorded: the next cycle compares with the last stored reading.</p>
     <div class="chart" id="cycles-chart"></div>
     <div class="two">
       <div class="panel" id="cross-check-panel"><h3 data-i18n="cc_h">Independent cross-check</h3><div id="cross-check"></div></div>

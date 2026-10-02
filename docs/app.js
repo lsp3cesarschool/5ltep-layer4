@@ -18,7 +18,7 @@ const I18N = {
     t_cc: "Cross-check", t_cc_note: "checked {d}",
     details: "Details",
     d_datasets: "Datasets the portal lists (`package_list`) and that the last cycle read (`package_show`). Resources are the files and links each dataset publishes. The custodian is the CKAN organization that publishes a dataset: every PROV record attributes the dataset to it (`prov:wasAttributedTo`), apart from this toolkit, which only observes.",
-    d_cycles: "A cycle reads the whole portal and compares each dataset with the previous reading. Four cycles a day are scheduled (every 6 h); GitHub sometimes delays or skips one. Since {since}: {n} cycles, {n30} in the last 30 days (about 120 expected); the longest gap in that period was {g} h. A missed cycle delays when a change is seen but loses nothing: the next cycle compares with the last stored reading. Identical readings are stored once: {snaps} distinct snapshots so far.",
+    d_cycles: "A cycle reads the whole portal and compares each dataset with the previous reading. The standard is four cycles a day, scheduled every 6 h; more than four in a day means the workflow was also run by hand, fewer that GitHub delayed or skipped one. Since {since}: {n} cycles, {n30} in the last 30 days (about 120 expected); the longest gap in that period was {g} h. A missed cycle delays when a change is seen but loses nothing: the next cycle compares with the last stored reading. Identical readings are stored once: {snaps} distinct snapshots so far.",
     d_events: "Each time a dataset's fingerprint changes, the classifier gives the change a type and the toolkit writes a W3C PROV-DM record: a new version of the dataset, linked to the one before it. The bar shows the share of datasets with at least one change ({n} of {total}, {pct}); the others only have the baseline of their first observation. New datasets are not counted here.",
     d_by_type: "By type:", d_content: "content changed, with a new modification date (warning)",
     d_drift: "resources added, removed, renamed or re-formatted (critical)", d_retro: "changed without a new modification date (critical)",
@@ -47,8 +47,9 @@ const I18N = {
     c_when: "Detected (UTC)", c_dataset: "Dataset", c_type: "Type", c_what: "What changed", c_prov: "Provenance",
     log: "PROV log", critical: "critical", show_more: "Show all {n}", ev_none: "No change matches.",
     health_h: "Monitoring health",
-    health_note: "Monitoring cycles per day over the last 90 days (four are scheduled). A missing cycle delays when a change is seen, never what is recorded: the next cycle compares with the last stored reading.",
-    cycles_day: "{n} cycle(s) on {d}", scheduled: "scheduled: 4 a day",
+    health_note: "Monitoring cycles per day over the last 90 days. The standard is four a day, scheduled every 6 h (dashed line). More than four means the workflow was also run by hand (Actions → Run workflow), for example to test a change or refresh the dashboard; fewer means GitHub delayed or skipped a scheduled cycle. A missing cycle delays when a change is seen, never what is recorded: the next cycle compares with the last stored reading.",
+    cycles_day: "{n} cycle(s) on {d}", scheduled: "standard: 4 a day",
+    cycles_more: "more than the 4 scheduled: at least {k} run by hand", cycles_fewer: "{k} scheduled cycle(s) delayed or skipped by GitHub",
     cc_h: "Independent cross-check", mon_h: "Cycles",
     k_since: "first cycle", k_last: "last cycle", k_cycles: "cycles", k_30d: "cycles in the last 30 days",
     k_gap: "longest gap, last 30 days (h)", k_snaps: "distinct snapshots stored", k_records: "PROV records",
@@ -82,7 +83,7 @@ const I18N = {
     t_cc: "Verificação cruzada", t_cc_note: "verificada em {d}",
     details: "Detalhes",
     d_datasets: "Conjuntos que o portal lista (`package_list`) e que o último ciclo leu (`package_show`). Recursos são os arquivos e links que cada conjunto publica. Custodiante é a organização do CKAN que publica o conjunto: cada registro PROV atribui o conjunto a ela (`prov:wasAttributedTo`), separada deste kit, que só observa.",
-    d_cycles: "Um ciclo lê o portal inteiro e compara cada conjunto com a leitura anterior. São agendados quatro ciclos por dia (a cada 6 h); o GitHub às vezes atrasa ou pula um. Desde {since}: {n} ciclos, {n30} nos últimos 30 dias (cerca de 120 esperados); o maior intervalo nesse período foi de {g} h. Um ciclo perdido atrasa quando a mudança é vista, mas não perde nada: o ciclo seguinte compara com a última leitura guardada. Leituras idênticas são guardadas uma vez só: {snaps} snapshots distintos até agora.",
+    d_cycles: "Um ciclo lê o portal inteiro e compara cada conjunto com a leitura anterior. O padrão são quatro ciclos por dia, agendados a cada 6 h; mais de quatro num dia significa que o workflow também foi disparado à mão, e menos, que o GitHub atrasou ou pulou um. Desde {since}: {n} ciclos, {n30} nos últimos 30 dias (cerca de 120 esperados); o maior intervalo nesse período foi de {g} h. Um ciclo perdido atrasa quando a mudança é vista, mas não perde nada: o ciclo seguinte compara com a última leitura guardada. Leituras idênticas são guardadas uma vez só: {snaps} snapshots distintos até agora.",
     d_events: "Sempre que a impressão digital de um conjunto muda, o classificador dá um tipo à mudança e o kit grava um registro W3C PROV-DM: uma nova versão do conjunto, ligada à anterior. A barra mostra a parcela de conjuntos com ao menos uma mudança ({n} de {total}, {pct}); os demais só têm a linha de base da primeira observação. Conjuntos novos não entram nesta conta.",
     d_by_type: "Por tipo:", d_content: "conteúdo mudou, com nova data de modificação (aviso)",
     d_drift: "recursos adicionados, removidos, renomeados ou com outro formato (crítica)", d_retro: "mudou sem nova data de modificação (crítica)",
@@ -111,8 +112,9 @@ const I18N = {
     c_when: "Detectada (UTC)", c_dataset: "Conjunto", c_type: "Tipo", c_what: "O que mudou", c_prov: "Proveniência",
     log: "registro PROV", critical: "crítica", show_more: "Mostrar todas as {n}", ev_none: "Nenhuma mudança corresponde.",
     health_h: "Saúde do monitoramento",
-    health_note: "Ciclos de monitoramento por dia nos últimos 90 dias (quatro estão agendados). Um ciclo perdido atrasa quando uma mudança é vista, nunca o que é registrado: o ciclo seguinte compara com a última leitura guardada.",
-    cycles_day: "{n} ciclo(s) em {d}", scheduled: "agendados: 4 por dia",
+    health_note: "Ciclos de monitoramento por dia nos últimos 90 dias. O padrão são quatro por dia, agendados a cada 6 h (linha tracejada). Mais de quatro significa que o workflow também foi disparado à mão (Actions → Run workflow), por exemplo para testar uma mudança ou atualizar o painel; menos significa que o GitHub atrasou ou pulou um ciclo agendado. Um ciclo perdido atrasa quando a mudança é vista, nunca o que é registrado: o ciclo seguinte compara com a última leitura guardada.",
+    cycles_day: "{n} ciclo(s) em {d}", scheduled: "padrão: 4 por dia",
+    cycles_more: "mais que os 4 agendados: ao menos {k} disparado(s) à mão", cycles_fewer: "{k} ciclo(s) agendado(s) atrasado(s) ou pulado(s) pelo GitHub",
     cc_h: "Verificação cruzada independente", mon_h: "Ciclos",
     k_since: "primeiro ciclo", k_last: "último ciclo", k_cycles: "ciclos", k_30d: "ciclos nos últimos 30 dias",
     k_gap: "maior intervalo, últimos 30 dias (h)", k_snaps: "snapshots distintos guardados", k_records: "registros PROV",
@@ -580,7 +582,10 @@ function renderCycles(d) {
     }
     if (i % 15 === 0) svg += `<text class="axis-label" x="${x0}" y="${H - 6}">${esc(key.slice(5))}</text>`;
     svg += `<rect class="hit" data-i="${i}" x="${x0 - 1}" y="${Tp}" width="${slot}" height="${ph}"/>`;
-    tips.push(esc(t("cycles_day", { n, d: key })));
+    const partial = i === 0 && key === (d.monitoring.since || "").slice(0, 10) || i === days.length - 1;
+    tips.push(esc(t("cycles_day", { n, d: key }))
+      + (n > 4 ? `<br>${esc(t("cycles_more", { k: n - 4 }))}` : "")
+      + (n < 4 && !partial ? `<br>${esc(t("cycles_fewer", { k: 4 - n }))}` : ""));
   });
   el("cycles-chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("health_h"))}">${svg}</svg>`;
   el("cycles-chart").querySelectorAll("rect.hit").forEach((n) => bindTip(n, tips[Number(n.dataset.i)]));
