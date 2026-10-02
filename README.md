@@ -176,7 +176,7 @@ python main.py --portal https://dadosabertos.ibama.gov.br --org ibama
 
 ```bash
 pytest tests/ -v
-# 54 tests covering: hash determinism, 4 change types, dual-agent model,
+# 67 tests covering: hash determinism, 4 change types, dual-agent model,
 # derivation chains, append-only persistence, end-to-end pipeline,
 # critical-change alerting (SCHEMA_DRIFT/RETRO_ALTER) and CI signalling,
 # PROV-O interoperability with the `prov` library (needs: pip install prov rdflib),
@@ -273,17 +273,19 @@ When a retroactive alteration is detected:
 │   ├── hash_engine.py              # SHA-256 fingerprinting & change detection
 │   ├── change_summary.py           # Change details (fields, relocations) + changes.md
 │   ├── dashboard.py                # Dashboard data + status badges (docs/data)
+│   ├── cycle_failures.py           # Why a cycle failed (portal down, blocked, DNS...) for the dashboard
 │   ├── portal_config.py            # Reads portal.json
 │   └── prov_mapper.py              # ★ W3C PROV-DM JSON-LD generator (L4 core)
 ├── tests/
 │   ├── __init__.py
-│   └── test_toolkit.py             # 54 unit + integration tests
+│   └── test_toolkit.py             # 67 unit + integration tests
 ├── docs/                            # Dashboard (GitHub Pages): index.html, app.js, style.css
 │   └── data/                        # layer4.json, cross_check.json, badges (committed by bot)
 ├── evaluation/                      # Scripts + results reproducing the paper's evaluation
 ├── data/                            # Runtime data (committed by bot)
 │   ├── hash_store.json
 │   ├── cross_check_report.json
+│   ├── cycle_failures.json          # Why each failed cycle failed (recorded by the cycle or read from its log)
 │   └── snapshots/
 │       ├── manifest.json
 │       └── snapshot_*.json[.gz]

@@ -18,7 +18,7 @@ const I18N = {
     t_cc: "Cross-check", t_cc_note: "checked {d}",
     details: "Details",
     d_datasets: "Datasets the portal lists (`package_list`) and that the last cycle read (`package_show`). Resources are the files and links each dataset publishes. The custodian is the CKAN organization that publishes a dataset: every PROV record attributes the dataset to it (`prov:wasAttributedTo`), apart from this toolkit, which only observes.",
-    d_cycles: "A cycle reads the whole portal and compares each dataset with the previous reading. The standard is four cycles a day, scheduled every 6 h; more than four in a day means the workflow was also run by hand, fewer that GitHub delayed or skipped one. Since {since}: {n} cycles, {n30} in the last 30 days (about 120 expected); the longest gap in that period was {g} h. A missed cycle delays when a change is seen but loses nothing: the next cycle compares with the last stored reading. Identical readings are stored once: {snaps} distinct snapshots so far.",
+    d_cycles: "A cycle reads the whole portal and compares each dataset with the previous reading. The standard is four cycles a day, scheduled every 6 h; more than four in a day means the workflow was also run manually, fewer that GitHub delayed or skipped one. Since {since}: {n} cycles, {n30} in the last 30 days (about 120 expected); the longest gap in that period was {g} h. A missed cycle delays when a change is seen but loses nothing: the next cycle compares with the last stored reading. Identical readings are stored once: {snaps} distinct snapshots so far.",
     d_events: "Each time a dataset's fingerprint changes, the classifier gives the change a type and the toolkit writes a W3C PROV-DM record: a new version of the dataset, linked to the one before it. The bar shows the share of datasets with at least one change ({n} of {total}, {pct}); the others only have the baseline of their first observation. New datasets are not counted here.",
     d_by_type: "By type:", d_content: "content changed, with a new modification date (warning)",
     d_drift: "resources added, removed, renamed or re-formatted (critical)", d_retro: "changed without a new modification date (critical)",
@@ -47,10 +47,28 @@ const I18N = {
     c_when: "Detected (UTC)", c_dataset: "Dataset", c_type: "Type", c_what: "What changed", c_prov: "Provenance",
     log: "PROV log", critical: "critical", show_more: "Show all {n}", ev_none: "No change matches.",
     health_h: "Monitoring health",
-    health_note: "Monitoring cycles per day over the last 90 days. The standard is four a day, scheduled every 6 h (dashed line). More than four means the workflow was also run by hand (Actions → Run workflow), for example to test a change or refresh the dashboard; fewer means GitHub delayed or skipped a scheduled cycle. A missing cycle delays when a change is seen, never what is recorded: the next cycle compares with the last stored reading.",
+    health_note: "Monitoring cycles per day over the last 90 days. The standard is four a day, scheduled every 6 h (dashed line). More than four means the workflow was also run manually (Actions → Run workflow), for example to test a change or refresh the dashboard; fewer means GitHub delayed or skipped a scheduled cycle. A missing cycle delays when a change is seen, never what is recorded: the next cycle compares with the last stored reading.",
     cycles_day: "{n} cycle(s) on {d}", scheduled: "standard: 4 a day",
-    cycles_more: "more than the 4 scheduled: at least {k} run by hand", cycles_fewer: "{k} scheduled cycle(s) delayed or skipped by GitHub",
+    cycles_more: "more than the 4 scheduled: at least {k} run manually", cycles_fewer: "{k} scheduled cycle(s) delayed or skipped by GitHub",
     cc_h: "Independent cross-check", mon_h: "Cycles",
+    failures_h: "Failed cycles", fail_mark: "a cycle failed that day (the cause is in Failed cycles)",
+    failures_none: "No cycle has failed since {since}.",
+    failures_text: "{n} cycle(s) failed since {since}: {by}. A failed cycle stores nothing, and the next one compares with the last stored reading, so no change is lost, only seen later. Each failure also fails its GitHub Actions run, which e-mails the maintainer.",
+    f_when: "When (UTC)", f_cause: "Cause", f_detail: "Detail", f_run: "Run", f_run_link: "run",
+    cycles_failed: "✕ {time} UTC: {cause}", cycles_fewer_fail: "{k} other scheduled cycle(s) delayed or skipped by GitHub",
+    k_failed: "failed cycles", k_unread: "datasets not read in the last cycle",
+    src_cycle: "recorded by the cycle", src_log: "read from the run's log", src_actions: "from the GitHub Actions API",
+    cat_portal_down: "Portal down", catd_portal_down: "the portal's server answered with an error (HTTP 5xx)",
+    cat_portal_slow: "Portal too slow", catd_portal_slow: "no answer within 30 s, in all three attempts",
+    cat_dns: "Portal address not found (DNS)", catd_dns: "the portal's domain did not lead to any server",
+    cat_network: "Connection failed", catd_network: "connection refused, interrupted or with a certificate problem",
+    cat_blocked: "Access blocked by the portal", catd_blocked: "the portal refused the request (HTTP 403 or 429), for example a firewall or a request limit",
+    cat_unexpected: "Unexpected answer", catd_unexpected: "the API answered something other than the expected JSON (missing page, maintenance page, success=false)",
+    cat_toolkit: "Toolkit error", catd_toolkit: "an error in this toolkit's code",
+    cat_setup: "Runner setup failed", catd_setup: "checkout, Python or dependencies on GitHub's runner",
+    cat_commit: "Saving failed", catd_commit: "commit or push to the repository",
+    cat_cancelled: "Cancelled or timed out", catd_cancelled: "the run was cancelled or exceeded its time limit",
+    cat_unknown: "Cause not recorded", catd_unknown: "the run's log is no longer available",
     k_since: "first cycle", k_last: "last cycle", k_cycles: "cycles", k_30d: "cycles in the last 30 days",
     k_gap: "longest gap, last 30 days (h)", k_snaps: "distinct snapshots stored", k_records: "PROV records",
     cc_waiting: "The first cross-check has not run yet.",
@@ -116,6 +134,24 @@ const I18N = {
     cycles_day: "{n} ciclo(s) em {d}", scheduled: "padrão: 4 por dia",
     cycles_more: "mais que os 4 agendados: ao menos {k} disparado(s) manualmente", cycles_fewer: "{k} ciclo(s) agendado(s) atrasado(s) ou pulado(s) pelo GitHub",
     cc_h: "Verificação cruzada independente", mon_h: "Ciclos",
+    failures_h: "Falhas de ciclo", fail_mark: "um ciclo falhou nesse dia (a causa está em Falhas de ciclo)",
+    failures_none: "Nenhum ciclo falhou desde {since}.",
+    failures_text: "{n} ciclo(s) falharam desde {since}: {by}. Um ciclo que falha não grava nada, e o seguinte compara com a última leitura guardada; então nenhuma mudança se perde, só é vista mais tarde. Cada falha também faz a execução do GitHub Actions falhar, e o GitHub avisa o mantenedor por e-mail.",
+    f_when: "Quando (UTC)", f_cause: "Causa", f_detail: "Detalhe", f_run: "Execução", f_run_link: "execução",
+    cycles_failed: "✕ {time} UTC: {cause}", cycles_fewer_fail: "{k} outro(s) ciclo(s) agendado(s) atrasado(s) ou pulado(s) pelo GitHub",
+    k_failed: "ciclos que falharam", k_unread: "conjuntos não lidos no último ciclo",
+    src_cycle: "registrada pelo ciclo", src_log: "lida do log da execução", src_actions: "da API do GitHub Actions",
+    cat_portal_down: "Portal fora do ar", catd_portal_down: "o servidor do portal respondeu com erro (HTTP 5xx)",
+    cat_portal_slow: "Portal lento demais", catd_portal_slow: "nenhuma resposta em 30 s, nas três tentativas",
+    cat_dns: "Endereço do portal não encontrado (DNS)", catd_dns: "o domínio do portal não levou a nenhum servidor",
+    cat_network: "Falha de conexão", catd_network: "conexão recusada, interrompida ou com problema de certificado",
+    cat_blocked: "Acesso bloqueado pelo portal", catd_blocked: "o portal recusou o pedido (HTTP 403 ou 429), por exemplo por firewall ou limite de requisições",
+    cat_unexpected: "Resposta inesperada", catd_unexpected: "a API respondeu algo diferente do JSON esperado (página inexistente, página de manutenção, success=false)",
+    cat_toolkit: "Erro do kit", catd_toolkit: "um erro no código deste kit",
+    cat_setup: "Falha ao preparar o ambiente", catd_setup: "checkout, Python ou dependências no runner do GitHub",
+    cat_commit: "Falha ao gravar", catd_commit: "commit ou push no repositório",
+    cat_cancelled: "Cancelado ou tempo esgotado", catd_cancelled: "a execução foi cancelada ou passou do tempo limite",
+    cat_unknown: "Causa não registrada", catd_unknown: "o log da execução não está mais disponível",
     k_since: "primeiro ciclo", k_last: "último ciclo", k_cycles: "ciclos", k_30d: "ciclos nos últimos 30 dias",
     k_gap: "maior intervalo, últimos 30 dias (h)", k_snaps: "snapshots distintos guardados", k_records: "registros PROV",
     cc_waiting: "A primeira verificação cruzada ainda não rodou.",
@@ -572,7 +608,8 @@ function renderCycles(d) {
     svg += `<line class="${v === 4 ? "ref" : "grid"}" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/>`
       + `<text class="axis-label" x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
   }
-  svg += `<text class="label" x="${W - R}" y="${y(4) - 4}" text-anchor="end">${esc(t("scheduled"))}</text>`;
+  const failed = {};
+  for (const f of d.monitoring.failures || []) (failed[(f.when || "").slice(0, 10)] ||= []).push(f);
   const tips = [];
   days.forEach(([key, n], i) => {
     const x0 = L + i * slot;
@@ -580,22 +617,52 @@ function renderCycles(d) {
       const top = y(n), r = Math.min(2, bw / 2);
       svg += `<path d="M${x0},${y(0)} V${top + r} q0,-${r} ${r},-${r} H${x0 + bw - r} q${r},0 ${r},${r} V${y(0)} Z" fill="var(--bar)"/>`;
     }
+    const fails = failed[key] || [];
+    if (fails.length) svg += `<text class="fail-mark" x="${x0 + bw / 2}" y="${Tp - 6}" text-anchor="middle">✕</text>`;
     if (i % 15 === 0) svg += `<text class="axis-label" x="${x0}" y="${H - 6}">${esc(key.slice(5))}</text>`;
     svg += `<rect class="hit" data-i="${i}" x="${x0 - 1}" y="${Tp}" width="${slot}" height="${ph}"/>`;
     const partial = i === 0 && key === (d.monitoring.since || "").slice(0, 10) || i === days.length - 1;
+    const short = 4 - n - fails.length;                     // missing cycles not explained by a failure
     tips.push(esc(t("cycles_day", { n, d: key }))
       + (n > 4 ? `<br>${esc(t("cycles_more", { k: n - 4 }))}` : "")
-      + (n < 4 && !partial ? `<br>${esc(t("cycles_fewer", { k: 4 - n }))}` : ""));
+      + fails.map((f) => `<br><span class="crit">${esc(t("cycles_failed", {
+        time: (f.when || "").slice(11, 16), cause: t(`cat_${f.category}`) }))}</span>`).join("")
+      + (short > 0 && !partial ? `<br>${esc(t(fails.length ? "cycles_fewer_fail" : "cycles_fewer", { k: short }))}` : ""));
   });
   el("cycles-chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("health_h"))}">${svg}</svg>`;
   el("cycles-chart").querySelectorAll("rect.hit").forEach((n) => bindTip(n, tips[Number(n.dataset.i)]));
+  // the dashed line's label lives in the legend, where a day above 4 cannot cover it
+  el("cycles-legend").innerHTML = `<li><span class="dash-key"></span>${esc(t("scheduled"))}</li>`
+    + (Object.keys(failed).length ? `<li><span class="crit">✕</span> ${esc(t("fail_mark"))}</li>` : "");
+  renderFailures(d);
 
   const m = d.monitoring;
   el("monitoring").innerHTML = [
     [t("k_since"), stamp(m.since)], [t("k_last"), stamp(m.last_cycle)], [t("k_cycles"), fmt(m.cycles)],
     [t("k_30d"), fmt(m.cycles_30d)], [t("k_gap"), fmt(m.max_gap_hours_30d)],
     [t("k_snaps"), fmt(m.distinct_snapshots)], [t("k_records"), fmt(d.totals.prov_records)],
+    [t("k_failed"), fmt((m.failures || []).length)], [t("k_unread"), fmt((m.unread_last_cycle || []).length)],
   ].map(([k, v]) => `<span>${esc(k)}</span><span class="v">${esc(v)}</span>`).join("");
+}
+
+// Failed cycles: when, why (in words, with the technical detail) and a link to the run.
+function renderFailures(d) {
+  const m = d.monitoring, list = m.failures || [];
+  const by = Object.entries(m.failures_by_category || {})
+    .map(([c, n]) => { const label = t(`cat_${c}`); return `${label[0].toLowerCase()}${label.slice(1)} ${fmt(n)}`; })
+    .join(", ");
+  el("failures-text").textContent = list.length
+    ? t("failures_text", { n: fmt(list.length), since: day(m.since), by })
+    : t("failures_none", { since: day(m.since) });
+  el("failures-wrap").hidden = !list.length;
+  el("failures-table").innerHTML = `<thead><tr><th>${esc(t("f_when"))}</th><th>${esc(t("f_cause"))}</th>`
+    + `<th>${esc(t("f_detail"))}</th><th>${esc(t("f_run"))}</th></tr></thead><tbody>`
+    + list.map((f) => `<tr><td class="when">${esc(stamp(f.when))}</td>`
+      + `<td><span class="crit">✕</span> <span title="${esc(t(`catd_${f.category}`))}">${esc(t(`cat_${f.category}`))}</span>`
+      + `<br><span class="small muted">${esc(t(`catd_${f.category}`))}</span></td>`
+      + `<td class="small"><code>${esc(f.detail)}</code><br><span class="muted">${esc(t(`src_${f.source}`))}</span></td>`
+      + `<td>${f.run_id ? `<a href="${repo()}/actions/runs/${encodeURIComponent(f.run_id)}" rel="noopener">${esc(t("f_run_link"))}</a>` : "—"}</td></tr>`)
+      .join("") + "</tbody>";
 }
 
 function renderCrossCheck(cc) {

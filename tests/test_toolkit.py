@@ -65,8 +65,11 @@ def sample_dataset() -> Dict[str, Any]:
 
 @pytest.fixture(autouse=True)
 def _isolated_docs(tmp_path, monkeypatch):
-    """Dashboard data and badges written by run_pipeline go to tmp_path, never to docs/."""
+    """Dashboard data, badges and failure records written by run_pipeline go to tmp_path, never to
+    docs/ or data/; and no test asks the GitHub Actions API, even when the suite runs in CI."""
     monkeypatch.setattr(main, "DOCS_DATA_DIR", tmp_path / "docs_data")
+    monkeypatch.setattr(main, "FAILURES_FILE", tmp_path / "cycle_failures.json")
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
 
 
 # ---------------------------------------------------------------------------
@@ -886,6 +889,8 @@ class TestPaperClaims:
         assert len(steps) == 6
         assert text.index("Commit provenance logs") < text.index("Alert on CRITICAL")
         assert "steps.monitor.outputs.critical == 'true'" in text
+        # the commit also runs after a failed cycle, to save its cause; the alert step does not
+        assert "if: success() || failure()" in text
         assert "python-version: ${{ env.PYTHON_VERSION }}" in text and "PYTHON_VERSION: '3.11'" in text
 
     def test_sparql_finds_retro_alter(self, sample_dataset, tmp_path):
@@ -904,3 +909,113 @@ class TestPaperClaims:
         since = "2000-01-01T00:00:00+00:00"
         rows = list(graph.query(sparql_query.WINDOW_QUERY % (sparql_query.NS_5LTEP, "RETRO_ALTER", since)))
         assert records == 1 and len(rows) == 1 and str(rows[0][0]) == "abc123"
+
+
+# ---------------------------------------------------------------------------
+# Failed cycles: why a cycle failed, recorded for the dashboard
+# ---------------------------------------------------------------------------
+
+import requests  # noqa: E402
+import cycle_failures  # noqa: E402
+
+
+def _http_error(code, reason, url="https://portal.gov.br/api/3/action/package_list"):
+    response = requests.Response()
+    response.status_code, response.reason, response.url = code, reason, url
+    kind = "Server" if code >= 500 else "Client"
+    return requests.HTTPError(f"{code} {kind} Error: {reason} for url: {url}", response=response)
+
+
+class TestCycleFailures:
+    @pytest.mark.parametrize("exc, category", [
+        (_http_error(502, "Bad Gateway"), "portal_down"),
+        (_http_error(403, "Forbidden"), "blocked"),
+        (_http_error(429, "Too Many Requests"), "blocked"),
+        (_http_error(404, "Not Found"), "unexpected"),
+        (requests.ReadTimeout("HTTPSConnectionPool(host='p.gov.br', port=443): Read timed out."), "portal_slow"),
+        (requests.ConnectTimeout("HTTPSConnectionPool(host='p.gov.br', port=443): ConnectTimeoutError"), "network"),
+        (requests.ConnectionError("HTTPSConnectionPool(host='p.gov.br', port=443): Max retries exceeded "
+                                  "(Caused by NameResolutionError(...))"), "dns"),
+        (requests.ConnectionError("HTTPSConnectionPool(host='p.gov.br', port=443): Connection refused"), "network"),
+        (ValueError("CKAN API returned success=false: {'message': 'x'}"), "unexpected"),
+        (KeyError("resources"), "toolkit"),
+    ])
+    def test_classify_exception(self, exc, category):
+        assert cycle_failures.classify_exception(exc)[0] == category
+
+    def test_classify_log_uses_the_last_exception(self):
+        log = ("2026-10-02T22:11:02.75Z 2026-10-02T22:11:02 [WARNING] ckan_harvester: Attempt 1 failed: "
+               "HTTPSConnectionPool(host='p.gov.br', port=443): Read timed out.\n"
+               "2026-10-02T22:11:59.71Z requests.exceptions.HTTPError: 502 Server Error: Bad Gateway for url: "
+               "https://p.gov.br/api/3/action/package_list\n")
+        assert cycle_failures.classify_log(log) == ("portal_down", "HTTP 502 Bad Gateway (/api/3/action/package_list)")
+        assert cycle_failures.classify_log("no traceback here")[0] == "unknown"
+
+    def test_failed_cycle_is_recorded_and_still_fails(self, sample_dataset, tmp_path, monkeypatch):
+        """The run still fails (as in the paper); its cause is recorded and shown on the dashboard."""
+        snaps = tmp_path / "snapshots"
+        snaps.mkdir()
+        monkeypatch.setattr(main, "SNAPSHOTS_DIR", snaps)
+        monkeypatch.setattr(main, "MANIFEST_FILE", snaps / "manifest.json")
+        monkeypatch.setattr(main, "HASHES_FILE", tmp_path / "hash_store.json")
+        monkeypatch.setattr(main, "PROV_DIR", tmp_path / "prov")
+        monkeypatch.setattr(main, "CHANGES_FILE", tmp_path / "changes.md")
+        monkeypatch.setenv("GITHUB_RUN_ID", "123")
+        monkeypatch.setattr(sys, "argv", ["main.py", "--portal", "https://p.gov.br"])
+
+        class _Down:
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def harvest_all(self):
+                raise _http_error(403, "Forbidden")
+
+        monkeypatch.setattr(main, "CKANHarvester", _Down)
+        with pytest.raises(requests.HTTPError):
+            main.cli()
+        entry = cycle_failures.load(main.FAILURES_FILE)[0]
+        assert entry["run_id"] == 123 and entry["category"] == "blocked" and entry["source"] == "cycle"
+        data = json.loads((main.DOCS_DATA_DIR / "layer4.json").read_text(encoding="utf-8"))
+        assert data["monitoring"]["failures"][0]["category"] == "blocked"
+        assert data["monitoring"]["failures_by_category"] == {"blocked": 1}
+
+    def test_sync_from_actions(self, tmp_path, monkeypatch):
+        """Runs without a record are classified from the failed step, or from the job log."""
+        store = tmp_path / "f.json"
+        cycle_failures.record(store, "blocked", "HTTP 403", datetime_utc(), run_id=1)
+        runs = {"failure": [{"id": 1, "created_at": "2026-09-01T00:00:00Z"},
+                            {"id": 2, "created_at": "2026-09-02T00:00:00Z"},
+                            {"id": 3, "created_at": "2026-09-03T00:00:00Z"}],
+                "cancelled": [], "timed_out": []}
+        jobs = {2: {"id": 20, "steps": [{"name": "Install dependencies", "conclusion": "failure"}]},
+                3: {"id": 30, "steps": [{"name": "Run monitoring cycle", "conclusion": "failure"}]}}
+
+        class _R:
+            def __init__(self, payload=None, text="", status=200):
+                self.payload, self.text, self.status_code, self.ok = payload, text, status, status < 400
+
+            def json(self):
+                return self.payload
+
+            def raise_for_status(self):
+                pass
+
+        def fake_get(url, params=None, **kwargs):
+            if url.endswith("/runs"):
+                return _R({"workflow_runs": runs[params["status"]]})
+            if url.endswith("/jobs"):
+                return _R({"jobs": [jobs[int(url.split("/")[-2])]]})
+            return _R(text="Z requests.exceptions.ConnectionError: HTTPSConnectionPool(host='p.gov.br', "
+                           "port=443): Max retries exceeded (Caused by NameResolutionError(x))")
+
+        monkeypatch.setattr(cycle_failures.requests, "get", fake_get)
+        assert cycle_failures.sync_from_actions(store, "o/r", None) == 2
+        by_run = {e["run_id"]: e for e in cycle_failures.load(store)}
+        assert by_run[2]["category"] == "setup" and by_run[2]["source"] == "actions"
+        assert by_run[3]["category"] == "dns" and by_run[3]["source"] == "log"
+        assert cycle_failures.sync_from_actions(store, "o/r", None) == 0      # nothing new the second time
+
+
+def datetime_utc():
+    from datetime import datetime as _dt, timezone as _tz
+    return _dt(2026, 9, 1, tzinfo=_tz.utc)

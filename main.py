@@ -44,6 +44,7 @@ from prov_mapper import ProvMapper, TOOLKIT_VERSION
 from change_summary import build_history, describe_change, latest_snapshot, write_changes_md
 from dashboard import build_dashboard, write_dashboard
 from portal_config import load_portal
+import cycle_failures
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -67,6 +68,7 @@ SNAPSHOTS_DIR = DATA_DIR / "snapshots"
 MANIFEST_FILE = SNAPSHOTS_DIR / "manifest.json"
 CHANGES_FILE = Path("changes.md")  # human-readable change log (generated)
 DOCS_DATA_DIR = Path("docs") / "data"  # dashboard data and README badges (GitHub Pages)
+FAILURES_FILE = DATA_DIR / "cycle_failures.json"  # why cycles failed (see src/cycle_failures.py)
 
 for d in [DATA_DIR, PROV_DIR, SNAPSHOTS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
@@ -264,18 +266,7 @@ def run_pipeline(
 
     # Human-readable change log and dashboard, rebuilt from the stored history
     if not dry_run:
-        try:
-            history = build_history(SNAPSHOTS_DIR, PROV_DIR)
-            entries = write_changes_md(SNAPSHOTS_DIR, PROV_DIR, portal_url, CHANGES_FILE, history)
-            logger.info("changes.md updated (%d entries)", entries)
-            data = build_dashboard(
-                history, SNAPSHOTS_DIR, PROV_DIR,
-                portal or {"portal_url": portal_url, "name": portal_url, "title": portal_url},
-                repository=os.environ.get("GITHUB_REPOSITORY"), toolkit_version=TOOLKIT_VERSION)
-            write_dashboard(DOCS_DATA_DIR, data)
-            logger.info("Dashboard data and status badges written to %s", DOCS_DATA_DIR)
-        except Exception as e:  # never block monitoring on the report step
-            logger.warning("Could not update changes.md / dashboard: %s", e)
+        publish_reports(portal_url, portal)
 
     # ------------------------------------------------------------------
     # Summary
@@ -303,6 +294,43 @@ def run_pipeline(
     )
 
     return summary
+
+
+# ---------------------------------------------------------------------------
+# Reports (changes.md, dashboard) and failed cycles
+# ---------------------------------------------------------------------------
+
+def publish_reports(portal_url: str, portal: Dict[str, str] = None) -> None:
+    """Rebuild changes.md and the dashboard data; never blocks monitoring."""
+    repository = os.environ.get("GITHUB_REPOSITORY")
+    if repository and os.environ.get("GITHUB_ACTIONS") == "true":
+        try:  # failed runs this repository has no record of (older ones, or outside this step)
+            cycle_failures.sync_from_actions(FAILURES_FILE, repository, os.environ.get("GITHUB_TOKEN"))
+        except Exception as e:
+            logger.warning("Could not read failed runs from the GitHub Actions API: %s", e)
+    try:
+        history = build_history(SNAPSHOTS_DIR, PROV_DIR) if MANIFEST_FILE.exists() else []
+        if MANIFEST_FILE.exists():
+            entries = write_changes_md(SNAPSHOTS_DIR, PROV_DIR, portal_url, CHANGES_FILE, history)
+            logger.info("changes.md updated (%d entries)", entries)
+        data = build_dashboard(
+            history, SNAPSHOTS_DIR, PROV_DIR,
+            portal or {"portal_url": portal_url, "name": portal_url, "title": portal_url},
+            repository=repository, toolkit_version=TOOLKIT_VERSION, failures_path=FAILURES_FILE)
+        write_dashboard(DOCS_DATA_DIR, data)
+        logger.info("Dashboard data and status badges written to %s", DOCS_DATA_DIR)
+    except Exception as e:  # never block monitoring on the report step
+        logger.warning("Could not update changes.md / dashboard: %s", e)
+
+
+def record_failed_cycle(exc: BaseException, started: datetime, portal: Dict[str, str]) -> None:
+    """Record why this cycle failed and show it on the dashboard (the run still fails)."""
+    category, detail = cycle_failures.classify_exception(exc)
+    run_id = os.environ.get("GITHUB_RUN_ID")
+    cycle_failures.record(FAILURES_FILE, category, detail, started,
+                          run_id=int(run_id) if run_id and run_id.isdigit() else None)
+    logger.error("Cycle failed (%s): %s", category, detail)
+    publish_reports(portal["portal_url"], portal)
 
 
 # ---------------------------------------------------------------------------
@@ -366,15 +394,30 @@ def _emit_github_output(summary: Dict[str, Any]) -> None:
         fh.write(f"critical_dataset_files={affected_files}\n")
 
 
-if __name__ == "__main__":
+def cli() -> None:
     args = parse_args()
     portal = load_portal(args.portal)
-    summary = run_pipeline(
-        portal_url=portal["portal_url"],
-        portal=portal,
-        org_filter=args.org,
-        dry_run=args.dry_run,
-        max_datasets=args.max_datasets,
-    )
+    started = datetime.now(timezone.utc)
+    try:
+        summary = run_pipeline(
+            portal_url=portal["portal_url"],
+            portal=portal,
+            org_filter=args.org,
+            dry_run=args.dry_run,
+            max_datasets=args.max_datasets,
+        )
+    except Exception as exc:
+        # As in the paper, a failed cycle fails the run (and GitHub e-mails the
+        # maintainer); first its cause is recorded for the dashboard.
+        if not args.dry_run:
+            try:
+                record_failed_cycle(exc, started, portal)
+            except Exception as e:
+                logger.warning("Could not record the failed cycle: %s", e)
+        raise
     print(json.dumps(summary, indent=2))
     _emit_github_output(summary)
+
+
+if __name__ == "__main__":
+    cli()

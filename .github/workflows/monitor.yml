@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: read      # failed runs and their logs, to record why a cycle failed
 
     steps:
       - name: Checkout repository
@@ -41,9 +42,12 @@ jobs:
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_SHA: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
 
+      # Also after a failed cycle, to save why it failed; the run still fails (and e-mails).
       - name: Commit provenance logs, change log and dashboard data
         id: commit
+        if: success() || failure()
         run: |
           git config user.name "5L-TEP L4 Bot"
           git config user.email "5ltep-l4-bot@users.noreply.github.com"

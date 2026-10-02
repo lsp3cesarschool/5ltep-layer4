@@ -180,7 +180,7 @@ python main.py --portal https://dadosabertos.ibama.gov.br --org ibama
 
 ```bash
 pytest tests/ -v
-# 54 testes cobrindo: determinismo do hash, os 4 tipos de mudança, modelo de dois
+# 67 testes cobrindo: determinismo do hash, os 4 tipos de mudança, modelo de dois
 # agentes, cadeias de derivação, persistência somente por acréscimo, pipeline de
 # ponta a ponta, alertas de mudança crítica (SCHEMA_DRIFT/RETRO_ALTER) e sinalização
 # para a CI, interoperabilidade PROV-O com a biblioteca `prov` (requer:
@@ -278,17 +278,19 @@ Quando uma alteração retroativa é detectada:
 │   ├── hash_engine.py              # Impressões digitais SHA-256 e detecção de mudanças
 │   ├── change_summary.py           # Detalhes das mudanças (campos, mudanças de servidor) + changes.md
 │   ├── dashboard.py                # Dados do painel + selos de situação (docs/data)
+│   ├── cycle_failures.py           # Por que um ciclo falhou (portal fora do ar, bloqueio, DNS...) para o painel
 │   ├── portal_config.py            # Lê o portal.json
 │   └── prov_mapper.py              # ★ Gerador de JSON-LD W3C PROV-DM (núcleo da L4)
 ├── tests/
 │   ├── __init__.py
-│   └── test_toolkit.py             # 54 testes unitários e de integração
+│   └── test_toolkit.py             # 67 testes unitários e de integração
 ├── docs/                            # Painel (GitHub Pages): index.html, app.js, style.css
 │   └── data/                        # layer4.json, cross_check.json, selos (commit feito pelo bot)
 ├── evaluation/                      # Scripts e resultados que reproduzem a avaliação do artigo
 ├── data/                            # Dados de execução (commit feito pelo bot)
 │   ├── hash_store.json
 │   ├── cross_check_report.json
+│   ├── cycle_failures.json          # Por que cada ciclo falhou (registrado pelo ciclo ou lido do log)
 │   └── snapshots/
 │       ├── manifest.json
 │       └── snapshot_*.json[.gz]

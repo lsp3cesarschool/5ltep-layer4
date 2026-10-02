@@ -24,7 +24,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from change_summary import latest_snapshot
+import cycle_failures
+from change_summary import latest_snapshot, load_snapshot
 
 DASHBOARD_FILE = "layer4.json"
 STATUS_FILES = {"en": "status.json", "pt": "status.pt.json"}
@@ -84,7 +85,8 @@ def _monitoring(runs: List[str]) -> Dict[str, object]:
 
 def build_dashboard(history: List[dict], snapshots_dir: Path, prov_dir: Path,
                     portal: Dict[str, str], repository: Optional[str] = None,
-                    toolkit_version: str = "", now: Optional[datetime] = None) -> Dict[str, object]:
+                    toolkit_version: str = "", now: Optional[datetime] = None,
+                    failures_path: Optional[Path] = None) -> Dict[str, object]:
     """Assemble the dashboard data from the change history and the stored state."""
     snapshots_dir, prov_dir = Path(snapshots_dir), Path(prov_dir)
     manifest_path = snapshots_dir / "manifest.json"
@@ -151,6 +153,14 @@ def build_dashboard(history: List[dict], snapshots_dir: Path, prov_dir: Path,
                          key=lambda m: -m["urls"])
 
     prov_events = [e for e in events if e["type"] in PROV_TYPES]
+    # Failed cycles (newest first) and the datasets the last cycle could not read
+    failures = sorted(cycle_failures.load(failures_path), key=lambda f: f.get("when") or "",
+                      reverse=True) if failures_path else []
+    unread = []
+    if manifest.get("runs"):
+        last_file = manifest["snapshots"].get(manifest["runs"][max(manifest["runs"])])
+        if last_file:
+            unread = sorted(i for i in load_snapshot(snapshots_dir, last_file)[1] if i)
     counts = collections.Counter(e["type"] for e in events)
     return {
         "schema": 1,
@@ -159,7 +169,10 @@ def build_dashboard(history: List[dict], snapshots_dir: Path, prov_dir: Path,
         "repository": repository,
         "portal": portal,
         "monitoring": {**_monitoring(list(manifest.get("runs", {}))),
-                       "distinct_snapshots": len(manifest.get("snapshots", {}))},
+                       "distinct_snapshots": len(manifest.get("snapshots", {})),
+                       "failures": failures,
+                       "failures_by_category": cycle_failures.summary(failures),
+                       "unread_last_cycle": unread},
         "totals": {
             "datasets": len(current),
             "resources": sum(d["resources"] for d in datasets),

@@ -205,3 +205,8 @@ section.tiles { align-items: start; }
 .chip-filter { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--accent); border-radius: 14px;
   padding: 2px 4px 2px 10px; font-size: .85rem; color: var(--text); }
 .chip-filter button { border: 0; background: none; color: var(--accent); cursor: pointer; font: inherit; padding: 0 4px; }
+
+/* failed cycles: status critical, always with the ✕ icon and words, never colour alone */
+.chart .fail-mark { fill: var(--critical); font-size: 11px; font-weight: 700; }
+#failures-h { scroll-margin-top: 16px; }
+.dash-key { display: inline-block; width: 18px; border-top: 2px dashed var(--axis); vertical-align: middle; margin-right: 6px; }
