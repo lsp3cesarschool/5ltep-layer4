@@ -28,8 +28,10 @@ const I18N = {
     d_cc: "Once a day a separate script reads the portal again and compares, for every dataset, two fields its custodian sets (last modification date and number of resources) with the latest snapshot. In sync: everything matches. Pending: differences the next cycle should record (snapshot up to 7 h old). Stale: older differences (monitoring may have stopped). Error: fewer than 90% of the datasets could be read. Stale and error make the workflow fail, which e-mails the maintainer.",
     d_cc_last: "Last result:",
     months_h: "Changes per month",
-    months_note: "The classifier described in the paper has four types: CLEAN_UPDATE (no change; not charted), CONTENT_MOD, SCHEMA_DRIFT and RETRO_ALTER; changes of the last two types are critical. Each change of the last three types becomes a W3C PROV-DM record. New datasets (recorded as a baseline on their first observation) and removed datasets are also shown, by month of detection; they are not change types and produce no PROV record.",
-    table_view: "Table view", month: "Month", total: "Total",
+    months_note: "The classifier described in the paper has four types: CLEAN_UPDATE (no change; not charted), CONTENT_MOD, SCHEMA_DRIFT and RETRO_ALTER; changes of the last two types are critical. Each change of the last three types becomes a W3C PROV-DM record. New datasets (recorded as a baseline on their first observation) and removed datasets are also shown, by date of detection; they are not change types and produce no PROV record.",
+    table_view: "Table view", month: "Month", day: "Day", total: "Total",
+    days_h: "Changes per day", period: "Period", p_m: "By month", p_d14: "By day, last 14 days",
+    p_d30: "By day, last 30 days", p_d90: "By day, last 90 days", no_change_period: "No change detected in this period",
     where_h: "Where the files are",
     where_note: "The server each resource URL points to today, and the moves between servers seen since monitoring began. A move, or a switch between a zip and a plain file, usually keeps the format the portal declares: a program that downloads these files can break without warning.",
     hosts_h: "Resource URLs by server, today", moves_h: "Moves and packaging changes",
@@ -84,8 +86,10 @@ const I18N = {
     d_cc: "Uma vez por dia, um script separado lê o portal de novo e compara, para cada conjunto, dois campos que o custodiante define (data da última modificação e número de recursos) com o snapshot mais recente. Sincronizada: tudo bate. Pendente: diferenças que o próximo ciclo deve registrar (snapshot com até 7 h). Desatualizada: diferenças mais antigas (o monitoramento pode ter parado). Erro: menos de 90% dos conjuntos puderam ser lidos. Desatualizada e erro fazem o workflow falhar, e o GitHub avisa o mantenedor por e-mail.",
     d_cc_last: "Último resultado:",
     months_h: "Mudanças por mês",
-    months_note: "O classificador descrito no artigo tem quatro tipos: CLEAN_UPDATE (sem mudança; fora do gráfico), CONTENT_MOD, SCHEMA_DRIFT e RETRO_ALTER; as mudanças dos dois últimos tipos são críticas. Cada mudança dos três últimos tipos vira um registro W3C PROV-DM. Conjuntos novos (registrados como linha de base na primeira observação) e conjuntos removidos também aparecem, por mês de detecção; não são tipos de mudança e não geram registro PROV.",
-    table_view: "Ver como tabela", month: "Mês", total: "Total",
+    months_note: "O classificador descrito no artigo tem quatro tipos: CLEAN_UPDATE (sem mudança; fora do gráfico), CONTENT_MOD, SCHEMA_DRIFT e RETRO_ALTER; as mudanças dos dois últimos tipos são críticas. Cada mudança dos três últimos tipos vira um registro W3C PROV-DM. Conjuntos novos (registrados como linha de base na primeira observação) e conjuntos removidos também aparecem, pela data de detecção; não são tipos de mudança e não geram registro PROV.",
+    table_view: "Ver como tabela", month: "Mês", day: "Dia", total: "Total",
+    days_h: "Mudanças por dia", period: "Período", p_m: "Por mês", p_d14: "Por dia, últimos 14 dias",
+    p_d30: "Por dia, últimos 30 dias", p_d90: "Por dia, últimos 90 dias", no_change_period: "Nenhuma mudança detectada neste período",
     where_h: "Onde estão os arquivos",
     where_note: "O servidor para o qual aponta hoje a URL de cada recurso, e as mudanças de servidor vistas desde o início do monitoramento. Uma mudança de servidor, ou a troca entre zip e arquivo simples, costuma manter o formato que o portal declara: um programa que baixa esses arquivos pode quebrar sem aviso.",
     hosts_h: "URLs de recursos por servidor, hoje", moves_h: "Mudanças de servidor e de empacotamento",
@@ -319,17 +323,40 @@ function renderTiles(d, cc) {
 }
 
 // --- changes per month: stacked bars, one axis, 2px surface gaps -----------------
-function months(d) {
-  const first = (d.monitoring.since || d.generated_at).slice(0, 7);
-  const last = (d.monitoring.last_cycle || d.generated_at).slice(0, 7);
-  const out = [];
-  let [y, mo] = first.split("-").map(Number);
-  while (`${y}-${String(mo).padStart(2, "0")}` <= last) {
-    out.push(`${y}-${String(mo).padStart(2, "0")}`);
-    mo += 1;
-    if (mo > 12) { mo = 1; y += 1; }
+// Periods of the changes chart: by month since monitoring began, or by day over the last N days.
+// A repository monitored for less than 60 days opens by day, so a new instance shows its first changes.
+const PERIODS = ["m", "d14", "d30", "d90"];
+
+function defaultPeriod(d) {
+  const asked = new URLSearchParams(location.search).get("period");
+  if (PERIODS.includes(asked)) return asked;
+  const since = Date.parse(d.monitoring.since || d.generated_at);
+  return Date.now() - since < 60 * 86400e3 ? "d30" : "m";
+}
+
+function buckets(d, period) {
+  const end = (d.monitoring.last_cycle || d.generated_at);
+  const since = (d.monitoring.since || d.generated_at);
+  if (period === "m") {
+    const out = [];
+    let [y, mo] = since.slice(0, 7).split("-").map(Number);
+    while (`${y}-${String(mo).padStart(2, "0")}` <= end.slice(0, 7)) {
+      out.push(`${y}-${String(mo).padStart(2, "0")}`);
+      mo += 1;
+      if (mo > 12) { mo = 1; y += 1; }
+    }
+    return { keys: out, keyOf: (iso) => iso.slice(0, 7), short: (k) => k };
   }
-  return out;
+  const days = Number(period.slice(1));
+  const last = new Date(end.slice(0, 10) + "T00:00:00Z");
+  const out = [];
+  for (let k = days - 1; k >= 0; k--) {
+    const x = new Date(last);
+    x.setUTCDate(x.getUTCDate() - k);
+    const key = x.toISOString().slice(0, 10);
+    if (key >= since.slice(0, 10)) out.push(key);
+  }
+  return { keys: out, keyOf: (iso) => iso.slice(0, 10), short: (k) => k.slice(5) };
 }
 
 function niceMax(v) {
@@ -339,10 +366,13 @@ function niceMax(v) {
 }
 
 function renderMonths(d) {
-  const ms = months(d);
+  const period = el("period").value;
+  const byMonth = period === "m";
+  el("months-title").textContent = t(byMonth ? "months_h" : "days_h");
+  const { keys: ms, keyOf, short } = buckets(d, period);
   const counts = Object.fromEntries(ms.map((m) => [m, Object.fromEntries(TYPES.map((ty) => [ty, 0]))]));
   for (const e of d.events) {
-    const m = e.when.slice(0, 7);
+    const m = keyOf(e.when);
     if (counts[m] && TYPES.includes(e.type)) counts[m][e.type] += 1;
   }
   const present = TYPES.filter((ty) => ms.some((m) => counts[m][ty]));
@@ -350,15 +380,21 @@ function renderMonths(d) {
     `<li>${swatch(ty)}${typeHtml(ty)}${isType(ty) ? ` · ${esc(t(`type_${ty}`))}` : ""}</li>`).join("");
 
   const totals = ms.map((m) => TYPES.reduce((a, ty) => a + counts[m][ty], 0));
-  const max = niceMax(Math.max(1, ...totals));
+  // Whole numbers on the axis (counts are integers): steps of 1 up to 4, then a nice step.
+  const highest = Math.max(1, ...totals);
+  const tick = highest <= 4 ? 1 : Math.ceil(niceMax(highest) / 4);
+  const max = tick * 4;
   const W = 860, H = 240, L = 34, R = 8, Tp = 10, B = 26;
   const pw = W - L - R, ph = H - Tp - B;
-  const bw = Math.min(56, (pw / ms.length) * 0.6);
+  const bw = Math.max(2, Math.min(56, (pw / ms.length) * 0.6));
+  // Selective labels: every axis label and bar total only while they fit; the tooltip always has them.
+  const step = Math.ceil(ms.length / 12);
+  const fits = ms.length <= 31;
   const x = (i) => L + (pw / ms.length) * (i + 0.5);
   const y = (v) => Tp + ph - (v / max) * ph;
   let svg = "";
   for (let k = 0; k <= 4; k++) {
-    const v = (max / 4) * k;
+    const v = tick * k;
     svg += `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/>`
       + `<text class="axis-label" x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${fmt(v)}</text>`;
   }
@@ -377,16 +413,22 @@ function renderMonths(d) {
         : `<rect x="${x(i) - bw / 2}" y="${y0 - h}" width="${bw}" height="${h}" style="fill:${typeColor(ty)}"/>`;
       acc += v;
     });
-    if (totals[i]) svg += `<text class="label" x="${x(i)}" y="${y(totals[i]) - 4}" text-anchor="middle">${fmt(totals[i])}</text>`;
-    svg += `<text class="axis-label" x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(m)}</text>`;
+    if (totals[i] && fits) svg += `<text class="label" x="${x(i)}" y="${y(totals[i]) - 4}" text-anchor="middle">${fmt(totals[i])}</text>`;
+    const lastFits = i === ms.length - 1 && i % step >= step / 2;   // the last day, unless it would overlap
+    if (i % step === 0 || lastFits) {
+      svg += `<text class="axis-label" x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(short(m))}</text>`;
+    }
     svg += `<rect class="hit" data-i="${i}" x="${x(i) - pw / ms.length / 2}" y="${Tp}" width="${pw / ms.length}" height="${ph}" tabindex="0"/>`;
     hits.push(`<strong>${esc(m)}</strong> · ${esc(t("total"))} ${fmt(totals[i])}<br>`
       + segs.map((ty) => `${swatch(ty)}${esc(typeName(ty))}: ${fmt(counts[m][ty])}`).join("<br>"));
   });
-  el("months-chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("months_h"))}">${HATCH}${svg}</svg>`;
+  if (!totals.some(Boolean)) {
+    svg += `<text class="label" x="${L + pw / 2}" y="${Tp + ph / 2}" text-anchor="middle">${esc(t("no_change_period"))}</text>`;
+  }
+  el("months-chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(el("months-title").textContent)}">${HATCH}${svg}</svg>`;
   el("months-chart").querySelectorAll("rect.hit").forEach((n) => bindTip(n, hits[Number(n.dataset.i)]));
 
-  el("months-table").innerHTML = `<thead><tr><th>${esc(t("month"))}</th>${present.map((ty) => `<th>${esc(typeName(ty))}</th>`).join("")}`
+  el("months-table").innerHTML = `<thead><tr><th>${esc(t(byMonth ? "month" : "day"))}</th>${present.map((ty) => `<th>${esc(typeName(ty))}</th>`).join("")}`
     + `<th>${esc(t("total"))}</th></tr></thead><tbody>`
     + ms.slice().reverse().map((m) => `<tr><td>${esc(m)}</td>${present.map((ty) => `<td>${fmt(counts[m][ty])}</td>`).join("")}`
       + `<td>${fmt(TYPES.reduce((a, ty) => a + counts[m][ty], 0))}</td></tr>`).join("") + "</tbody>";
@@ -551,6 +593,8 @@ async function main() {
     gen: stamp(DATA.generated_at) });
   renderTiles(DATA, cc);
   bindTileLinks();
+  el("period").value = defaultPeriod(DATA);
+  el("period").addEventListener("input", () => renderMonths(DATA));
   renderMonths(DATA);
   renderWhere(DATA);
   const types = [...new Set(DATA.events.map((e) => e.type))];
