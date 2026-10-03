@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-10-02T22:49:26.850682+00:00",
+ "generated_at": "2026-10-03T05:13:41.957961+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-10-02T22:29:04+00:00",
-  "cycles": 438,
+  "last_cycle": "2026-10-03T05:13:21+00:00",
+  "cycles": 439,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -128,7 +128,8 @@
    "2026-09-29": 3,
    "2026-09-30": 3,
    "2026-10-01": 3,
-   "2026-10-02": 6
+   "2026-10-02": 6,
+   "2026-10-03": 1
   },
   "cycles_30d": 110,
   "max_gap_hours_30d": 14.2,
@@ -244,28 +245,79 @@
    "dns": 3,
    "portal_down": 1
   },
-  "unread_last_cycle": [
-   "fiscalizacao-termo-de-embargo",
-   "residuos-solidos-transportador",
-   "volumes-explorados-if-100",
-   "volumes-explorados-inventario-amostral"
-  ]
+  "unread_last_cycle": []
  },
  "totals": {
-  "datasets": 75,
-  "resources": 440,
+  "datasets": 79,
+  "resources": 474,
   "organizations": 1,
   "prov_events": 32,
   "prov_records": 32,
   "critical": 0,
   "datasets_changed": 23,
   "by_type": {
+   "NEW": 12,
    "REMOVED": 4,
-   "CONTENT_MOD": 32,
-   "NEW": 8
+   "CONTENT_MOD": 32
   }
  },
  "events": [
+  {
+   "when": "2026-10-03T05:13:21+00:00",
+   "type": "NEW",
+   "severity": "INFO",
+   "dataset_id": "e9fb8ec2-d676-49f3-85e8-6751ebed36e7",
+   "name": "volumes-explorados-inventario-amostral",
+   "title": "Volumes Explorados - Inventário Amostral",
+   "summary": "Dataset published (3 resources)",
+   "summary_pt": "Conjunto publicado (3 recursos)",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-03T05:13:21+00:00",
+   "type": "NEW",
+   "severity": "INFO",
+   "dataset_id": "08bac698-0921-47d7-b20a-83b9bf5a474c",
+   "name": "volumes-explorados-if-100",
+   "title": "Volumes Explorados - IF 100%",
+   "summary": "Dataset published (3 resources)",
+   "summary_pt": "Conjunto publicado (3 recursos)",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-03T05:13:21+00:00",
+   "type": "NEW",
+   "severity": "INFO",
+   "dataset_id": "2f82348f-c531-42b7-bc57-c3cea8dc4bc7",
+   "name": "residuos-solidos-transportador",
+   "title": "Resíduos Sólidos – Transportador",
+   "summary": "Dataset published (4 resources)",
+   "summary_pt": "Conjunto publicado (4 recursos)",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-03T05:13:21+00:00",
+   "type": "NEW",
+   "severity": "INFO",
+   "dataset_id": "4b292c2e-56bb-4639-9ea2-a9b02fea9558",
+   "name": "fiscalizacao-termo-de-embargo",
+   "title": "Fiscalização - termo de embargo",
+   "summary": "Dataset published (24 resources)",
+   "summary_pt": "Conjunto publicado (24 recursos)",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
   {
    "when": "2026-10-02T22:29:04+00:00",
    "type": "REMOVED",
@@ -1022,6 +1074,58 @@
   }
  ],
  "datasets": [
+  {
+   "id": "e9fb8ec2-d676-49f3-85e8-6751ebed36e7",
+   "name": "volumes-explorados-inventario-amostral",
+   "title": "Volumes Explorados - Inventário Amostral",
+   "organization": "Dados Abertos",
+   "resources": 3,
+   "metadata_modified": "2026-08-14T17:40:55.569206",
+   "prov_records": 1,
+   "prov_log": "e9fb8ec2-d676-49f3-85e8-6751ebed36e7.jsonld",
+   "changes": 2,
+   "last_change": "2026-10-02T22:29:04+00:00",
+   "last_type": "REMOVED"
+  },
+  {
+   "id": "08bac698-0921-47d7-b20a-83b9bf5a474c",
+   "name": "volumes-explorados-if-100",
+   "title": "Volumes Explorados - IF 100%",
+   "organization": "Dados Abertos",
+   "resources": 3,
+   "metadata_modified": "2025-01-24T12:33:11.303923",
+   "prov_records": 0,
+   "prov_log": null,
+   "changes": 1,
+   "last_change": "2026-10-02T22:29:04+00:00",
+   "last_type": "REMOVED"
+  },
+  {
+   "id": "2f82348f-c531-42b7-bc57-c3cea8dc4bc7",
+   "name": "residuos-solidos-transportador",
+   "title": "Resíduos Sólidos – Transportador",
+   "organization": "Dados Abertos",
+   "resources": 4,
+   "metadata_modified": "2021-09-18T12:40:08.741509",
+   "prov_records": 0,
+   "prov_log": null,
+   "changes": 1,
+   "last_change": "2026-10-02T22:29:04+00:00",
+   "last_type": "REMOVED"
+  },
+  {
+   "id": "4b292c2e-56bb-4639-9ea2-a9b02fea9558",
+   "name": "fiscalizacao-termo-de-embargo",
+   "title": "Fiscalização - termo de embargo",
+   "organization": "Dados Abertos",
+   "resources": 24,
+   "metadata_modified": "2026-09-22T14:03:01.895563",
+   "prov_records": 8,
+   "prov_log": "4b292c2e-56bb-4639-9ea2-a9b02fea9558.jsonld",
+   "changes": 9,
+   "last_change": "2026-10-02T22:29:04+00:00",
+   "last_type": "REMOVED"
+  },
   {
    "id": "5cc6ed7b-01b1-430c-96cf-e994a2555348",
    "name": "fila-de-acompanhamento-de-registro-de-agrotoxicos-quimicos",
@@ -1999,8 +2103,8 @@
   }
  ],
  "hosts_now": {
-  "stibamadadosabertosprd.blob.core.windows.net": 217,
-  "dadosabertos.ibama.gov.br": 189,
+  "stibamadadosabertosprd.blob.core.windows.net": 244,
+  "dadosabertos.ibama.gov.br": 196,
   "siscom.ibama.gov.br": 29,
   "siscom.ibama.gov.br:80": 3,
   "": 1,
