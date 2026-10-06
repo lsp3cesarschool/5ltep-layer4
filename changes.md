@@ -7,9 +7,9 @@ first monitoring cycle that saw the change).
 
 - **Monitored since:** 2026-06-09
 - **Datasets in the latest snapshot:** 79
-- **Changes recorded as PROV events:** 32 (0 critical)
+- **Changes recorded as PROV events:** 33 (0 critical)
 - **New datasets:** 12
-- **Last change detected:** 2026-10-03 05:13 UTC
+- **Last change detected:** 2026-10-06 18:19 UTC
 
 Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 (resources added, removed, renamed or re-formatted; critical), `RETRO_ALTER`
@@ -20,7 +20,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Month | PROV events | Critical | New datasets |
 |---|---:|---:|---:|
-| 2026-10 | 0 | 0 | 4 |
+| 2026-10 | 1 | 0 | 4 |
 | 2026-09 | 8 | 0 | 0 |
 | 2026-08 | 10 | 0 | 3 |
 | 2026-07 | 11 | 0 | 3 |
@@ -30,6 +30,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Detected (UTC) | Dataset | Type | What changed | Provenance |
 |---|---|---|---|---|
+| 2026-10-06 18:19 | [Rapp Pilhas e Baterias - Fabricante Nacional](https://dadosabertos.ibama.gov.br/dataset/rapp-pilhas-e-baterias-fabricante-nacional) | `CONTENT_MOD` | 6 resource URL(s) changed (1 moved from ? to stibamadadosabertosprd.blob.core.windows.net; 1 plain file → zip) | [log](provenance_logs/079831ad-dc14-43c2-9d44-8eed0283c817.jsonld) |
 | 2026-10-03 05:13 | [Volumes Explorados - Inventário Amostral](https://dadosabertos.ibama.gov.br/dataset/volumes-explorados-inventario-amostral) | `NEW` | Dataset published (3 resources) |  |
 | 2026-10-03 05:13 | [Volumes Explorados - IF 100%](https://dadosabertos.ibama.gov.br/dataset/volumes-explorados-if-100) | `NEW` | Dataset published (3 resources) |  |
 | 2026-10-03 05:13 | [Resíduos Sólidos – Transportador](https://dadosabertos.ibama.gov.br/dataset/residuos-solidos-transportador) | `NEW` | Dataset published (4 resources) |  |

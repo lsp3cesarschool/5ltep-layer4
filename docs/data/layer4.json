@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-10-06T06:15:32.377687+00:00",
+ "generated_at": "2026-10-06T18:19:58.765622+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-10-06T06:15:15+00:00",
-  "cycles": 449,
+  "last_cycle": "2026-10-06T18:19:17+00:00",
+  "cycles": 450,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -132,11 +132,11 @@
    "2026-10-03": 4,
    "2026-10-04": 3,
    "2026-10-05": 2,
-   "2026-10-06": 2
+   "2026-10-06": 3
   },
-  "cycles_30d": 109,
+  "cycles_30d": 108,
   "max_gap_hours_30d": 14.2,
-  "distinct_snapshots": 32,
+  "distinct_snapshots": 33,
   "failures": [
    {
     "run_id": 37071032525,
@@ -254,17 +254,37 @@
   "datasets": 79,
   "resources": 474,
   "organizations": 1,
-  "prov_events": 32,
-  "prov_records": 32,
+  "prov_events": 33,
+  "prov_records": 33,
   "critical": 0,
   "datasets_changed": 23,
   "by_type": {
+   "CONTENT_MOD": 33,
    "NEW": 12,
-   "REMOVED": 4,
-   "CONTENT_MOD": 32
+   "REMOVED": 4
   }
  },
  "events": [
+  {
+   "when": "2026-10-06T18:19:17+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "079831ad-dc14-43c2-9d44-8eed0283c817",
+   "name": "rapp-pilhas-e-baterias-fabricante-nacional",
+   "title": "Rapp Pilhas e Baterias - Fabricante Nacional",
+   "summary": "6 resource URL(s) changed (1 moved from ? to stibamadadosabertosprd.blob.core.windows.net; 1 plain file → zip)",
+   "summary_pt": "6 URL(s) de recurso alterada(s) (1 movida(s) de ? para stibamadadosabertosprd.blob.core.windows.net; 1 arquivo simples → zip)",
+   "host_pairs": [
+    [
+     "",
+     "stibamadadosabertosprd.blob.core.windows.net",
+     1
+    ]
+   ],
+   "zip_to_plain": 0,
+   "plain_to_zip": 1,
+   "prov_log": "079831ad-dc14-43c2-9d44-8eed0283c817.jsonld"
+  },
   {
    "when": "2026-10-03T05:13:21+00:00",
    "type": "NEW",
@@ -1078,6 +1098,19 @@
  ],
  "datasets": [
   {
+   "id": "079831ad-dc14-43c2-9d44-8eed0283c817",
+   "name": "rapp-pilhas-e-baterias-fabricante-nacional",
+   "title": "Rapp Pilhas e Baterias - Fabricante Nacional",
+   "organization": "Dados Abertos",
+   "resources": 20,
+   "metadata_modified": "2026-10-06T14:55:39.032888",
+   "prov_records": 2,
+   "prov_log": "079831ad-dc14-43c2-9d44-8eed0283c817.jsonld",
+   "changes": 2,
+   "last_change": "2026-10-06T18:19:17+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
    "id": "e9fb8ec2-d676-49f3-85e8-6751ebed36e7",
    "name": "volumes-explorados-inventario-amostral",
    "title": "Volumes Explorados - Inventário Amostral",
@@ -1179,19 +1212,6 @@
    "prov_log": "ef55602f-73f2-4976-a35d-23d6bfebc1df.jsonld",
    "changes": 1,
    "last_change": "2026-08-26T19:49:09+00:00",
-   "last_type": "CONTENT_MOD"
-  },
-  {
-   "id": "079831ad-dc14-43c2-9d44-8eed0283c817",
-   "name": "rapp-pilhas-e-baterias-fabricante-nacional",
-   "title": "Rapp Pilhas e Baterias - Fabricante Nacional",
-   "organization": "Dados Abertos",
-   "resources": 20,
-   "metadata_modified": "2026-08-19T13:44:32.950159",
-   "prov_records": 1,
-   "prov_log": "079831ad-dc14-43c2-9d44-8eed0283c817.jsonld",
-   "changes": 1,
-   "last_change": "2026-08-19T18:36:20+00:00",
    "last_type": "CONTENT_MOD"
   },
   {
@@ -2106,23 +2126,13 @@
   }
  ],
  "hosts_now": {
-  "stibamadadosabertosprd.blob.core.windows.net": 244,
+  "stibamadadosabertosprd.blob.core.windows.net": 245,
   "dadosabertos.ibama.gov.br": 196,
   "siscom.ibama.gov.br": 29,
   "siscom.ibama.gov.br:80": 3,
-  "": 1,
   "pamgia.ibama.gov.br": 1
  },
- "urls_without_host": [
-  {
-   "dataset": "rapp-pilhas-e-baterias-fabricante-nacional",
-   "title": "Rapp Pilhas e Baterias - Fabricante Nacional",
-   "resource": "Pontos de Coleta",
-   "format": "CSV",
-   "url": "",
-   "host": ""
-  }
- ],
+ "urls_without_host": [],
  "relocations": [
   {
    "from": "dadosabertos.ibama.gov.br",
@@ -2131,10 +2141,18 @@
    "events": 23,
    "datasets": 16,
    "last": "2026-09-28T23:00:33+00:00"
+  },
+  {
+   "from": "",
+   "to": "stibamadadosabertosprd.blob.core.windows.net",
+   "urls": 1,
+   "events": 1,
+   "datasets": 1,
+   "last": "2026-10-06T18:19:17+00:00"
   }
  ],
  "packaging": {
   "zip_to_plain": 42,
-  "plain_to_zip": 15
+  "plain_to_zip": 16
  }
 }
