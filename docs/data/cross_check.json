@@ -1,11 +1,11 @@
 {
  "status": "IN_SYNC",
- "checked_at": "2026-10-05T10:45:51.522553+00:00",
- "duration_seconds": 34.68,
+ "checked_at": "2026-10-06T10:38:57.862504+00:00",
+ "duration_seconds": 31.94,
  "portal_url": "https://dadosabertos.ibama.gov.br",
- "snapshot_run_id": "20261005T053244Z",
+ "snapshot_run_id": "20261006T061515Z",
  "snapshot_file": "snapshot_20260928T230033Z.json",
- "snapshot_age_hours": 5.22,
+ "snapshot_age_hours": 4.4,
  "monitor_tolerance_hours": 7,
  "coverage_ratio": 1.0,
  "min_coverage_ratio": 0.9,
@@ -18,6 +18,6 @@
  },
  "modified": [],
  "errors": [],
- "sentence": "✅ **Cross-check passing** — last verified 2026-10-05 10:45 UTC. All 79 reachable datasets in sync with the live portal (dadosabertos.ibama.gov.br); latest snapshot is 5.2h old.",
- "sentence_pt": "✅ **Verificação cruzada aprovada** — última verificação em 2026-10-05 10:45 UTC. Todos os 79 conjuntos de dados acessíveis estão sincronizados com o portal ao vivo (dadosabertos.ibama.gov.br); o snapshot mais recente tem 5,2 h."
+ "sentence": "✅ **Cross-check passing** — last verified 2026-10-06 10:38 UTC. All 79 reachable datasets in sync with the live portal (dadosabertos.ibama.gov.br); latest snapshot is 4.4h old.",
+ "sentence_pt": "✅ **Verificação cruzada aprovada** — última verificação em 2026-10-06 10:38 UTC. Todos os 79 conjuntos de dados acessíveis estão sincronizados com o portal ao vivo (dadosabertos.ibama.gov.br); o snapshot mais recente tem 4,4 h."
 }
