@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-10-07T13:16:02.299603+00:00",
+ "generated_at": "2026-10-07T23:02:59.243361+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-10-07T13:15:41+00:00",
-  "cycles": 452,
+  "last_cycle": "2026-10-07T23:02:39+00:00",
+  "cycles": 453,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -133,11 +133,11 @@
    "2026-10-04": 3,
    "2026-10-05": 2,
    "2026-10-06": 3,
-   "2026-10-07": 2
+   "2026-10-07": 3
   },
-  "cycles_30d": 108,
+  "cycles_30d": 107,
   "max_gap_hours_30d": 14.2,
-  "distinct_snapshots": 33,
+  "distinct_snapshots": 34,
   "failures": [
    {
     "run_id": 37071032525,
@@ -255,17 +255,59 @@
   "datasets": 79,
   "resources": 474,
   "organizations": 1,
-  "prov_events": 33,
-  "prov_records": 33,
+  "prov_events": 36,
+  "prov_records": 36,
   "critical": 0,
-  "datasets_changed": 23,
+  "datasets_changed": 25,
   "by_type": {
-   "CONTENT_MOD": 33,
+   "CONTENT_MOD": 36,
    "NEW": 12,
    "REMOVED": 4
   }
  },
  "events": [
+  {
+   "when": "2026-10-07T23:02:39+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "d7986b0b-9bd0-4c95-a0b8-99fad6b188e0",
+   "name": "sinaflor-empreendimentos-de-base-florestal",
+   "title": "Sinaflor - Empreendimentos de Base Florestal",
+   "summary": "4 resource URL(s) changed (3 zip → plain file)",
+   "summary_pt": "4 URL(s) de recurso alterada(s) (3 zip → arquivo simples)",
+   "host_pairs": [],
+   "zip_to_plain": 3,
+   "plain_to_zip": 0,
+   "prov_log": "d7986b0b-9bd0-4c95-a0b8-99fad6b188e0.jsonld"
+  },
+  {
+   "when": "2026-10-07T23:02:39+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "503f10ae-b624-481e-9ef7-0a490bc33d2d",
+   "name": "rapp-pilhas-e-baterias-importador",
+   "title": "Rapp Pilhas e baterias - Importador",
+   "summary": "6 resource URL(s) changed",
+   "summary_pt": "6 URL(s) de recurso alterada(s)",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": "503f10ae-b624-481e-9ef7-0a490bc33d2d.jsonld"
+  },
+  {
+   "when": "2026-10-07T23:02:39+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "4b292c2e-56bb-4639-9ea2-a9b02fea9558",
+   "name": "fiscalizacao-termo-de-embargo",
+   "title": "Fiscalização - termo de embargo",
+   "summary": "3 resource URL(s) changed",
+   "summary_pt": "3 URL(s) de recurso alterada(s)",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": "4b292c2e-56bb-4639-9ea2-a9b02fea9558.jsonld"
+  },
   {
    "when": "2026-10-06T18:19:17+00:00",
    "type": "CONTENT_MOD",
@@ -1099,6 +1141,45 @@
  ],
  "datasets": [
   {
+   "id": "d7986b0b-9bd0-4c95-a0b8-99fad6b188e0",
+   "name": "sinaflor-empreendimentos-de-base-florestal",
+   "title": "Sinaflor - Empreendimentos de Base Florestal",
+   "organization": "Dados Abertos",
+   "resources": 4,
+   "metadata_modified": "2026-10-07T19:59:02.219034",
+   "prov_records": 1,
+   "prov_log": "d7986b0b-9bd0-4c95-a0b8-99fad6b188e0.jsonld",
+   "changes": 1,
+   "last_change": "2026-10-07T23:02:39+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
+   "id": "503f10ae-b624-481e-9ef7-0a490bc33d2d",
+   "name": "rapp-pilhas-e-baterias-importador",
+   "title": "Rapp Pilhas e baterias - Importador",
+   "organization": "Dados Abertos",
+   "resources": 24,
+   "metadata_modified": "2026-10-07T19:57:48.508810",
+   "prov_records": 1,
+   "prov_log": "503f10ae-b624-481e-9ef7-0a490bc33d2d.jsonld",
+   "changes": 1,
+   "last_change": "2026-10-07T23:02:39+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
+   "id": "4b292c2e-56bb-4639-9ea2-a9b02fea9558",
+   "name": "fiscalizacao-termo-de-embargo",
+   "title": "Fiscalização - termo de embargo",
+   "organization": "Dados Abertos",
+   "resources": 24,
+   "metadata_modified": "2026-10-07T19:32:21.034682",
+   "prov_records": 9,
+   "prov_log": "4b292c2e-56bb-4639-9ea2-a9b02fea9558.jsonld",
+   "changes": 10,
+   "last_change": "2026-10-07T23:02:39+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
    "id": "079831ad-dc14-43c2-9d44-8eed0283c817",
    "name": "rapp-pilhas-e-baterias-fabricante-nacional",
    "title": "Rapp Pilhas e Baterias - Fabricante Nacional",
@@ -1147,19 +1228,6 @@
    "prov_records": 0,
    "prov_log": null,
    "changes": 1,
-   "last_change": "2026-10-02T22:29:04+00:00",
-   "last_type": "REMOVED"
-  },
-  {
-   "id": "4b292c2e-56bb-4639-9ea2-a9b02fea9558",
-   "name": "fiscalizacao-termo-de-embargo",
-   "title": "Fiscalização - termo de embargo",
-   "organization": "Dados Abertos",
-   "resources": 24,
-   "metadata_modified": "2026-09-22T14:03:01.895563",
-   "prov_records": 8,
-   "prov_log": "4b292c2e-56bb-4639-9ea2-a9b02fea9558.jsonld",
-   "changes": 9,
    "last_change": "2026-10-02T22:29:04+00:00",
    "last_type": "REMOVED"
   },
@@ -1580,19 +1648,6 @@
    "last_type": null
   },
   {
-   "id": "d7986b0b-9bd0-4c95-a0b8-99fad6b188e0",
-   "name": "sinaflor-empreendimentos-de-base-florestal",
-   "title": "Sinaflor - Empreendimentos de Base Florestal",
-   "organization": "Dados Abertos",
-   "resources": 4,
-   "metadata_modified": "2026-03-16T14:31:08.666833",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
    "id": "3077864c-729b-4f37-969f-151725ac97fe",
    "name": "sinaflor-autorizacao-de-supressao-de-vegetacao",
    "title": "Sinaflor - Autorização de Supressão de Vegetação",
@@ -1677,19 +1732,6 @@
    "organization": "Dados Abertos",
    "resources": 4,
    "metadata_modified": "2021-09-18T12:41:33.290962",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
-   "id": "503f10ae-b624-481e-9ef7-0a490bc33d2d",
-   "name": "rapp-pilhas-e-baterias-importador",
-   "title": "Rapp Pilhas e baterias - Importador",
-   "organization": "Dados Abertos",
-   "resources": 24,
-   "metadata_modified": "2026-08-10T14:03:01.880308",
    "prov_records": 0,
    "prov_log": null,
    "changes": 0,
@@ -2153,7 +2195,7 @@
   }
  ],
  "packaging": {
-  "zip_to_plain": 42,
+  "zip_to_plain": 45,
   "plain_to_zip": 16
  }
 }
