@@ -7,9 +7,9 @@ first monitoring cycle that saw the change).
 
 - **Monitored since:** 2026-06-09
 - **Datasets in the latest snapshot:** 79
-- **Changes recorded as PROV events:** 36 (0 critical)
+- **Changes recorded as PROV events:** 38 (0 critical)
 - **New datasets:** 12
-- **Last change detected:** 2026-10-07 23:02 UTC
+- **Last change detected:** 2026-10-08 23:18 UTC
 
 Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 (resources added, removed, renamed or re-formatted; critical), `RETRO_ALTER`
@@ -20,7 +20,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Month | PROV events | Critical | New datasets |
 |---|---:|---:|---:|
-| 2026-10 | 4 | 0 | 4 |
+| 2026-10 | 6 | 0 | 4 |
 | 2026-09 | 8 | 0 | 0 |
 | 2026-08 | 10 | 0 | 3 |
 | 2026-07 | 11 | 0 | 3 |
@@ -30,6 +30,8 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Detected (UTC) | Dataset | Type | What changed | Provenance |
 |---|---|---|---|---|
+| 2026-10-08 23:18 | [Volumes Explorados - IF 100%](https://dadosabertos.ibama.gov.br/dataset/volumes-explorados-if-100) | `CONTENT_MOD` | 3 resource URL(s) changed (3 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/08bac698-0921-47d7-b20a-83b9bf5a474c.jsonld) |
+| 2026-10-08 23:18 | [Arrecadação com TCFA](https://dadosabertos.ibama.gov.br/dataset/arrecadacao-com-tcfa) | `CONTENT_MOD` | 4 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net; 4 plain file → zip); license title changed | [log](provenance_logs/0fc42235-b591-469d-9e46-edc8066a3da8.jsonld) |
 | 2026-10-07 23:02 | [Sinaflor - Empreendimentos de Base Florestal](https://dadosabertos.ibama.gov.br/dataset/sinaflor-empreendimentos-de-base-florestal) | `CONTENT_MOD` | 4 resource URL(s) changed (3 zip → plain file) | [log](provenance_logs/d7986b0b-9bd0-4c95-a0b8-99fad6b188e0.jsonld) |
 | 2026-10-07 23:02 | [Rapp Pilhas e baterias - Importador](https://dadosabertos.ibama.gov.br/dataset/rapp-pilhas-e-baterias-importador) | `CONTENT_MOD` | 6 resource URL(s) changed | [log](provenance_logs/503f10ae-b624-481e-9ef7-0a490bc33d2d.jsonld) |
 | 2026-10-07 23:02 | [Fiscalização - termo de embargo](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-embargo) | `CONTENT_MOD` | 3 resource URL(s) changed | [log](provenance_logs/4b292c2e-56bb-4639-9ea2-a9b02fea9558.jsonld) |

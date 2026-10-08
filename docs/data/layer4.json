@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-10-08T13:22:33.871882+00:00",
+ "generated_at": "2026-10-08T23:18:35.372797+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-10-08T13:22:15+00:00",
-  "cycles": 455,
+  "last_cycle": "2026-10-08T23:18:16+00:00",
+  "cycles": 456,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -134,11 +134,11 @@
    "2026-10-05": 2,
    "2026-10-06": 3,
    "2026-10-07": 3,
-   "2026-10-08": 2
+   "2026-10-08": 3
   },
-  "cycles_30d": 107,
+  "cycles_30d": 106,
   "max_gap_hours_30d": 14.2,
-  "distinct_snapshots": 34,
+  "distinct_snapshots": 35,
   "failures": [
    {
     "run_id": 37071032525,
@@ -256,17 +256,57 @@
   "datasets": 79,
   "resources": 474,
   "organizations": 1,
-  "prov_events": 36,
-  "prov_records": 36,
+  "prov_events": 38,
+  "prov_records": 38,
   "critical": 0,
-  "datasets_changed": 25,
+  "datasets_changed": 27,
   "by_type": {
-   "CONTENT_MOD": 36,
+   "CONTENT_MOD": 38,
    "NEW": 12,
    "REMOVED": 4
   }
  },
  "events": [
+  {
+   "when": "2026-10-08T23:18:16+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "08bac698-0921-47d7-b20a-83b9bf5a474c",
+   "name": "volumes-explorados-if-100",
+   "title": "Volumes Explorados - IF 100%",
+   "summary": "3 resource URL(s) changed (3 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net)",
+   "summary_pt": "3 URL(s) de recurso alterada(s) (3 movida(s) de dadosabertos.ibama.gov.br para stibamadadosabertosprd.blob.core.windows.net)",
+   "host_pairs": [
+    [
+     "dadosabertos.ibama.gov.br",
+     "stibamadadosabertosprd.blob.core.windows.net",
+     3
+    ]
+   ],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": "08bac698-0921-47d7-b20a-83b9bf5a474c.jsonld"
+  },
+  {
+   "when": "2026-10-08T23:18:16+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "0fc42235-b591-469d-9e46-edc8066a3da8",
+   "name": "arrecadacao-com-tcfa",
+   "title": "Arrecadação com TCFA",
+   "summary": "4 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net; 4 plain file → zip); license title changed",
+   "summary_pt": "4 URL(s) de recurso alterada(s) (4 movida(s) de dadosabertos.ibama.gov.br para stibamadadosabertosprd.blob.core.windows.net; 4 arquivo simples → zip); título da licença alterado",
+   "host_pairs": [
+    [
+     "dadosabertos.ibama.gov.br",
+     "stibamadadosabertosprd.blob.core.windows.net",
+     4
+    ]
+   ],
+   "zip_to_plain": 0,
+   "plain_to_zip": 4,
+   "prov_log": "0fc42235-b591-469d-9e46-edc8066a3da8.jsonld"
+  },
   {
    "when": "2026-10-07T23:02:39+00:00",
    "type": "CONTENT_MOD",
@@ -1142,6 +1182,32 @@
  ],
  "datasets": [
   {
+   "id": "08bac698-0921-47d7-b20a-83b9bf5a474c",
+   "name": "volumes-explorados-if-100",
+   "title": "Volumes Explorados - IF 100%",
+   "organization": "Dados Abertos",
+   "resources": 3,
+   "metadata_modified": "2026-10-08T18:26:13.316334",
+   "prov_records": 1,
+   "prov_log": "08bac698-0921-47d7-b20a-83b9bf5a474c.jsonld",
+   "changes": 2,
+   "last_change": "2026-10-08T23:18:16+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
+   "id": "0fc42235-b591-469d-9e46-edc8066a3da8",
+   "name": "arrecadacao-com-tcfa",
+   "title": "Arrecadação com TCFA",
+   "organization": "Dados Abertos",
+   "resources": 4,
+   "metadata_modified": "2026-10-08T18:42:42.346305",
+   "prov_records": 1,
+   "prov_log": "0fc42235-b591-469d-9e46-edc8066a3da8.jsonld",
+   "changes": 1,
+   "last_change": "2026-10-08T23:18:16+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
    "id": "d7986b0b-9bd0-4c95-a0b8-99fad6b188e0",
    "name": "sinaflor-empreendimentos-de-base-florestal",
    "title": "Sinaflor - Empreendimentos de Base Florestal",
@@ -1203,19 +1269,6 @@
    "prov_records": 1,
    "prov_log": "e9fb8ec2-d676-49f3-85e8-6751ebed36e7.jsonld",
    "changes": 2,
-   "last_change": "2026-10-02T22:29:04+00:00",
-   "last_type": "REMOVED"
-  },
-  {
-   "id": "08bac698-0921-47d7-b20a-83b9bf5a474c",
-   "name": "volumes-explorados-if-100",
-   "title": "Volumes Explorados - IF 100%",
-   "organization": "Dados Abertos",
-   "resources": 3,
-   "metadata_modified": "2025-01-24T12:33:11.303923",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 1,
    "last_change": "2026-10-02T22:29:04+00:00",
    "last_type": "REMOVED"
   },
@@ -2143,19 +2196,6 @@
    "last_type": null
   },
   {
-   "id": "0fc42235-b591-469d-9e46-edc8066a3da8",
-   "name": "arrecadacao-com-tcfa",
-   "title": "Arrecadação com TCFA",
-   "organization": "Dados Abertos",
-   "resources": 4,
-   "metadata_modified": "2024-10-24T14:29:27.082885",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
    "id": "8b1649b3-4a3b-4116-9764-3354ae27537f",
    "name": "antropizacao-dos-biomas-extra-amazonicos",
    "title": "Antropização dos Biomas Extra-Amazônicos",
@@ -2170,8 +2210,8 @@
   }
  ],
  "hosts_now": {
-  "stibamadadosabertosprd.blob.core.windows.net": 245,
-  "dadosabertos.ibama.gov.br": 196,
+  "stibamadadosabertosprd.blob.core.windows.net": 252,
+  "dadosabertos.ibama.gov.br": 189,
   "siscom.ibama.gov.br": 29,
   "siscom.ibama.gov.br:80": 3,
   "pamgia.ibama.gov.br": 1
@@ -2181,10 +2221,10 @@
   {
    "from": "dadosabertos.ibama.gov.br",
    "to": "stibamadadosabertosprd.blob.core.windows.net",
-   "urls": 72,
-   "events": 23,
-   "datasets": 16,
-   "last": "2026-09-28T23:00:33+00:00"
+   "urls": 79,
+   "events": 25,
+   "datasets": 18,
+   "last": "2026-10-08T23:18:16+00:00"
   },
   {
    "from": "",
@@ -2197,6 +2237,6 @@
  ],
  "packaging": {
   "zip_to_plain": 45,
-  "plain_to_zip": 16
+  "plain_to_zip": 20
  }
 }
