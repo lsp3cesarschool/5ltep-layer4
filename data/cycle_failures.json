@@ -102,5 +102,13 @@
   "detail": "HTTP 502 Bad Gateway (/api/3/action/package_list)",
   "step": "Run monitoring cycle",
   "source": "log"
+ },
+ {
+  "run_id": 38410424702,
+  "when": "2026-10-13T14:06:07+00:00",
+  "category": "blocked",
+  "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "cycle"
  }
 ]
