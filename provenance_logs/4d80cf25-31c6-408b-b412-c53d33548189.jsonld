@@ -1,0 +1,102 @@
+{
+  "@context": {
+    "prov": "http://www.w3.org/ns/prov#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "5ltep": "https://5ltep.example.org/ontology#",
+    "ckan": "https://ckan.org/schema#",
+    "portal": "https://dadosabertos.ibama.gov.br/"
+  },
+  "5ltep:datasetId": "4d80cf25-31c6-408b-b412-c53d33548189",
+  "5ltep:portalUrl": "https://dadosabertos.ibama.gov.br",
+  "provenance_chain": [
+    {
+      "@context": {
+        "prov": "http://www.w3.org/ns/prov#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "5ltep": "https://5ltep.example.org/ontology#",
+        "ckan": "https://ckan.org/schema#",
+        "portal": "https://dadosabertos.ibama.gov.br/"
+      },
+      "@graph": [
+        {
+          "@id": "https://dadosabertos.ibama.gov.br/dataset/4d80cf25-31c6-408b-b412-c53d33548189#352802709828",
+          "@type": [
+            "prov:Entity",
+            "5ltep:DatasetSnapshot"
+          ],
+          "prov:wasGeneratedBy": {
+            "@id": "5ltep:run-20261014T170649Z"
+          },
+          "5ltep:changeType": "CONTENT_MOD",
+          "5ltep:severity": "WARNING",
+          "5ltep:datasetId": "4d80cf25-31c6-408b-b412-c53d33548189",
+          "5ltep:contentHash": "3528027098284062aa9472763f011efb025c7c34ff3327621736ef75723df42b",
+          "5ltep:detectedAt": {
+            "@value": "2026-10-14T17:06:49.637937+00:00",
+            "@type": "xsd:dateTime"
+          },
+          "prov:wasAttributedTo": {
+            "@id": "https://dadosabertos.ibama.gov.br/organization/ibama"
+          },
+          "prov:wasDerivedFrom": {
+            "@id": "https://dadosabertos.ibama.gov.br/dataset/4d80cf25-31c6-408b-b412-c53d33548189#b8731b7b0bda"
+          },
+          "5ltep:changeSummary": "4 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net); license title changed",
+          "5ltep:changedFields": [
+            "metadata_modified",
+            "resource.url"
+          ],
+          "5ltep:fieldsOutsideFingerprint": [
+            "license_title",
+            "resource.url_type"
+          ],
+          "5ltep:resourceUrlChanges": 4,
+          "5ltep:hostMoves": 4,
+          "5ltep:packagingChanges": 0
+        },
+        {
+          "@id": "5ltep:run-20261014T170649Z",
+          "@type": [
+            "prov:Activity",
+            "5ltep:MonitoringRun"
+          ],
+          "prov:startedAtTime": {
+            "@value": "2026-10-14T17:06:49.641949+00:00",
+            "@type": "xsd:dateTime"
+          },
+          "prov:endedAtTime": {
+            "@value": "2026-10-14T17:06:49.642074+00:00",
+            "@type": "xsd:dateTime"
+          },
+          "prov:wasAssociatedWith": {
+            "@id": "https://github.com/lsp3cesarschool/5ltep-layer4@a267314"
+          },
+          "prov:used": {
+            "@id": "https://dadosabertos.ibama.gov.br/api/3/action/package_show?id=4d80cf25-31c6-408b-b412-c53d33548189"
+          }
+        },
+        {
+          "@id": "https://github.com/lsp3cesarschool/5ltep-layer4@a267314",
+          "@type": [
+            "prov:Agent",
+            "prov:SoftwareAgent"
+          ],
+          "rdfs:label": "5L-TEP Toolkit v1.1.0 (Layer 4 — Observability & Provenance)",
+          "5ltep:repositoryUrl": "https://github.com/lsp3cesarschool/5ltep-layer4",
+          "5ltep:commitSha": "a267314708ddab327273784e7ae5331ce450a7f7"
+        },
+        {
+          "@id": "https://dadosabertos.ibama.gov.br/organization/ibama",
+          "@type": [
+            "prov:Agent",
+            "5ltep:DataCustodian"
+          ],
+          "rdfs:label": "ibama",
+          "5ltep:portalUrl": "https://dadosabertos.ibama.gov.br"
+        }
+      ]
+    }
+  ]
+}
