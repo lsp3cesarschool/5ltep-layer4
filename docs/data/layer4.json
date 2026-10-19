@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-10-18T20:37:06.109045+00:00",
+ "generated_at": "2026-10-19T04:34:28.398759+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -151,6 +151,14 @@
   "distinct_snapshots": 36,
   "failures": [
    {
+    "run_id": 39200117135,
+    "when": "2026-10-19T04:34:19+00:00",
+    "category": "blocked",
+    "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "cycle"
+   },
+   {
     "run_id": 38410424702,
     "when": "2026-10-13T14:06:07+00:00",
     "category": "blocked",
@@ -264,7 +272,7 @@
    }
   ],
   "failures_by_category": {
-   "blocked": 10,
+   "blocked": 11,
    "dns": 3,
    "portal_down": 1
   },

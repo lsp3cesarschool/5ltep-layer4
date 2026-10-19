@@ -110,5 +110,13 @@
   "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
   "step": "Run monitoring cycle",
   "source": "cycle"
+ },
+ {
+  "run_id": 39200117135,
+  "when": "2026-10-19T04:34:19+00:00",
+  "category": "blocked",
+  "detail": "HTTP 403 Forbidden (/api/3/action/package_list)",
+  "step": "Run monitoring cycle",
+  "source": "cycle"
  }
 ]
