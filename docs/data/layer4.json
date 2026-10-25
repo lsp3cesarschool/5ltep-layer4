@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-10-25T04:36:04.033516+00:00",
+ "generated_at": "2026-10-25T11:19:06.114379+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -158,6 +158,14 @@
   "distinct_snapshots": 36,
   "failures": [
    {
+    "run_id": 40188331608,
+    "when": "2026-10-25T11:18:54+00:00",
+    "category": "portal_down",
+    "detail": "HTTP 504 Gateway Timeout (/api/3/action/package_list)",
+    "step": "Run monitoring cycle",
+    "source": "cycle"
+   },
+   {
     "run_id": 39200117135,
     "when": "2026-10-19T04:34:19+00:00",
     "category": "blocked",
@@ -281,7 +289,7 @@
   "failures_by_category": {
    "blocked": 11,
    "dns": 3,
-   "portal_down": 1
+   "portal_down": 2
   },
   "unread_last_cycle": []
  },
