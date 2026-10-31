@@ -6,10 +6,10 @@ PROV-DM records; do not edit by hand. Times are UTC (detection time, i.e., the
 first monitoring cycle that saw the change).
 
 - **Monitored since:** 2026-06-09
-- **Datasets in the latest snapshot:** 79
+- **Datasets in the latest snapshot:** 78
 - **Changes recorded as PROV events:** 40 (0 critical)
 - **New datasets:** 12
-- **Last change detected:** 2026-10-14 17:06 UTC
+- **Last change detected:** 2026-10-31 12:18 UTC
 
 Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 (resources added, removed, renamed or re-formatted; critical), `RETRO_ALTER`
@@ -30,6 +30,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Detected (UTC) | Dataset | Type | What changed | Provenance |
 |---|---|---|---|---|
+| 2026-10-31 12:18 | [Vegetação de Mangue brasileira](https://dadosabertos.ibama.gov.br/dataset/vegetacao-de-mangue-brasileira) | `REMOVED` | Dataset no longer listed |  |
 | 2026-10-14 17:06 | [Fiscalização – termo de destruição ou inutilização (série A e B)](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b) | `CONTENT_MOD` | 4 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/2b346de7-e221-43f7-a155-3993c4353506.jsonld) |
 | 2026-10-14 17:06 | [Evolução das Receitas Arrecadadas](https://dadosabertos.ibama.gov.br/dataset/evolucao-das-receitas-arrecadadas) | `CONTENT_MOD` | 4 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net); license title changed | [log](provenance_logs/4d80cf25-31c6-408b-b412-c53d33548189.jsonld) |
 | 2026-10-08 23:18 | [Volumes Explorados - IF 100%](https://dadosabertos.ibama.gov.br/dataset/volumes-explorados-if-100) | `CONTENT_MOD` | 3 resource URL(s) changed (3 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/08bac698-0921-47d7-b20a-83b9bf5a474c.jsonld) |

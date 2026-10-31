@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-10-31T05:33:42.958239+00:00",
+ "generated_at": "2026-10-31T12:38:00.915695+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-10-31T05:33:21+00:00",
-  "cycles": 531,
+  "last_cycle": "2026-10-31T12:18:20+00:00",
+  "cycles": 532,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -157,11 +157,11 @@
    "2026-10-28": 3,
    "2026-10-29": 3,
    "2026-10-30": 3,
-   "2026-10-31": 1
+   "2026-10-31": 2
   },
-  "cycles_30d": 101,
+  "cycles_30d": 102,
   "max_gap_hours_30d": 22.1,
-  "distinct_snapshots": 36,
+  "distinct_snapshots": 37,
   "failures": [
    {
     "run_id": 40188331608,
@@ -297,23 +297,39 @@
    "dns": 3,
    "portal_down": 2
   },
-  "unread_last_cycle": []
+  "unread_last_cycle": [
+   "vegetacao-de-mangue-brasileira"
+  ]
  },
  "totals": {
-  "datasets": 79,
-  "resources": 474,
+  "datasets": 78,
+  "resources": 471,
   "organizations": 1,
   "prov_events": 40,
   "prov_records": 40,
   "critical": 0,
   "datasets_changed": 29,
   "by_type": {
+   "REMOVED": 5,
    "CONTENT_MOD": 40,
-   "NEW": 12,
-   "REMOVED": 4
+   "NEW": 12
   }
  },
  "events": [
+  {
+   "when": "2026-10-31T12:18:20+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "bac8b578-90e5-4988-8037-154bd9c319d7",
+   "name": "vegetacao-de-mangue-brasileira",
+   "title": "Vegetação de Mangue brasileira",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
   {
    "when": "2026-10-14T17:06:34+00:00",
    "type": "CONTENT_MOD",
@@ -1672,19 +1688,6 @@
    "last_type": null
   },
   {
-   "id": "bac8b578-90e5-4988-8037-154bd9c319d7",
-   "name": "vegetacao-de-mangue-brasileira",
-   "title": "Vegetação de Mangue brasileira",
-   "organization": "Dados Abertos",
-   "resources": 3,
-   "metadata_modified": "2021-09-18T13:22:03.418050",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
    "id": "49c2a644-b3cd-4eaf-ad98-a243eef9656d",
    "name": "unidades-ibama",
    "title": "Unidades IBAMA",
@@ -2299,7 +2302,7 @@
  "hosts_now": {
   "stibamadadosabertosprd.blob.core.windows.net": 260,
   "dadosabertos.ibama.gov.br": 181,
-  "siscom.ibama.gov.br": 29,
+  "siscom.ibama.gov.br": 26,
   "siscom.ibama.gov.br:80": 3,
   "pamgia.ibama.gov.br": 1
  },
