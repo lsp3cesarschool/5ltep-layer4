@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-10-31T12:38:00.915695+00:00",
+ "generated_at": "2026-10-31T21:47:41.241492+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-10-31T12:18:20+00:00",
-  "cycles": 532,
+  "last_cycle": "2026-10-31T21:29:10+00:00",
+  "cycles": 533,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -157,11 +157,11 @@
    "2026-10-28": 3,
    "2026-10-29": 3,
    "2026-10-30": 3,
-   "2026-10-31": 2
+   "2026-10-31": 3
   },
   "cycles_30d": 102,
   "max_gap_hours_30d": 22.1,
-  "distinct_snapshots": 37,
+  "distinct_snapshots": 38,
   "failures": [
    {
     "run_id": 40188331608,
@@ -298,24 +298,127 @@
    "portal_down": 2
   },
   "unread_last_cycle": [
-   "vegetacao-de-mangue-brasileira"
+   "catalogo-de-imagens-orbitais",
+   "fiscalizacao-termo-de-suspensao",
+   "fontes-energeticas",
+   "rapp-pilhas-e-baterias-reciclador",
+   "sinaflor-uso-alternativo-do-solo",
+   "sinaflor-uso-alternativo-do-solo-agricultor-familiar"
   ]
  },
  "totals": {
-  "datasets": 78,
-  "resources": 471,
+  "datasets": 73,
+  "resources": 446,
   "organizations": 1,
   "prov_events": 40,
   "prov_records": 40,
   "critical": 0,
   "datasets_changed": 29,
   "by_type": {
-   "REMOVED": 5,
-   "CONTENT_MOD": 40,
-   "NEW": 12
+   "NEW": 13,
+   "REMOVED": 11,
+   "CONTENT_MOD": 40
   }
  },
  "events": [
+  {
+   "when": "2026-10-31T21:29:10+00:00",
+   "type": "NEW",
+   "severity": "INFO",
+   "dataset_id": "bac8b578-90e5-4988-8037-154bd9c319d7",
+   "name": "vegetacao-de-mangue-brasileira",
+   "title": "Vegetação de Mangue brasileira",
+   "summary": "Dataset published (3 resources)",
+   "summary_pt": "Conjunto publicado (3 recursos)",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-31T21:29:10+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "5dbb0a27-bdc5-48cf-8b7b-a8c725e4510d",
+   "name": "sinaflor-uso-alternativo-do-solo-agricultor-familiar",
+   "title": "Sinaflor - Uso Alternativo do Solo - Agricultor familiar",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-31T21:29:10+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "bd827dc1-ca3d-41c7-b554-5fdbaee77a2e",
+   "name": "sinaflor-uso-alternativo-do-solo",
+   "title": "Sinaflor - Uso Alternativo do Solo",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-31T21:29:10+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "7294fa27-6d00-47c6-ba4c-ba6d7b693c4d",
+   "name": "rapp-pilhas-e-baterias-reciclador",
+   "title": "Rapp Pilhas e Baterias - Reciclador",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-31T21:29:10+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "932624b2-b1f5-40f2-970a-a41098e91b01",
+   "name": "fontes-energeticas",
+   "title": "Fontes Energéticas",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-31T21:29:10+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "47c97994-cd26-4d16-a2d8-4fbc27b1d9a0",
+   "name": "fiscalizacao-termo-de-suspensao",
+   "title": "Fiscalização - termo de suspensão",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-10-31T21:29:10+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "70412bc5-33f3-4937-b4ab-028d2b6c2094",
+   "name": "catalogo-de-imagens-orbitais",
+   "title": "Catálogo de Imagens Orbitais",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
   {
    "when": "2026-10-31T12:18:20+00:00",
    "type": "REMOVED",
@@ -1285,6 +1388,19 @@
  ],
  "datasets": [
   {
+   "id": "bac8b578-90e5-4988-8037-154bd9c319d7",
+   "name": "vegetacao-de-mangue-brasileira",
+   "title": "Vegetação de Mangue brasileira",
+   "organization": "Dados Abertos",
+   "resources": 3,
+   "metadata_modified": "2021-09-18T13:22:03.418050",
+   "prov_records": 0,
+   "prov_log": null,
+   "changes": 1,
+   "last_change": "2026-10-31T12:18:20+00:00",
+   "last_type": "REMOVED"
+  },
+  {
    "id": "2b346de7-e221-43f7-a155-3993c4353506",
    "name": "fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b",
    "title": "Fiscalização – termo de destruição ou inutilização (série A e B)",
@@ -1480,19 +1596,6 @@
    "last_type": "CONTENT_MOD"
   },
   {
-   "id": "47c97994-cd26-4d16-a2d8-4fbc27b1d9a0",
-   "name": "fiscalizacao-termo-de-suspensao",
-   "title": "Fiscalização - termo de suspensão",
-   "organization": "Dados Abertos",
-   "resources": 12,
-   "metadata_modified": "2026-08-14T17:38:14.694986",
-   "prov_records": 1,
-   "prov_log": "47c97994-cd26-4d16-a2d8-4fbc27b1d9a0.jsonld",
-   "changes": 1,
-   "last_change": "2026-08-14T18:55:10+00:00",
-   "last_type": "CONTENT_MOD"
-  },
-  {
    "id": "777a2cf5-515c-4c35-b141-24487388ac83",
    "name": "sinaflor-autorizacao-especial",
    "title": "Sinaflor - Autorização Especial",
@@ -1516,19 +1619,6 @@
    "prov_log": "158522dd-cf31-480a-a36f-c5fc90ec21fc.jsonld",
    "changes": 1,
    "last_change": "2026-08-12T19:02:56+00:00",
-   "last_type": "CONTENT_MOD"
-  },
-  {
-   "id": "5dbb0a27-bdc5-48cf-8b7b-a8c725e4510d",
-   "name": "sinaflor-uso-alternativo-do-solo-agricultor-familiar",
-   "title": "Sinaflor - Uso Alternativo do Solo - Agricultor familiar",
-   "organization": "Dados Abertos",
-   "resources": 3,
-   "metadata_modified": "2026-07-16T17:20:13.699827",
-   "prov_records": 1,
-   "prov_log": "5dbb0a27-bdc5-48cf-8b7b-a8c725e4510d.jsonld",
-   "changes": 1,
-   "last_change": "2026-07-16T19:13:22+00:00",
    "last_type": "CONTENT_MOD"
   },
   {
@@ -1568,19 +1658,6 @@
    "prov_log": "0429abfc-f4ba-4942-86ca-2c2554a80fd0.jsonld",
    "changes": 2,
    "last_change": "2026-07-09T03:25:53+00:00",
-   "last_type": "CONTENT_MOD"
-  },
-  {
-   "id": "bd827dc1-ca3d-41c7-b554-5fdbaee77a2e",
-   "name": "sinaflor-uso-alternativo-do-solo",
-   "title": "Sinaflor - Uso Alternativo do Solo",
-   "organization": "Dados Abertos",
-   "resources": 4,
-   "metadata_modified": "2026-07-08T14:59:51.049461",
-   "prov_records": 1,
-   "prov_log": "bd827dc1-ca3d-41c7-b554-5fdbaee77a2e.jsonld",
-   "changes": 1,
-   "last_change": "2026-07-08T19:27:07+00:00",
    "last_type": "CONTENT_MOD"
   },
   {
@@ -1909,19 +1986,6 @@
    "last_type": null
   },
   {
-   "id": "7294fa27-6d00-47c6-ba4c-ba6d7b693c4d",
-   "name": "rapp-pilhas-e-baterias-reciclador",
-   "title": "Rapp Pilhas e Baterias - Reciclador",
-   "organization": "Dados Abertos",
-   "resources": 4,
-   "metadata_modified": "2026-07-22T14:41:38.500349",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
    "id": "76c8ba80-f39c-449f-b60e-c9712e14b91a",
    "name": "produtos-reciclados",
    "title": "Produtos Reciclados",
@@ -2006,19 +2070,6 @@
    "organization": "Dados Abertos",
    "resources": 3,
    "metadata_modified": "2021-09-18T13:22:39.823520",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
-   "id": "932624b2-b1f5-40f2-970a-a41098e91b01",
-   "name": "fontes-energeticas",
-   "title": "Fontes Energéticas",
-   "organization": "Dados Abertos",
-   "resources": 4,
-   "metadata_modified": "2021-09-18T12:45:29.255448",
    "prov_records": 0,
    "prov_log": null,
    "changes": 0,
@@ -2260,19 +2311,6 @@
    "last_type": null
   },
   {
-   "id": "70412bc5-33f3-4937-b4ab-028d2b6c2094",
-   "name": "catalogo-de-imagens-orbitais",
-   "title": "Catálogo de Imagens Orbitais",
-   "organization": "Dados Abertos",
-   "resources": 1,
-   "metadata_modified": "2021-09-18T13:14:40.515649",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
    "id": "2dc12ec3-de3d-4bf4-964b-374d9bacad6f",
    "name": "autorizacao-ambiental-para-o-transporte-interestadual-de-produtos-perigosos-aatipp",
    "title": "Autorização Ambiental para o Transporte Interestadual de Produtos Perigosos - AATIPP",
@@ -2300,9 +2338,9 @@
   }
  ],
  "hosts_now": {
-  "stibamadadosabertosprd.blob.core.windows.net": 260,
-  "dadosabertos.ibama.gov.br": 181,
-  "siscom.ibama.gov.br": 26,
+  "stibamadadosabertosprd.blob.core.windows.net": 242,
+  "dadosabertos.ibama.gov.br": 172,
+  "siscom.ibama.gov.br": 28,
   "siscom.ibama.gov.br:80": 3,
   "pamgia.ibama.gov.br": 1
  },
