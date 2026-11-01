@@ -6,10 +6,10 @@ PROV-DM records; do not edit by hand. Times are UTC (detection time, i.e., the
 first monitoring cycle that saw the change).
 
 - **Monitored since:** 2026-06-09
-- **Datasets in the latest snapshot:** 73
+- **Datasets in the latest snapshot:** 79
 - **Changes recorded as PROV events:** 40 (0 critical)
-- **New datasets:** 13
-- **Last change detected:** 2026-10-31 21:29 UTC
+- **New datasets:** 19
+- **Last change detected:** 2026-11-01 05:56 UTC
 
 Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 (resources added, removed, renamed or re-formatted; critical), `RETRO_ALTER`
@@ -20,6 +20,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Month | PROV events | Critical | New datasets |
 |---|---:|---:|---:|
+| 2026-11 | 0 | 0 | 6 |
 | 2026-10 | 8 | 0 | 5 |
 | 2026-09 | 8 | 0 | 0 |
 | 2026-08 | 10 | 0 | 3 |
@@ -30,6 +31,12 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Detected (UTC) | Dataset | Type | What changed | Provenance |
 |---|---|---|---|---|
+| 2026-11-01 05:56 | [Sinaflor - Uso Alternativo do Solo - Agricultor familiar](https://dadosabertos.ibama.gov.br/dataset/sinaflor-uso-alternativo-do-solo-agricultor-familiar) | `NEW` | Dataset published (3 resources) |  |
+| 2026-11-01 05:56 | [Sinaflor - Uso Alternativo do Solo](https://dadosabertos.ibama.gov.br/dataset/sinaflor-uso-alternativo-do-solo) | `NEW` | Dataset published (4 resources) |  |
+| 2026-11-01 05:56 | [Rapp Pilhas e Baterias - Reciclador](https://dadosabertos.ibama.gov.br/dataset/rapp-pilhas-e-baterias-reciclador) | `NEW` | Dataset published (4 resources) |  |
+| 2026-11-01 05:56 | [Fontes Energéticas](https://dadosabertos.ibama.gov.br/dataset/fontes-energeticas) | `NEW` | Dataset published (4 resources) |  |
+| 2026-11-01 05:56 | [Fiscalização - termo de suspensão](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-suspensao) | `NEW` | Dataset published (12 resources) |  |
+| 2026-11-01 05:56 | [Catálogo de Imagens Orbitais](https://dadosabertos.ibama.gov.br/dataset/catalogo-de-imagens-orbitais) | `NEW` | Dataset published (1 resources) |  |
 | 2026-10-31 21:29 | [Vegetação de Mangue brasileira](https://dadosabertos.ibama.gov.br/dataset/vegetacao-de-mangue-brasileira) | `NEW` | Dataset published (3 resources) |  |
 | 2026-10-31 21:29 | [Sinaflor - Uso Alternativo do Solo - Agricultor familiar](https://dadosabertos.ibama.gov.br/dataset/sinaflor-uso-alternativo-do-solo-agricultor-familiar) | `REMOVED` | Dataset no longer listed |  |
 | 2026-10-31 21:29 | [Sinaflor - Uso Alternativo do Solo](https://dadosabertos.ibama.gov.br/dataset/sinaflor-uso-alternativo-do-solo) | `REMOVED` | Dataset no longer listed |  |
