@@ -3,6 +3,7 @@
 
 const I18N = {
   en: {
+    cupim: "← CUPIM platform",
     back: "← Back to the repository", eyebrow: "5L-TEP · Layer 4 · Observability & Provenance", loading: "Loading…",
     run: "Run a cycle now ↗", changes_btn: "changes.md ↗", prov_btn: "Provenance logs ↗",
     intro: "Every six hours this repository reads the metadata of every dataset of the portal, compares it with the previous reading, and records each change as a W3C PROV-DM entity derived from the version before it. This page shows what changed, when and how; the records themselves are in the repository.",
@@ -86,6 +87,7 @@ const I18N = {
     inv_NEW: "New dataset published (baseline)", inv_REMOVED: "Dataset removed", inv_NOT_FINGERPRINTED: "Outside the fingerprint",
   },
   pt: {
+    cupim: "← Plataforma CUPIM",
     back: "← Voltar ao repositório", eyebrow: "5L-TEP · Camada 4 · Observabilidade e Proveniência", loading: "Carregando…",
     run: "Rodar um ciclo agora ↗", changes_btn: "changes.md ↗", prov_btn: "Registros de proveniência ↗",
     intro: "A cada seis horas, este repositório lê os metadados de todos os conjuntos de dados do portal, compara com a leitura anterior e registra cada mudança como uma entidade W3C PROV-DM derivada da versão anterior. Esta página mostra o que mudou, quando e como; os registros estão no repositório.",
@@ -212,6 +214,7 @@ function repo() {
 }
 
 function translatePage() {
+  document.getElementById("cupim-link").href = `https://5ltep-cupim.github.io/?lang=${LANG}`;
   document.documentElement.lang = LANG === "pt" ? "pt-BR" : "en";
   document.querySelectorAll("[data-i18n]").forEach((n) => { n.textContent = t(n.dataset.i18n); });
   document.querySelectorAll("[data-i18n-placeholder]").forEach((n) => { n.placeholder = t(n.dataset.i18nPlaceholder); });
