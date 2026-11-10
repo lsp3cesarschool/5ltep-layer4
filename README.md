@@ -128,7 +128,9 @@ Given: h_t = SHA-256(canonical_json(stable_fields(metadata_t)))
 The toolkit implements a dual-agent provenance model that distinguishes the **observer** from the **data custodian**:
 
 - **prov:SoftwareAgent** (observer): The 5L-TEP toolkit / GitHub Actions runner
-- **5ltep:DataCustodian** (custodian): The originating government agency (from CKAN's `organization` field)
+- **cupim:DataCustodian** (custodian): The originating government agency (from CKAN's `organization` field)
+
+The toolkit vocabulary uses the prefix `cupim:` (IRI `https://5ltep.example.org/ontology#`). Records written before 2026-11-10 use the prefix `5ltep:` for the same IRI; `prov` 3.3 and later reject a prefix that starts with a digit, so `evaluation/prov_interop.py` renames it at read time.
 
 This ensures accountability is correctly attributed (cf. Simmhan et al., 2005), in alignment with Brazil's LAI transparency obligations.
 
@@ -142,7 +144,7 @@ Because any change produces a cryptographically distinct identifier, PROV-DM's e
 
 ### Derivation Chains
 
-When a dataset changes, the new entity links to its predecessor via `wasDerivedFrom`, forming an immutable derivation chain annotated with `5ltep:changeType` and `5ltep:severity`. Since v1.0.2, each record also describes *how* the dataset changed: `5ltep:changeSummary` (one-line English summary), `5ltep:changedFields`, `5ltep:fieldsOutsideFingerprint`, `5ltep:resourceUrlChanges`, `5ltep:hostMoves` and `5ltep:packagingChanges`.
+When a dataset changes, the new entity links to its predecessor via `wasDerivedFrom`, forming an immutable derivation chain annotated with `cupim:changeType` and `cupim:severity`. Since v1.0.2, each record also describes *how* the dataset changed: `cupim:changeSummary` (one-line English summary), `cupim:changedFields`, `cupim:fieldsOutsideFingerprint`, `cupim:resourceUrlChanges`, `cupim:hostMoves` and `cupim:packagingChanges`.
 
 ## Quick Start
 
@@ -201,31 +203,31 @@ When a retroactive alteration is detected:
     "prov": "http://www.w3.org/ns/prov#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-    "5ltep": "https://5ltep.example.org/ontology#",
+    "cupim": "https://5ltep.example.org/ontology#",
     "ckan": "https://ckan.org/schema#",
     "portal": "https://dadosabertos.ibama.gov.br/"
   },
   "@graph": [
     {
       "@id": "https://dadosabertos.ibama.gov.br/dataset/abc123#a1b2c3d4e5f6",
-      "@type": ["prov:Entity", "5ltep:DatasetSnapshot"],
-      "prov:wasGeneratedBy": {"@id": "5ltep:run-20260607T100000Z"},
+      "@type": ["prov:Entity", "cupim:DatasetSnapshot"],
+      "prov:wasGeneratedBy": {"@id": "cupim:run-20260607T100000Z"},
       "prov:wasAttributedTo": {"@id": "https://dadosabertos.ibama.gov.br/organization/ibama"},
       "prov:wasDerivedFrom": {"@id": "https://dadosabertos.ibama.gov.br/dataset/abc123#f6e5d4c3b2a1"},
-      "5ltep:changeType": "RETRO_ALTER",
-      "5ltep:severity": "CRITICAL",
-      "5ltep:contentHash": "a1b2c3d4e5f6...",
-      "5ltep:detectedAt": {"@value": "2026-06-07T10:00:00+00:00", "@type": "xsd:dateTime"},
-      "5ltep:changeSummary": "Description edited",
-      "5ltep:changedFields": ["notes"],
-      "5ltep:fieldsOutsideFingerprint": [],
-      "5ltep:resourceUrlChanges": 0,
-      "5ltep:hostMoves": 0,
-      "5ltep:packagingChanges": 0
+      "cupim:changeType": "RETRO_ALTER",
+      "cupim:severity": "CRITICAL",
+      "cupim:contentHash": "a1b2c3d4e5f6...",
+      "cupim:detectedAt": {"@value": "2026-06-07T10:00:00+00:00", "@type": "xsd:dateTime"},
+      "cupim:changeSummary": "Description edited",
+      "cupim:changedFields": ["notes"],
+      "cupim:fieldsOutsideFingerprint": [],
+      "cupim:resourceUrlChanges": 0,
+      "cupim:hostMoves": 0,
+      "cupim:packagingChanges": 0
     },
     {
-      "@id": "5ltep:run-20260607T100000Z",
-      "@type": ["prov:Activity", "5ltep:MonitoringRun"],
+      "@id": "cupim:run-20260607T100000Z",
+      "@type": ["prov:Activity", "cupim:MonitoringRun"],
       "prov:startedAtTime": {"@value": "2026-06-07T10:00:00+00:00", "@type": "xsd:dateTime"},
       "prov:endedAtTime": {"@value": "2026-06-07T10:00:02+00:00", "@type": "xsd:dateTime"},
       "prov:wasAssociatedWith": {"@id": "https://github.com/lsp3cesarschool/5ltep-layer4@abc1234"},
@@ -235,14 +237,14 @@ When a retroactive alteration is detected:
       "@id": "https://github.com/lsp3cesarschool/5ltep-layer4@abc1234",
       "@type": ["prov:Agent", "prov:SoftwareAgent"],
       "rdfs:label": "5L-TEP Toolkit v1.0.2 (Layer 4 — Observability & Provenance)",
-      "5ltep:repositoryUrl": "https://github.com/lsp3cesarschool/5ltep-layer4",
-      "5ltep:commitSha": "abc1234567890"
+      "cupim:repositoryUrl": "https://github.com/lsp3cesarschool/5ltep-layer4",
+      "cupim:commitSha": "abc1234567890"
     },
     {
       "@id": "https://dadosabertos.ibama.gov.br/organization/ibama",
-      "@type": ["prov:Agent", "5ltep:DataCustodian"],
+      "@type": ["prov:Agent", "cupim:DataCustodian"],
       "rdfs:label": "ibama",
-      "5ltep:portalUrl": "https://dadosabertos.ibama.gov.br"
+      "cupim:portalUrl": "https://dadosabertos.ibama.gov.br"
     }
   ]
 }

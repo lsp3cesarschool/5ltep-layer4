@@ -29,6 +29,8 @@ from pathlib import Path
 from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
+from src.prov_mapper import term
+
 # Fields covered by the fingerprint (see HashEngine.compute_hash)
 DATASET_FIELDS = ["name", "title", "notes", "metadata_modified", "num_resources"]
 RESOURCE_FIELDS = ["id", "name", "format", "url", "size", "last_modified"]
@@ -236,9 +238,9 @@ def _recorded_events(prov_dir: Path) -> List[tuple]:
     for path in glob.glob(str(Path(prov_dir) / "*.jsonld")):
         for record in json.loads(Path(path).read_text(encoding="utf-8"))["provenance_chain"]:
             entity = next(n for n in record["@graph"] if "prov:Entity" in n["@type"])
-            events.append((datetime.fromisoformat(entity["5ltep:detectedAt"]["@value"]),
-                           entity["5ltep:datasetId"], entity["5ltep:changeType"],
-                           entity["5ltep:severity"]))
+            events.append((datetime.fromisoformat(term(entity, "detectedAt")["@value"]),
+                           term(entity, "datasetId"), term(entity, "changeType"),
+                           term(entity, "severity")))
     return events
 
 

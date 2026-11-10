@@ -270,8 +270,8 @@ class TestProvMapper:
         record = mapper.generate_record(event)
 
         entity = record["@graph"][0]
-        assert entity["5ltep:changeType"] == "SCHEMA_DRIFT"
-        assert entity["5ltep:severity"] == "CRITICAL"
+        assert entity["cupim:changeType"] == "SCHEMA_DRIFT"
+        assert entity["cupim:severity"] == "CRITICAL"
 
     def test_dual_agent_model(self, tmp_path):
         """
@@ -293,7 +293,7 @@ class TestProvMapper:
 
         # Custodian agent (government agency)
         custodian = record["@graph"][3]
-        assert "5ltep:DataCustodian" in custodian["@type"]
+        assert "cupim:DataCustodian" in custodian["@type"]
         assert "ibama" in custodian["@id"]
 
     def test_context_declares_portal_namespace(self, tmp_path):
@@ -316,7 +316,7 @@ class TestProvMapper:
         """Local runs (repository 'local') fall back to the toolkit QName."""
         mapper = ProvMapper(provenance_dir=str(tmp_path / "prov"), repository_url="local")
         sw_agent = mapper.generate_record(self._make_event())["@graph"][2]
-        assert sw_agent["@id"].startswith("5ltep:toolkit-v")
+        assert sw_agent["@id"].startswith("cupim:toolkit-v")
 
     def test_record_loads_with_prov_library(self, tmp_path):
         """Records are readable by the `prov` library's PROV-O (RDF) reader."""
@@ -355,7 +355,7 @@ class TestProvMapper:
 
         with open(paths[0]) as f:
             log = json.load(f)
-        assert log["5ltep:datasetId"] == "abc123"
+        assert log["cupim:datasetId"] == "abc123"
         assert len(log["provenance_chain"]) == 1
 
     def test_save_records_appends(self, tmp_path):
@@ -430,8 +430,8 @@ class TestPipeline:
 
         records = mapper.generate_records(non_clean)
         assert len(records) == 1
-        assert records[0]["@graph"][0]["5ltep:changeType"] == "CONTENT_MOD"
-        assert records[0]["@graph"][0]["5ltep:severity"] == "WARNING"
+        assert records[0]["@graph"][0]["cupim:changeType"] == "CONTENT_MOD"
+        assert records[0]["@graph"][0]["cupim:severity"] == "WARNING"
 
         # Step 4: Save and verify persistence
         paths = mapper.save_records(non_clean)
@@ -461,8 +461,8 @@ class TestPipeline:
         mapper = ProvMapper(provenance_dir=prov_dir)
         records = mapper.generate_records(non_clean)
         entity = records[0]["@graph"][0]
-        assert entity["5ltep:changeType"] == "RETRO_ALTER"
-        assert entity["5ltep:severity"] == "CRITICAL"
+        assert entity["cupim:changeType"] == "RETRO_ALTER"
+        assert entity["cupim:severity"] == "CRITICAL"
         assert "prov:wasDerivedFrom" in entity
 
 
@@ -652,8 +652,8 @@ class TestChangeSummary:
         event.details = describe_change(sample_dataset, after)
         record = ProvMapper(provenance_dir=str(tmp_path / "prov")).generate_record(event)
         entity = record["@graph"][0]
-        assert entity["5ltep:hostMoves"] == 1
-        assert "resource URL(s) changed" in entity["5ltep:changeSummary"]
+        assert entity["cupim:hostMoves"] == 1
+        assert "resource URL(s) changed" in entity["cupim:changeSummary"]
 
         prov_model = pytest.importorskip("prov.model")
         pytest.importorskip("rdflib")
@@ -700,7 +700,7 @@ class TestChangeSummary:
 
         log = json.loads((prov / "abc123.jsonld").read_text(encoding="utf-8"))
         entity = log["provenance_chain"][-1]["@graph"][0]
-        assert entity["5ltep:resourceUrlChanges"] == 1
+        assert entity["cupim:resourceUrlChanges"] == 1
 
         changes = (tmp_path / "changes.md").read_text(encoding="utf-8")
         assert "Embargos Ambientais Federais" in changes

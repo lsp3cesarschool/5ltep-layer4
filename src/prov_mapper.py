@@ -42,9 +42,22 @@ PROV_CONTEXT = {
     "prov": "http://www.w3.org/ns/prov#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-    "5ltep": "https://5ltep.example.org/ontology#",
+    # Prefix of the toolkit vocabulary. Records written before 2026-11-10 use "5ltep", which prov>=3.3
+    # rejects (an RDF prefix cannot start with a digit); the IRI is the same, so the meaning is unchanged.
+    "cupim": "https://5ltep.example.org/ontology#",
     "ckan": "https://ckan.org/schema#",
 }
+
+PREFIX = "cupim"
+LEGACY_PREFIX = "5ltep"
+
+
+def term(node: dict, name: str):
+    """Value of a toolkit property in a record, under the current or the legacy prefix."""
+    if f"{PREFIX}:{name}" in node:
+        return node[f"{PREFIX}:{name}"]
+    return node[f"{LEGACY_PREFIX}:{name}"]
+
 
 # Toolkit version for agent identification
 TOOLKIT_VERSION = "1.1.0"
@@ -101,7 +114,7 @@ class ProvMapper:
             repository_url = f"https://github.com/{repository_url}"
         self.repository_url = "" if repository_url == "local" else repository_url
         self.commit_sha = commit_sha
-        self.run_id = f"5ltep:run-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
+        self.run_id = f"cupim:run-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
         self.run_start = datetime.now(timezone.utc)
 
     def _build_entity_uri(self, event: ChangeEvent) -> str:
@@ -126,7 +139,7 @@ class ProvMapper:
         """Build the software agent (observer) identifier."""
         if self.repository_url:
             return f"{self.repository_url}@{self.commit_sha[:7]}"
-        return f"5ltep:toolkit-v{TOOLKIT_VERSION}"
+        return f"cupim:toolkit-v{TOOLKIT_VERSION}"
 
     def _build_custodian_agent_id(self, event: ChangeEvent) -> Optional[str]:
         """
@@ -150,7 +163,7 @@ class ProvMapper:
         run_end = datetime.now(timezone.utc)
         activity = {
             "@id": self.run_id,
-            "@type": ["prov:Activity", "5ltep:MonitoringRun"],
+            "@type": ["prov:Activity", "cupim:MonitoringRun"],
             "prov:startedAtTime": {
                 "@value": self.run_start.isoformat(),
                 "@type": "xsd:dateTime",
@@ -175,8 +188,8 @@ class ProvMapper:
             "@id": self._build_software_agent_id(),
             "@type": ["prov:Agent", "prov:SoftwareAgent"],
             "rdfs:label": f"5L-TEP Toolkit v{TOOLKIT_VERSION} ({TOOLKIT_SCOPE})",
-            "5ltep:repositoryUrl": self.repository_url or "local",
-            "5ltep:commitSha": self.commit_sha,
+            "cupim:repositoryUrl": self.repository_url or "local",
+            "cupim:commitSha": self.commit_sha,
         }
 
     def _build_custodian_agent(self, event: ChangeEvent) -> Optional[dict]:
@@ -192,9 +205,9 @@ class ProvMapper:
             return None
         return {
             "@id": agent_id,
-            "@type": ["prov:Agent", "5ltep:DataCustodian"],
+            "@type": ["prov:Agent", "cupim:DataCustodian"],
             "rdfs:label": event.organization,
-            "5ltep:portalUrl": event.portal_url,
+            "cupim:portalUrl": event.portal_url,
         }
 
     def generate_record(self, event: ChangeEvent) -> dict:
@@ -219,13 +232,13 @@ class ProvMapper:
         # Build entity node (§3.3.1 — content-addressable identification)
         entity = {
             "@id": entity_uri,
-            "@type": ["prov:Entity", "5ltep:DatasetSnapshot"],
+            "@type": ["prov:Entity", "cupim:DatasetSnapshot"],
             "prov:wasGeneratedBy": {"@id": self.run_id},
-            "5ltep:changeType": event.change_type.value,
-            "5ltep:severity": event.severity.value,
-            "5ltep:datasetId": event.dataset_id,
-            "5ltep:contentHash": event.current_hash,
-            "5ltep:detectedAt": {
+            "cupim:changeType": event.change_type.value,
+            "cupim:severity": event.severity.value,
+            "cupim:datasetId": event.dataset_id,
+            "cupim:contentHash": event.current_hash,
+            "cupim:detectedAt": {
                 "@value": event.detected_at,
                 "@type": "xsd:dateTime",
             },
@@ -248,12 +261,12 @@ class ProvMapper:
         # Human-readable change description (fields, relocations, packaging)
         details = getattr(event, "details", None)
         if details:
-            entity["5ltep:changeSummary"] = details["summary"]
-            entity["5ltep:changedFields"] = details["changedFields"]
-            entity["5ltep:fieldsOutsideFingerprint"] = details["fieldsOutsideFingerprint"]
-            entity["5ltep:resourceUrlChanges"] = details["resourceUrlChanges"]
-            entity["5ltep:hostMoves"] = details["hostMoves"]
-            entity["5ltep:packagingChanges"] = details["packagingChanges"]
+            entity["cupim:changeSummary"] = details["summary"]
+            entity["cupim:changedFields"] = details["changedFields"]
+            entity["cupim:fieldsOutsideFingerprint"] = details["fieldsOutsideFingerprint"]
+            entity["cupim:resourceUrlChanges"] = details["resourceUrlChanges"]
+            entity["cupim:hostMoves"] = details["hostMoves"]
+            entity["cupim:packagingChanges"] = details["packagingChanges"]
 
         # Build activity (§3.3.2)
         activity = self._build_activity(event)
@@ -318,8 +331,8 @@ class ProvMapper:
             else:
                 log = {
                     "@context": build_context(event.portal_url),
-                    "5ltep:datasetId": event.dataset_id,
-                    "5ltep:portalUrl": event.portal_url,
+                    "cupim:datasetId": event.dataset_id,
+                    "cupim:portalUrl": event.portal_url,
                     "provenance_chain": [],
                 }
 

@@ -18,6 +18,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.prov_mapper import term  # noqa: E402
+
 REPO = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
 SNAP_DIR = REPO / "data" / "snapshots"
 
@@ -102,8 +105,8 @@ def main():
     for path in glob.glob(str(REPO / "provenance_logs" / "*.jsonld")):
         for record in json.loads(Path(path).read_text(encoding="utf-8"))["provenance_chain"]:
             entity = next(n for n in record["@graph"] if "prov:Entity" in n["@type"])
-            detected = datetime.fromisoformat(entity["5ltep:detectedAt"]["@value"])
-            recorded.append((detected, entity["5ltep:datasetId"], entity["5ltep:changeType"]))
+            detected = datetime.fromisoformat(term(entity, "detectedAt")["@value"])
+            recorded.append((detected, term(entity, "datasetId"), term(entity, "changeType")))
 
     unmatched = list(recorded)
     matches = collections.Counter()

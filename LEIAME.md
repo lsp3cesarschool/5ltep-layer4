@@ -132,7 +132,9 @@ Dados: h_t = SHA-256(canonical_json(stable_fields(metadata_t)))
 O kit implementa um modelo de proveniência com dois agentes, que distingue o **observador** do **custodiante dos dados**:
 
 - **prov:SoftwareAgent** (observador): o kit 5L-TEP / runner do GitHub Actions
-- **5ltep:DataCustodian** (custodiante): o órgão governamental de origem (do campo `organization` do CKAN)
+- **cupim:DataCustodian** (custodiante): o órgão governamental de origem (do campo `organization` do CKAN)
+
+O vocabulário da ferramenta usa o prefixo `cupim:` (IRI `https://5ltep.example.org/ontology#`). Registros gravados antes de 10/11/2026 usam o prefixo `5ltep:` para o mesmo IRI; o `prov` 3.3 em diante recusa prefixo que começa com dígito, e por isso `evaluation/prov_interop.py` o renomeia na leitura.
 
 Isso garante que a responsabilidade seja atribuída corretamente (cf. Simmhan et al., 2005), em consonância com as obrigações de transparência da LAI (Lei de Acesso à Informação).
 
@@ -146,7 +148,7 @@ Como qualquer mudança produz um identificador criptograficamente distinto, o re
 
 ### Cadeias de derivação
 
-Quando um conjunto de dados muda, a nova entidade se liga à sua antecessora por `wasDerivedFrom`, formando uma cadeia de derivação imutável anotada com `5ltep:changeType` e `5ltep:severity`. Desde a v1.0.2, cada registro também descreve *como* o conjunto de dados mudou: `5ltep:changeSummary` (resumo de uma linha, em inglês), `5ltep:changedFields`, `5ltep:fieldsOutsideFingerprint`, `5ltep:resourceUrlChanges`, `5ltep:hostMoves` e `5ltep:packagingChanges`.
+Quando um conjunto de dados muda, a nova entidade se liga à sua antecessora por `wasDerivedFrom`, formando uma cadeia de derivação imutável anotada com `cupim:changeType` e `cupim:severity`. Desde a v1.0.2, cada registro também descreve *como* o conjunto de dados mudou: `cupim:changeSummary` (resumo de uma linha, em inglês), `cupim:changedFields`, `cupim:fieldsOutsideFingerprint`, `cupim:resourceUrlChanges`, `cupim:hostMoves` e `cupim:packagingChanges`.
 
 ## Início rápido
 
@@ -206,31 +208,31 @@ Quando uma alteração retroativa é detectada:
     "prov": "http://www.w3.org/ns/prov#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-    "5ltep": "https://5ltep.example.org/ontology#",
+    "cupim": "https://5ltep.example.org/ontology#",
     "ckan": "https://ckan.org/schema#",
     "portal": "https://dadosabertos.ibama.gov.br/"
   },
   "@graph": [
     {
       "@id": "https://dadosabertos.ibama.gov.br/dataset/abc123#a1b2c3d4e5f6",
-      "@type": ["prov:Entity", "5ltep:DatasetSnapshot"],
-      "prov:wasGeneratedBy": {"@id": "5ltep:run-20260607T100000Z"},
+      "@type": ["prov:Entity", "cupim:DatasetSnapshot"],
+      "prov:wasGeneratedBy": {"@id": "cupim:run-20260607T100000Z"},
       "prov:wasAttributedTo": {"@id": "https://dadosabertos.ibama.gov.br/organization/ibama"},
       "prov:wasDerivedFrom": {"@id": "https://dadosabertos.ibama.gov.br/dataset/abc123#f6e5d4c3b2a1"},
-      "5ltep:changeType": "RETRO_ALTER",
-      "5ltep:severity": "CRITICAL",
-      "5ltep:contentHash": "a1b2c3d4e5f6...",
-      "5ltep:detectedAt": {"@value": "2026-06-07T10:00:00+00:00", "@type": "xsd:dateTime"},
-      "5ltep:changeSummary": "Description edited",
-      "5ltep:changedFields": ["notes"],
-      "5ltep:fieldsOutsideFingerprint": [],
-      "5ltep:resourceUrlChanges": 0,
-      "5ltep:hostMoves": 0,
-      "5ltep:packagingChanges": 0
+      "cupim:changeType": "RETRO_ALTER",
+      "cupim:severity": "CRITICAL",
+      "cupim:contentHash": "a1b2c3d4e5f6...",
+      "cupim:detectedAt": {"@value": "2026-06-07T10:00:00+00:00", "@type": "xsd:dateTime"},
+      "cupim:changeSummary": "Description edited",
+      "cupim:changedFields": ["notes"],
+      "cupim:fieldsOutsideFingerprint": [],
+      "cupim:resourceUrlChanges": 0,
+      "cupim:hostMoves": 0,
+      "cupim:packagingChanges": 0
     },
     {
-      "@id": "5ltep:run-20260607T100000Z",
-      "@type": ["prov:Activity", "5ltep:MonitoringRun"],
+      "@id": "cupim:run-20260607T100000Z",
+      "@type": ["prov:Activity", "cupim:MonitoringRun"],
       "prov:startedAtTime": {"@value": "2026-06-07T10:00:00+00:00", "@type": "xsd:dateTime"},
       "prov:endedAtTime": {"@value": "2026-06-07T10:00:02+00:00", "@type": "xsd:dateTime"},
       "prov:wasAssociatedWith": {"@id": "https://github.com/lsp3cesarschool/5ltep-layer4@abc1234"},
@@ -240,14 +242,14 @@ Quando uma alteração retroativa é detectada:
       "@id": "https://github.com/lsp3cesarschool/5ltep-layer4@abc1234",
       "@type": ["prov:Agent", "prov:SoftwareAgent"],
       "rdfs:label": "5L-TEP Toolkit v1.0.2 (Layer 4 — Observability & Provenance)",
-      "5ltep:repositoryUrl": "https://github.com/lsp3cesarschool/5ltep-layer4",
-      "5ltep:commitSha": "abc1234567890"
+      "cupim:repositoryUrl": "https://github.com/lsp3cesarschool/5ltep-layer4",
+      "cupim:commitSha": "abc1234567890"
     },
     {
       "@id": "https://dadosabertos.ibama.gov.br/organization/ibama",
-      "@type": ["prov:Agent", "5ltep:DataCustodian"],
+      "@type": ["prov:Agent", "cupim:DataCustodian"],
       "rdfs:label": "ibama",
-      "5ltep:portalUrl": "https://dadosabertos.ibama.gov.br"
+      "cupim:portalUrl": "https://dadosabertos.ibama.gov.br"
     }
   ]
 }
