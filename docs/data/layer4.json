@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-11-12T15:06:00.110522+00:00",
+ "generated_at": "2026-11-12T23:33:46.986745+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-11-12T15:05:37+00:00",
-  "cycles": 562,
+  "last_cycle": "2026-11-12T23:33:25+00:00",
+  "cycles": 563,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -169,11 +169,11 @@
    "2026-11-09": 2,
    "2026-11-10": 2,
    "2026-11-11": 2,
-   "2026-11-12": 2
+   "2026-11-12": 3
   },
   "cycles_30d": 94,
   "max_gap_hours_30d": 16.5,
-  "distinct_snapshots": 38,
+  "distinct_snapshots": 39,
   "failures": [
    {
     "run_id": 40188331608,
@@ -315,17 +315,37 @@
   "datasets": 79,
   "resources": 474,
   "organizations": 1,
-  "prov_events": 40,
-  "prov_records": 40,
+  "prov_events": 41,
+  "prov_records": 41,
   "critical": 0,
   "datasets_changed": 29,
   "by_type": {
+   "CONTENT_MOD": 41,
    "NEW": 19,
-   "REMOVED": 11,
-   "CONTENT_MOD": 40
+   "REMOVED": 11
   }
  },
  "events": [
+  {
+   "when": "2026-11-12T23:33:25+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "2b346de7-e221-43f7-a155-3993c4353506",
+   "name": "fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b",
+   "title": "Fiscalização – termo de destruição ou inutilização (série A e B)",
+   "summary": "1 resource URL(s) changed (1 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net)",
+   "summary_pt": "1 URL(s) de recurso alterada(s) (1 movida(s) de dadosabertos.ibama.gov.br para stibamadadosabertosprd.blob.core.windows.net)",
+   "host_pairs": [
+    [
+     "dadosabertos.ibama.gov.br",
+     "stibamadadosabertosprd.blob.core.windows.net",
+     1
+    ]
+   ],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": "2b346de7-e221-43f7-a155-3993c4353506.jsonld"
+  },
   {
    "when": "2026-11-01T05:56:22+00:00",
    "type": "NEW",
@@ -1477,6 +1497,19 @@
  ],
  "datasets": [
   {
+   "id": "2b346de7-e221-43f7-a155-3993c4353506",
+   "name": "fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b",
+   "title": "Fiscalização – termo de destruição ou inutilização (série A e B)",
+   "organization": "Dados Abertos",
+   "resources": 12,
+   "metadata_modified": "2026-11-12T18:20:11.172922",
+   "prov_records": 2,
+   "prov_log": "2b346de7-e221-43f7-a155-3993c4353506.jsonld",
+   "changes": 2,
+   "last_change": "2026-11-12T23:33:25+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
    "id": "5dbb0a27-bdc5-48cf-8b7b-a8c725e4510d",
    "name": "sinaflor-uso-alternativo-do-solo-agricultor-familiar",
    "title": "Sinaflor - Uso Alternativo do Solo - Agricultor familiar",
@@ -1566,19 +1599,6 @@
    "changes": 1,
    "last_change": "2026-10-31T12:18:20+00:00",
    "last_type": "REMOVED"
-  },
-  {
-   "id": "2b346de7-e221-43f7-a155-3993c4353506",
-   "name": "fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b",
-   "title": "Fiscalização – termo de destruição ou inutilização (série A e B)",
-   "organization": "Dados Abertos",
-   "resources": 12,
-   "metadata_modified": "2026-10-14T15:04:55.161659",
-   "prov_records": 1,
-   "prov_log": "2b346de7-e221-43f7-a155-3993c4353506.jsonld",
-   "changes": 1,
-   "last_change": "2026-10-14T17:06:34+00:00",
-   "last_type": "CONTENT_MOD"
   },
   {
    "id": "4d80cf25-31c6-408b-b412-c53d33548189",
@@ -2505,8 +2525,8 @@
   }
  ],
  "hosts_now": {
-  "stibamadadosabertosprd.blob.core.windows.net": 260,
-  "dadosabertos.ibama.gov.br": 181,
+  "stibamadadosabertosprd.blob.core.windows.net": 261,
+  "dadosabertos.ibama.gov.br": 180,
   "siscom.ibama.gov.br": 29,
   "siscom.ibama.gov.br:80": 3,
   "pamgia.ibama.gov.br": 1
@@ -2516,10 +2536,10 @@
   {
    "from": "dadosabertos.ibama.gov.br",
    "to": "stibamadadosabertosprd.blob.core.windows.net",
-   "urls": 87,
-   "events": 27,
+   "urls": 88,
+   "events": 28,
    "datasets": 20,
-   "last": "2026-10-14T17:06:34+00:00"
+   "last": "2026-11-12T23:33:25+00:00"
   },
   {
    "from": "",

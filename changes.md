@@ -7,9 +7,9 @@ first monitoring cycle that saw the change).
 
 - **Monitored since:** 2026-06-09
 - **Datasets in the latest snapshot:** 79
-- **Changes recorded as PROV events:** 40 (0 critical)
+- **Changes recorded as PROV events:** 41 (0 critical)
 - **New datasets:** 19
-- **Last change detected:** 2026-11-01 05:56 UTC
+- **Last change detected:** 2026-11-12 23:33 UTC
 
 Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 (resources added, removed, renamed or re-formatted; critical), `RETRO_ALTER`
@@ -20,7 +20,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Month | PROV events | Critical | New datasets |
 |---|---:|---:|---:|
-| 2026-11 | 0 | 0 | 6 |
+| 2026-11 | 1 | 0 | 6 |
 | 2026-10 | 8 | 0 | 5 |
 | 2026-09 | 8 | 0 | 0 |
 | 2026-08 | 10 | 0 | 3 |
@@ -31,6 +31,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Detected (UTC) | Dataset | Type | What changed | Provenance |
 |---|---|---|---|---|
+| 2026-11-12 23:33 | [Fiscalização – termo de destruição ou inutilização (série A e B)](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b) | `CONTENT_MOD` | 1 resource URL(s) changed (1 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/2b346de7-e221-43f7-a155-3993c4353506.jsonld) |
 | 2026-11-01 05:56 | [Sinaflor - Uso Alternativo do Solo - Agricultor familiar](https://dadosabertos.ibama.gov.br/dataset/sinaflor-uso-alternativo-do-solo-agricultor-familiar) | `NEW` | Dataset published (3 resources) |  |
 | 2026-11-01 05:56 | [Sinaflor - Uso Alternativo do Solo](https://dadosabertos.ibama.gov.br/dataset/sinaflor-uso-alternativo-do-solo) | `NEW` | Dataset published (4 resources) |  |
 | 2026-11-01 05:56 | [Rapp Pilhas e Baterias - Reciclador](https://dadosabertos.ibama.gov.br/dataset/rapp-pilhas-e-baterias-reciclador) | `NEW` | Dataset published (4 resources) |  |
