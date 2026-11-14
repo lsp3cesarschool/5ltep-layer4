@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-11-13T19:37:19.798939+00:00",
+ "generated_at": "2026-11-14T06:31:50.610716+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-11-13T19:36:57+00:00",
-  "cycles": 565,
+  "last_cycle": "2026-11-14T06:12:30+00:00",
+  "cycles": 566,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -170,11 +170,12 @@
    "2026-11-10": 2,
    "2026-11-11": 2,
    "2026-11-12": 3,
-   "2026-11-13": 2
+   "2026-11-13": 2,
+   "2026-11-14": 1
   },
-  "cycles_30d": 93,
+  "cycles_30d": 92,
   "max_gap_hours_30d": 16.5,
-  "distinct_snapshots": 39,
+  "distinct_snapshots": 40,
   "failures": [
    {
     "run_id": 40188331608,
@@ -310,23 +311,69 @@
    "dns": 3,
    "portal_down": 2
   },
-  "unread_last_cycle": []
+  "unread_last_cycle": [
+   "dof-transportes-de-produtos-florestais",
+   "fontes-energeticas",
+   "sinaflor-pmfs-outros-biomas"
+  ]
  },
  "totals": {
-  "datasets": 79,
-  "resources": 474,
+  "datasets": 76,
+  "resources": 463,
   "organizations": 1,
   "prov_events": 41,
   "prov_records": 41,
   "critical": 0,
   "datasets_changed": 29,
   "by_type": {
+   "REMOVED": 14,
    "CONTENT_MOD": 41,
-   "NEW": 19,
-   "REMOVED": 11
+   "NEW": 19
   }
  },
  "events": [
+  {
+   "when": "2026-11-14T06:12:30+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "581b3be3-094c-495e-8772-2b0e119944ef",
+   "name": "sinaflor-pmfs-outros-biomas",
+   "title": "Sinaflor - PMFS Outros Biomas",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-11-14T06:12:30+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "932624b2-b1f5-40f2-970a-a41098e91b01",
+   "name": "fontes-energeticas",
+   "title": "Fontes Energéticas",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-11-14T06:12:30+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "8497dd55-6c90-40ce-b597-c6c9c8b3bee6",
+   "name": "dof-transportes-de-produtos-florestais",
+   "title": "DOF - Transportes de Produtos Florestais",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
   {
    "when": "2026-11-12T23:33:25+00:00",
    "type": "CONTENT_MOD",
@@ -1550,19 +1597,6 @@
    "last_type": "REMOVED"
   },
   {
-   "id": "932624b2-b1f5-40f2-970a-a41098e91b01",
-   "name": "fontes-energeticas",
-   "title": "Fontes Energéticas",
-   "organization": "Dados Abertos",
-   "resources": 4,
-   "metadata_modified": "2021-09-18T12:45:29.255448",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 1,
-   "last_change": "2026-10-31T21:29:10+00:00",
-   "last_type": "REMOVED"
-  },
-  {
    "id": "47c97994-cd26-4d16-a2d8-4fbc27b1d9a0",
    "name": "fiscalizacao-termo-de-suspensao",
    "title": "Fiscalização - termo de suspensão",
@@ -1846,19 +1880,6 @@
    "prov_log": "0429abfc-f4ba-4942-86ca-2c2554a80fd0.jsonld",
    "changes": 2,
    "last_change": "2026-07-09T03:25:53+00:00",
-   "last_type": "CONTENT_MOD"
-  },
-  {
-   "id": "581b3be3-094c-495e-8772-2b0e119944ef",
-   "name": "sinaflor-pmfs-outros-biomas",
-   "title": "Sinaflor - PMFS Outros Biomas",
-   "organization": "Dados Abertos",
-   "resources": 4,
-   "metadata_modified": "2026-07-08T14:31:11.790921",
-   "prov_records": 1,
-   "prov_log": "581b3be3-094c-495e-8772-2b0e119944ef.jsonld",
-   "changes": 1,
-   "last_change": "2026-07-08T19:27:07+00:00",
    "last_type": "CONTENT_MOD"
   },
   {
@@ -2447,19 +2468,6 @@
    "last_type": null
   },
   {
-   "id": "8497dd55-6c90-40ce-b597-c6c9c8b3bee6",
-   "name": "dof-transportes-de-produtos-florestais",
-   "title": "DOF - Transportes de Produtos Florestais",
-   "organization": "Dados Abertos",
-   "resources": 3,
-   "metadata_modified": "2026-03-16T13:11:15.288888",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
    "id": "69f05b5f-d4fa-4c16-a4bd-6f152afa4503",
    "name": "dof-conversoes-de-produtos-florestais",
    "title": "DOF - Conversões de Produtos Florestais",
@@ -2526,8 +2534,8 @@
   }
  ],
  "hosts_now": {
-  "stibamadadosabertosprd.blob.core.windows.net": 261,
-  "dadosabertos.ibama.gov.br": 180,
+  "stibamadadosabertosprd.blob.core.windows.net": 255,
+  "dadosabertos.ibama.gov.br": 175,
   "siscom.ibama.gov.br": 29,
   "siscom.ibama.gov.br:80": 3,
   "pamgia.ibama.gov.br": 1
