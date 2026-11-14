@@ -6,10 +6,10 @@ PROV-DM records; do not edit by hand. Times are UTC (detection time, i.e., the
 first monitoring cycle that saw the change).
 
 - **Monitored since:** 2026-06-09
-- **Datasets in the latest snapshot:** 76
+- **Datasets in the latest snapshot:** 79
 - **Changes recorded as PROV events:** 41 (0 critical)
-- **New datasets:** 19
-- **Last change detected:** 2026-11-14 06:12 UTC
+- **New datasets:** 22
+- **Last change detected:** 2026-11-14 17:57 UTC
 
 Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 (resources added, removed, renamed or re-formatted; critical), `RETRO_ALTER`
@@ -20,7 +20,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Month | PROV events | Critical | New datasets |
 |---|---:|---:|---:|
-| 2026-11 | 1 | 0 | 6 |
+| 2026-11 | 1 | 0 | 9 |
 | 2026-10 | 8 | 0 | 5 |
 | 2026-09 | 8 | 0 | 0 |
 | 2026-08 | 10 | 0 | 3 |
@@ -31,6 +31,9 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Detected (UTC) | Dataset | Type | What changed | Provenance |
 |---|---|---|---|---|
+| 2026-11-14 17:57 | [Sinaflor - PMFS Outros Biomas](https://dadosabertos.ibama.gov.br/dataset/sinaflor-pmfs-outros-biomas) | `NEW` | Dataset published (4 resources) |  |
+| 2026-11-14 17:57 | [Fontes Energéticas](https://dadosabertos.ibama.gov.br/dataset/fontes-energeticas) | `NEW` | Dataset published (4 resources) |  |
+| 2026-11-14 17:57 | [DOF - Transportes de Produtos Florestais](https://dadosabertos.ibama.gov.br/dataset/dof-transportes-de-produtos-florestais) | `NEW` | Dataset published (3 resources) |  |
 | 2026-11-14 06:12 | [Sinaflor - PMFS Outros Biomas](https://dadosabertos.ibama.gov.br/dataset/sinaflor-pmfs-outros-biomas) | `REMOVED` | Dataset no longer listed |  |
 | 2026-11-14 06:12 | [Fontes Energéticas](https://dadosabertos.ibama.gov.br/dataset/fontes-energeticas) | `REMOVED` | Dataset no longer listed |  |
 | 2026-11-14 06:12 | [DOF - Transportes de Produtos Florestais](https://dadosabertos.ibama.gov.br/dataset/dof-transportes-de-produtos-florestais) | `REMOVED` | Dataset no longer listed |  |

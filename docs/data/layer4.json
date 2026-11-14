@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-11-14T06:31:50.610716+00:00",
+ "generated_at": "2026-11-14T17:58:04.778502+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-11-14T06:12:30+00:00",
-  "cycles": 566,
+  "last_cycle": "2026-11-14T17:57:38+00:00",
+  "cycles": 567,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -171,9 +171,9 @@
    "2026-11-11": 2,
    "2026-11-12": 3,
    "2026-11-13": 2,
-   "2026-11-14": 1
+   "2026-11-14": 2
   },
-  "cycles_30d": 92,
+  "cycles_30d": 91,
   "max_gap_hours_30d": 16.5,
   "distinct_snapshots": 40,
   "failures": [
@@ -311,27 +311,65 @@
    "dns": 3,
    "portal_down": 2
   },
-  "unread_last_cycle": [
-   "dof-transportes-de-produtos-florestais",
-   "fontes-energeticas",
-   "sinaflor-pmfs-outros-biomas"
-  ]
+  "unread_last_cycle": []
  },
  "totals": {
-  "datasets": 76,
-  "resources": 463,
+  "datasets": 79,
+  "resources": 474,
   "organizations": 1,
   "prov_events": 41,
   "prov_records": 41,
   "critical": 0,
   "datasets_changed": 29,
   "by_type": {
+   "NEW": 22,
    "REMOVED": 14,
-   "CONTENT_MOD": 41,
-   "NEW": 19
+   "CONTENT_MOD": 41
   }
  },
  "events": [
+  {
+   "when": "2026-11-14T17:57:38+00:00",
+   "type": "NEW",
+   "severity": "INFO",
+   "dataset_id": "581b3be3-094c-495e-8772-2b0e119944ef",
+   "name": "sinaflor-pmfs-outros-biomas",
+   "title": "Sinaflor - PMFS Outros Biomas",
+   "summary": "Dataset published (4 resources)",
+   "summary_pt": "Conjunto publicado (4 recursos)",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-11-14T17:57:38+00:00",
+   "type": "NEW",
+   "severity": "INFO",
+   "dataset_id": "932624b2-b1f5-40f2-970a-a41098e91b01",
+   "name": "fontes-energeticas",
+   "title": "Fontes Energéticas",
+   "summary": "Dataset published (4 resources)",
+   "summary_pt": "Conjunto publicado (4 recursos)",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
+  {
+   "when": "2026-11-14T17:57:38+00:00",
+   "type": "NEW",
+   "severity": "INFO",
+   "dataset_id": "8497dd55-6c90-40ce-b597-c6c9c8b3bee6",
+   "name": "dof-transportes-de-produtos-florestais",
+   "title": "DOF - Transportes de Produtos Florestais",
+   "summary": "Dataset published (3 resources)",
+   "summary_pt": "Conjunto publicado (3 recursos)",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
   {
    "when": "2026-11-14T06:12:30+00:00",
    "type": "REMOVED",
@@ -1545,6 +1583,45 @@
  ],
  "datasets": [
   {
+   "id": "581b3be3-094c-495e-8772-2b0e119944ef",
+   "name": "sinaflor-pmfs-outros-biomas",
+   "title": "Sinaflor - PMFS Outros Biomas",
+   "organization": "Dados Abertos",
+   "resources": 4,
+   "metadata_modified": "2026-07-08T14:31:11.790921",
+   "prov_records": 1,
+   "prov_log": "581b3be3-094c-495e-8772-2b0e119944ef.jsonld",
+   "changes": 2,
+   "last_change": "2026-11-14T06:12:30+00:00",
+   "last_type": "REMOVED"
+  },
+  {
+   "id": "932624b2-b1f5-40f2-970a-a41098e91b01",
+   "name": "fontes-energeticas",
+   "title": "Fontes Energéticas",
+   "organization": "Dados Abertos",
+   "resources": 4,
+   "metadata_modified": "2021-09-18T12:45:29.255448",
+   "prov_records": 0,
+   "prov_log": null,
+   "changes": 2,
+   "last_change": "2026-11-14T06:12:30+00:00",
+   "last_type": "REMOVED"
+  },
+  {
+   "id": "8497dd55-6c90-40ce-b597-c6c9c8b3bee6",
+   "name": "dof-transportes-de-produtos-florestais",
+   "title": "DOF - Transportes de Produtos Florestais",
+   "organization": "Dados Abertos",
+   "resources": 3,
+   "metadata_modified": "2026-03-16T13:11:15.288888",
+   "prov_records": 0,
+   "prov_log": null,
+   "changes": 1,
+   "last_change": "2026-11-14T06:12:30+00:00",
+   "last_type": "REMOVED"
+  },
+  {
    "id": "2b346de7-e221-43f7-a155-3993c4353506",
    "name": "fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b",
    "title": "Fiscalização – termo de destruição ou inutilização (série A e B)",
@@ -2534,8 +2611,8 @@
   }
  ],
  "hosts_now": {
-  "stibamadadosabertosprd.blob.core.windows.net": 255,
-  "dadosabertos.ibama.gov.br": 175,
+  "stibamadadosabertosprd.blob.core.windows.net": 261,
+  "dadosabertos.ibama.gov.br": 180,
   "siscom.ibama.gov.br": 29,
   "siscom.ibama.gov.br:80": 3,
   "pamgia.ibama.gov.br": 1
