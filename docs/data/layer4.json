@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-11-15T06:25:05.424430+00:00",
+ "generated_at": "2026-11-15T19:11:56.726886+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-11-15T06:20:07+00:00",
-  "cycles": 569,
+  "last_cycle": "2026-11-15T18:46:55+00:00",
+  "cycles": 570,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -172,11 +172,11 @@
    "2026-11-12": 3,
    "2026-11-13": 2,
    "2026-11-14": 3,
-   "2026-11-15": 1
+   "2026-11-15": 2
   },
-  "cycles_30d": 91,
+  "cycles_30d": 90,
   "max_gap_hours_30d": 16.5,
-  "distinct_snapshots": 40,
+  "distinct_snapshots": 41,
   "failures": [
    {
     "run_id": 40188331608,
@@ -312,23 +312,39 @@
    "dns": 3,
    "portal_down": 2
   },
-  "unread_last_cycle": []
+  "unread_last_cycle": [
+   "relatorios-de-comercializacao-de-agrotoxicos"
+  ]
  },
  "totals": {
-  "datasets": 79,
-  "resources": 474,
+  "datasets": 78,
+  "resources": 471,
   "organizations": 1,
   "prov_events": 41,
   "prov_records": 41,
   "critical": 0,
   "datasets_changed": 29,
   "by_type": {
+   "REMOVED": 15,
    "NEW": 22,
-   "REMOVED": 14,
    "CONTENT_MOD": 41
   }
  },
  "events": [
+  {
+   "when": "2026-11-15T18:46:55+00:00",
+   "type": "REMOVED",
+   "severity": "WARNING",
+   "dataset_id": "b705b94b-e5b9-4246-9038-eaf1ecd4ff04",
+   "name": "relatorios-de-comercializacao-de-agrotoxicos",
+   "title": "Relatórios de Comercialização de Agrotóxicos",
+   "summary": "Dataset no longer listed",
+   "summary_pt": "Conjunto deixou de ser listado",
+   "host_pairs": [],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": null
+  },
   {
    "when": "2026-11-14T17:57:38+00:00",
    "type": "NEW",
@@ -1883,19 +1899,6 @@
    "last_type": "CONTENT_MOD"
   },
   {
-   "id": "b705b94b-e5b9-4246-9038-eaf1ecd4ff04",
-   "name": "relatorios-de-comercializacao-de-agrotoxicos",
-   "title": "Relatórios de Comercialização de Agrotóxicos",
-   "organization": "Dados Abertos",
-   "resources": 3,
-   "metadata_modified": "2026-08-17T13:55:43.962052",
-   "prov_records": 1,
-   "prov_log": "b705b94b-e5b9-4246-9038-eaf1ecd4ff04.jsonld",
-   "changes": 1,
-   "last_change": "2026-08-17T18:40:16+00:00",
-   "last_type": "CONTENT_MOD"
-  },
-  {
    "id": "777a2cf5-515c-4c35-b141-24487388ac83",
    "name": "sinaflor-autorizacao-especial",
    "title": "Sinaflor - Autorização Especial",
@@ -2612,7 +2615,7 @@
   }
  ],
  "hosts_now": {
-  "stibamadadosabertosprd.blob.core.windows.net": 261,
+  "stibamadadosabertosprd.blob.core.windows.net": 258,
   "dadosabertos.ibama.gov.br": 180,
   "siscom.ibama.gov.br": 29,
   "siscom.ibama.gov.br:80": 3,

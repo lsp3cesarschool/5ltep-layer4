@@ -6,10 +6,10 @@ PROV-DM records; do not edit by hand. Times are UTC (detection time, i.e., the
 first monitoring cycle that saw the change).
 
 - **Monitored since:** 2026-06-09
-- **Datasets in the latest snapshot:** 79
+- **Datasets in the latest snapshot:** 78
 - **Changes recorded as PROV events:** 41 (0 critical)
 - **New datasets:** 22
-- **Last change detected:** 2026-11-14 17:57 UTC
+- **Last change detected:** 2026-11-15 18:46 UTC
 
 Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 (resources added, removed, renamed or re-formatted; critical), `RETRO_ALTER`
@@ -31,6 +31,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Detected (UTC) | Dataset | Type | What changed | Provenance |
 |---|---|---|---|---|
+| 2026-11-15 18:46 | [Relatórios de Comercialização de Agrotóxicos](https://dadosabertos.ibama.gov.br/dataset/relatorios-de-comercializacao-de-agrotoxicos) | `REMOVED` | Dataset no longer listed |  |
 | 2026-11-14 17:57 | [Sinaflor - PMFS Outros Biomas](https://dadosabertos.ibama.gov.br/dataset/sinaflor-pmfs-outros-biomas) | `NEW` | Dataset published (4 resources) |  |
 | 2026-11-14 17:57 | [Fontes Energéticas](https://dadosabertos.ibama.gov.br/dataset/fontes-energeticas) | `NEW` | Dataset published (4 resources) |  |
 | 2026-11-14 17:57 | [DOF - Transportes de Produtos Florestais](https://dadosabertos.ibama.gov.br/dataset/dof-transportes-de-produtos-florestais) | `NEW` | Dataset published (3 resources) |  |
