@@ -1,13 +1,13 @@
 {
-  "status": "IN_SYNC",
-  "checked_at": "2026-11-15T11:22:47.371056+00:00",
-  "duration_seconds": 40.2,
+  "status": "DEGRADED",
+  "checked_at": "2026-11-16T12:13:05.686314+00:00",
+  "duration_seconds": 1145.24,
   "portal_url": "https://dadosabertos.ibama.gov.br",
-  "snapshot_run_id": "20261115T062007Z",
+  "snapshot_run_id": "20261116T061927Z",
   "snapshot_file": "snapshot_20261112T233325Z.json",
-  "snapshot_age_hours": 5.04,
+  "snapshot_age_hours": 5.89,
   "monitor_tolerance_hours": 7,
-  "coverage_ratio": 1.0,
+  "coverage_ratio": 0.962,
   "min_coverage_ratio": 0.9,
   "datasets": {
     "snapshot": 79,
@@ -17,5 +17,18 @@
     "removed": []
   },
   "modified": [],
-  "errors": []
+  "errors": [
+    {
+      "name": "fonte-energetica",
+      "error": "502 Server Error: Bad Gateway for url: https://dadosabertos.ibama.gov.br/api/3/action/package_show?id=fonte-energetica"
+    },
+    {
+      "name": "pescador-profissional",
+      "error": "502 Server Error: Bad Gateway for url: https://dadosabertos.ibama.gov.br/api/3/action/package_show?id=pescador-profissional"
+    },
+    {
+      "name": "residuos-solidos-transportador",
+      "error": "502 Server Error: Bad Gateway for url: https://dadosabertos.ibama.gov.br/api/3/action/package_show?id=residuos-solidos-transportador"
+    }
+  ]
 }
