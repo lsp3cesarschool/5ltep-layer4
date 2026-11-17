@@ -1,13 +1,13 @@
 {
- "status": "DEGRADED",
- "checked_at": "2026-11-16T12:13:05.686314+00:00",
- "duration_seconds": 1145.24,
+ "status": "IN_SYNC",
+ "checked_at": "2026-11-17T12:17:47.050325+00:00",
+ "duration_seconds": 32.87,
  "portal_url": "https://dadosabertos.ibama.gov.br",
- "snapshot_run_id": "20261116T061927Z",
+ "snapshot_run_id": "20261117T074922Z",
  "snapshot_file": "snapshot_20261112T233325Z.json",
- "snapshot_age_hours": 5.89,
+ "snapshot_age_hours": 4.47,
  "monitor_tolerance_hours": 7,
- "coverage_ratio": 0.962,
+ "coverage_ratio": 1.0,
  "min_coverage_ratio": 0.9,
  "datasets": {
   "snapshot": 79,
@@ -17,20 +17,7 @@
   "removed": []
  },
  "modified": [],
- "errors": [
-  {
-   "name": "fonte-energetica",
-   "error": "502 Server Error: Bad Gateway for url: https://dadosabertos.ibama.gov.br/api/3/action/package_show?id=fonte-energetica"
-  },
-  {
-   "name": "pescador-profissional",
-   "error": "502 Server Error: Bad Gateway for url: https://dadosabertos.ibama.gov.br/api/3/action/package_show?id=pescador-profissional"
-  },
-  {
-   "name": "residuos-solidos-transportador",
-   "error": "502 Server Error: Bad Gateway for url: https://dadosabertos.ibama.gov.br/api/3/action/package_show?id=residuos-solidos-transportador"
-  }
- ],
- "sentence": "🟡 **Cross-check degraded** — last verified 2026-11-16 12:13 UTC. All 79 reachable datasets in sync with the live portal (dadosabertos.ibama.gov.br); latest snapshot is 5.9h old. Coverage: 96% (3 transient fetch error(s)).",
- "sentence_pt": "🟡 **Verificação cruzada degradada** — última verificação em 2026-11-16 12:13 UTC. Todos os 79 conjuntos de dados acessíveis estão sincronizados com o portal ao vivo (dadosabertos.ibama.gov.br); o snapshot mais recente tem 5,9 h. Cobertura: 96% (3 erro(s) transitório(s) de consulta)."
+ "errors": [],
+ "sentence": "✅ **Cross-check passing** — last verified 2026-11-17 12:17 UTC. All 79 reachable datasets in sync with the live portal (dadosabertos.ibama.gov.br); latest snapshot is 4.5h old.",
+ "sentence_pt": "✅ **Verificação cruzada aprovada** — última verificação em 2026-11-17 12:17 UTC. Todos os 79 conjuntos de dados acessíveis estão sincronizados com o portal ao vivo (dadosabertos.ibama.gov.br); o snapshot mais recente tem 4,5 h."
 }
