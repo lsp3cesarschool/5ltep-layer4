@@ -7,9 +7,9 @@ first monitoring cycle that saw the change).
 
 - **Monitored since:** 2026-06-09
 - **Datasets in the latest snapshot:** 79
-- **Changes recorded as PROV events:** 41 (0 critical)
+- **Changes recorded as PROV events:** 46 (0 critical)
 - **New datasets:** 23
-- **Last change detected:** 2026-11-16 06:19 UTC
+- **Last change detected:** 2026-11-18 20:26 UTC
 
 Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 (resources added, removed, renamed or re-formatted; critical), `RETRO_ALTER`
@@ -20,7 +20,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Month | PROV events | Critical | New datasets |
 |---|---:|---:|---:|
-| 2026-11 | 1 | 0 | 10 |
+| 2026-11 | 6 | 0 | 10 |
 | 2026-10 | 8 | 0 | 5 |
 | 2026-09 | 8 | 0 | 0 |
 | 2026-08 | 10 | 0 | 3 |
@@ -31,6 +31,11 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Detected (UTC) | Dataset | Type | What changed | Provenance |
 |---|---|---|---|---|
+| 2026-11-18 20:26 | [Sisfogo - ROI](https://dadosabertos.ibama.gov.br/dataset/sisfogo-roi) | `CONTENT_MOD` | 5 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/d2eb0087-6500-4315-92ec-e66fe2c56ec1.jsonld) |
+| 2026-11-18 20:26 | [Julgamentos de Auto de Infração - Realizado no âmbito do IBAMA](https://dadosabertos.ibama.gov.br/dataset/julgamentos-de-auto-de-infracao-realizado-no-ambito-do-ibama) | `CONTENT_MOD` | 4 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net; 4 plain file → zip); license title changed | [log](provenance_logs/41cffdc5-d9ec-4c16-a6eb-ab31407425c4.jsonld) |
+| 2026-11-18 20:26 | [Fiscalização – termo de destruição ou inutilização (série A e B)](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b) | `CONTENT_MOD` | 3 resource URL(s) changed (3 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/2b346de7-e221-43f7-a155-3993c4353506.jsonld) |
+| 2026-11-18 20:26 | [Fiscalização - termo de apreensão](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-apreensao) | `CONTENT_MOD` | 9 resource URL(s) changed (9 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net; 9 zip → plain file) | [log](provenance_logs/89568872-a865-4e19-8a7c-6f11965a3195.jsonld) |
+| 2026-11-18 20:26 | [Autorização Ambiental para o Transporte Interestadual de Produtos Perigosos - AATIPP](https://dadosabertos.ibama.gov.br/dataset/autorizacao-ambiental-para-o-transporte-interestadual-de-produtos-perigosos-aatipp) | `CONTENT_MOD` | 4 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net; 4 plain file → zip); license title changed | [log](provenance_logs/2dc12ec3-de3d-4bf4-964b-374d9bacad6f.jsonld) |
 | 2026-11-16 06:19 | [Relatórios de Comercialização de Agrotóxicos](https://dadosabertos.ibama.gov.br/dataset/relatorios-de-comercializacao-de-agrotoxicos) | `NEW` | Dataset published (3 resources) |  |
 | 2026-11-15 18:46 | [Relatórios de Comercialização de Agrotóxicos](https://dadosabertos.ibama.gov.br/dataset/relatorios-de-comercializacao-de-agrotoxicos) | `REMOVED` | Dataset no longer listed |  |
 | 2026-11-14 17:57 | [Sinaflor - PMFS Outros Biomas](https://dadosabertos.ibama.gov.br/dataset/sinaflor-pmfs-outros-biomas) | `NEW` | Dataset published (4 resources) |  |

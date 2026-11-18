@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-11-18T07:20:09.270681+00:00",
+ "generated_at": "2026-11-18T20:26:51.926915+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-11-18T07:19:46+00:00",
-  "cycles": 575,
+  "last_cycle": "2026-11-18T20:26:28+00:00",
+  "cycles": 576,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -175,11 +175,11 @@
    "2026-11-15": 2,
    "2026-11-16": 2,
    "2026-11-17": 2,
-   "2026-11-18": 1
+   "2026-11-18": 2
   },
   "cycles_30d": 86,
   "max_gap_hours_30d": 16.0,
-  "distinct_snapshots": 41,
+  "distinct_snapshots": 42,
   "failures": [
    {
     "run_id": 40188331608,
@@ -321,17 +321,117 @@
   "datasets": 79,
   "resources": 474,
   "organizations": 1,
-  "prov_events": 41,
-  "prov_records": 41,
+  "prov_events": 46,
+  "prov_records": 46,
   "critical": 0,
-  "datasets_changed": 29,
+  "datasets_changed": 33,
   "by_type": {
+   "CONTENT_MOD": 46,
    "NEW": 23,
-   "REMOVED": 15,
-   "CONTENT_MOD": 41
+   "REMOVED": 15
   }
  },
  "events": [
+  {
+   "when": "2026-11-18T20:26:28+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "d2eb0087-6500-4315-92ec-e66fe2c56ec1",
+   "name": "sisfogo-roi",
+   "title": "Sisfogo - ROI",
+   "summary": "5 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net)",
+   "summary_pt": "5 URL(s) de recurso alterada(s) (4 movida(s) de dadosabertos.ibama.gov.br para stibamadadosabertosprd.blob.core.windows.net)",
+   "host_pairs": [
+    [
+     "dadosabertos.ibama.gov.br",
+     "stibamadadosabertosprd.blob.core.windows.net",
+     4
+    ]
+   ],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": "d2eb0087-6500-4315-92ec-e66fe2c56ec1.jsonld"
+  },
+  {
+   "when": "2026-11-18T20:26:28+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "41cffdc5-d9ec-4c16-a6eb-ab31407425c4",
+   "name": "julgamentos-de-auto-de-infracao-realizado-no-ambito-do-ibama",
+   "title": "Julgamentos de Auto de Infração - Realizado no âmbito do IBAMA",
+   "summary": "4 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net; 4 plain file → zip); license title changed",
+   "summary_pt": "4 URL(s) de recurso alterada(s) (4 movida(s) de dadosabertos.ibama.gov.br para stibamadadosabertosprd.blob.core.windows.net; 4 arquivo simples → zip); título da licença alterado",
+   "host_pairs": [
+    [
+     "dadosabertos.ibama.gov.br",
+     "stibamadadosabertosprd.blob.core.windows.net",
+     4
+    ]
+   ],
+   "zip_to_plain": 0,
+   "plain_to_zip": 4,
+   "prov_log": "41cffdc5-d9ec-4c16-a6eb-ab31407425c4.jsonld"
+  },
+  {
+   "when": "2026-11-18T20:26:28+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "2b346de7-e221-43f7-a155-3993c4353506",
+   "name": "fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b",
+   "title": "Fiscalização – termo de destruição ou inutilização (série A e B)",
+   "summary": "3 resource URL(s) changed (3 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net)",
+   "summary_pt": "3 URL(s) de recurso alterada(s) (3 movida(s) de dadosabertos.ibama.gov.br para stibamadadosabertosprd.blob.core.windows.net)",
+   "host_pairs": [
+    [
+     "dadosabertos.ibama.gov.br",
+     "stibamadadosabertosprd.blob.core.windows.net",
+     3
+    ]
+   ],
+   "zip_to_plain": 0,
+   "plain_to_zip": 0,
+   "prov_log": "2b346de7-e221-43f7-a155-3993c4353506.jsonld"
+  },
+  {
+   "when": "2026-11-18T20:26:28+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "89568872-a865-4e19-8a7c-6f11965a3195",
+   "name": "fiscalizacao-termo-de-apreensao",
+   "title": "Fiscalização - termo de apreensão",
+   "summary": "9 resource URL(s) changed (9 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net; 9 zip → plain file)",
+   "summary_pt": "9 URL(s) de recurso alterada(s) (9 movida(s) de dadosabertos.ibama.gov.br para stibamadadosabertosprd.blob.core.windows.net; 9 zip → arquivo simples)",
+   "host_pairs": [
+    [
+     "dadosabertos.ibama.gov.br",
+     "stibamadadosabertosprd.blob.core.windows.net",
+     9
+    ]
+   ],
+   "zip_to_plain": 9,
+   "plain_to_zip": 0,
+   "prov_log": "89568872-a865-4e19-8a7c-6f11965a3195.jsonld"
+  },
+  {
+   "when": "2026-11-18T20:26:28+00:00",
+   "type": "CONTENT_MOD",
+   "severity": "WARNING",
+   "dataset_id": "2dc12ec3-de3d-4bf4-964b-374d9bacad6f",
+   "name": "autorizacao-ambiental-para-o-transporte-interestadual-de-produtos-perigosos-aatipp",
+   "title": "Autorização Ambiental para o Transporte Interestadual de Produtos Perigosos - AATIPP",
+   "summary": "4 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net; 4 plain file → zip); license title changed",
+   "summary_pt": "4 URL(s) de recurso alterada(s) (4 movida(s) de dadosabertos.ibama.gov.br para stibamadadosabertosprd.blob.core.windows.net; 4 arquivo simples → zip); título da licença alterado",
+   "host_pairs": [
+    [
+     "dadosabertos.ibama.gov.br",
+     "stibamadadosabertosprd.blob.core.windows.net",
+     4
+    ]
+   ],
+   "zip_to_plain": 0,
+   "plain_to_zip": 4,
+   "prov_log": "2dc12ec3-de3d-4bf4-964b-374d9bacad6f.jsonld"
+  },
   {
    "when": "2026-11-16T06:19:27+00:00",
    "type": "NEW",
@@ -1615,6 +1715,71 @@
  ],
  "datasets": [
   {
+   "id": "d2eb0087-6500-4315-92ec-e66fe2c56ec1",
+   "name": "sisfogo-roi",
+   "title": "Sisfogo - ROI",
+   "organization": "Dados Abertos",
+   "resources": 5,
+   "metadata_modified": "2026-11-18T15:09:56.580786",
+   "prov_records": 1,
+   "prov_log": "d2eb0087-6500-4315-92ec-e66fe2c56ec1.jsonld",
+   "changes": 1,
+   "last_change": "2026-11-18T20:26:28+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
+   "id": "41cffdc5-d9ec-4c16-a6eb-ab31407425c4",
+   "name": "julgamentos-de-auto-de-infracao-realizado-no-ambito-do-ibama",
+   "title": "Julgamentos de Auto de Infração - Realizado no âmbito do IBAMA",
+   "organization": "Dados Abertos",
+   "resources": 4,
+   "metadata_modified": "2026-11-18T14:08:01.068236",
+   "prov_records": 1,
+   "prov_log": "41cffdc5-d9ec-4c16-a6eb-ab31407425c4.jsonld",
+   "changes": 1,
+   "last_change": "2026-11-18T20:26:28+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
+   "id": "2b346de7-e221-43f7-a155-3993c4353506",
+   "name": "fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b",
+   "title": "Fiscalização – termo de destruição ou inutilização (série A e B)",
+   "organization": "Dados Abertos",
+   "resources": 12,
+   "metadata_modified": "2026-11-18T14:05:24.819132",
+   "prov_records": 3,
+   "prov_log": "2b346de7-e221-43f7-a155-3993c4353506.jsonld",
+   "changes": 3,
+   "last_change": "2026-11-18T20:26:28+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
+   "id": "89568872-a865-4e19-8a7c-6f11965a3195",
+   "name": "fiscalizacao-termo-de-apreensao",
+   "title": "Fiscalização - termo de apreensão",
+   "organization": "Dados Abertos",
+   "resources": 18,
+   "metadata_modified": "2026-11-18T14:00:04.780221",
+   "prov_records": 1,
+   "prov_log": "89568872-a865-4e19-8a7c-6f11965a3195.jsonld",
+   "changes": 1,
+   "last_change": "2026-11-18T20:26:28+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
+   "id": "2dc12ec3-de3d-4bf4-964b-374d9bacad6f",
+   "name": "autorizacao-ambiental-para-o-transporte-interestadual-de-produtos-perigosos-aatipp",
+   "title": "Autorização Ambiental para o Transporte Interestadual de Produtos Perigosos - AATIPP",
+   "organization": "Dados Abertos",
+   "resources": 4,
+   "metadata_modified": "2026-11-18T13:46:02.187474",
+   "prov_records": 1,
+   "prov_log": "2dc12ec3-de3d-4bf4-964b-374d9bacad6f.jsonld",
+   "changes": 1,
+   "last_change": "2026-11-18T20:26:28+00:00",
+   "last_type": "CONTENT_MOD"
+  },
+  {
    "id": "b705b94b-e5b9-4246-9038-eaf1ecd4ff04",
    "name": "relatorios-de-comercializacao-de-agrotoxicos",
    "title": "Relatórios de Comercialização de Agrotóxicos",
@@ -1665,19 +1830,6 @@
    "changes": 1,
    "last_change": "2026-11-14T06:12:30+00:00",
    "last_type": "REMOVED"
-  },
-  {
-   "id": "2b346de7-e221-43f7-a155-3993c4353506",
-   "name": "fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b",
-   "title": "Fiscalização – termo de destruição ou inutilização (série A e B)",
-   "organization": "Dados Abertos",
-   "resources": 12,
-   "metadata_modified": "2026-11-12T18:20:11.172922",
-   "prov_records": 2,
-   "prov_log": "2b346de7-e221-43f7-a155-3993c4353506.jsonld",
-   "changes": 2,
-   "last_change": "2026-11-12T23:33:25+00:00",
-   "last_type": "CONTENT_MOD"
   },
   {
    "id": "5dbb0a27-bdc5-48cf-8b7b-a8c725e4510d",
@@ -2148,19 +2300,6 @@
    "last_type": null
   },
   {
-   "id": "d2eb0087-6500-4315-92ec-e66fe2c56ec1",
-   "name": "sisfogo-roi",
-   "title": "Sisfogo - ROI",
-   "organization": "Dados Abertos",
-   "resources": 5,
-   "metadata_modified": "2025-11-13T12:32:39.128641",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
    "id": "faa8d3ac-3389-4e0b-ba9e-9942f80989a8",
    "name": "sisfauna-plantel-exato",
    "title": "Sisfauna - Plantel Exato",
@@ -2356,19 +2495,6 @@
    "last_type": null
   },
   {
-   "id": "41cffdc5-d9ec-4c16-a6eb-ab31407425c4",
-   "name": "julgamentos-de-auto-de-infracao-realizado-no-ambito-do-ibama",
-   "title": "Julgamentos de Auto de Infração - Realizado no âmbito do IBAMA",
-   "organization": "Dados Abertos",
-   "resources": 4,
-   "metadata_modified": "2021-09-18T13:07:31.127734",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
    "id": "2d8e136c-a88d-49e4-bb20-472f038c93e1",
    "name": "importador-exportador-de-fauna-e-flora-produtos-parte",
    "title": "Importador/ Exportador de Fauna e Flora - Produtos/ Parte",
@@ -2401,19 +2527,6 @@
    "organization": "Dados Abertos",
    "resources": 4,
    "metadata_modified": "2021-09-18T12:45:08.884111",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
-   "id": "89568872-a865-4e19-8a7c-6f11965a3195",
-   "name": "fiscalizacao-termo-de-apreensao",
-   "title": "Fiscalização - termo de apreensão",
-   "organization": "Dados Abertos",
-   "resources": 18,
-   "metadata_modified": "2025-10-13T11:45:49.681782",
    "prov_records": 0,
    "prov_log": null,
    "changes": 0,
@@ -2616,19 +2729,6 @@
    "last_type": null
   },
   {
-   "id": "2dc12ec3-de3d-4bf4-964b-374d9bacad6f",
-   "name": "autorizacao-ambiental-para-o-transporte-interestadual-de-produtos-perigosos-aatipp",
-   "title": "Autorização Ambiental para o Transporte Interestadual de Produtos Perigosos - AATIPP",
-   "organization": "Dados Abertos",
-   "resources": 4,
-   "metadata_modified": "2021-09-18T13:07:02.282775",
-   "prov_records": 0,
-   "prov_log": null,
-   "changes": 0,
-   "last_change": null,
-   "last_type": null
-  },
-  {
    "id": "8b1649b3-4a3b-4116-9764-3354ae27537f",
    "name": "antropizacao-dos-biomas-extra-amazonicos",
    "title": "Antropização dos Biomas Extra-Amazônicos",
@@ -2643,8 +2743,8 @@
   }
  ],
  "hosts_now": {
-  "stibamadadosabertosprd.blob.core.windows.net": 261,
-  "dadosabertos.ibama.gov.br": 180,
+  "stibamadadosabertosprd.blob.core.windows.net": 285,
+  "dadosabertos.ibama.gov.br": 156,
   "siscom.ibama.gov.br": 29,
   "siscom.ibama.gov.br:80": 3,
   "pamgia.ibama.gov.br": 1
@@ -2654,10 +2754,10 @@
   {
    "from": "dadosabertos.ibama.gov.br",
    "to": "stibamadadosabertosprd.blob.core.windows.net",
-   "urls": 88,
-   "events": 28,
-   "datasets": 20,
-   "last": "2026-11-12T23:33:25+00:00"
+   "urls": 112,
+   "events": 33,
+   "datasets": 24,
+   "last": "2026-11-18T20:26:28+00:00"
   },
   {
    "from": "",
@@ -2669,7 +2769,7 @@
   }
  ],
  "packaging": {
-  "zip_to_plain": 45,
-  "plain_to_zip": 20
+  "zip_to_plain": 54,
+  "plain_to_zip": 28
  }
 }
