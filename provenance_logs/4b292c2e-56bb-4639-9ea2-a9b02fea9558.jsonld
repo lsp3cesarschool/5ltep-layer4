@@ -693,6 +693,101 @@
           "5ltep:portalUrl": "https://dadosabertos.ibama.gov.br"
         }
       ]
+    },
+    {
+      "@context": {
+        "prov": "http://www.w3.org/ns/prov#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "cupim": "https://5ltep.example.org/ontology#",
+        "ckan": "https://ckan.org/schema#",
+        "portal": "https://dadosabertos.ibama.gov.br/"
+      },
+      "@graph": [
+        {
+          "@id": "https://dadosabertos.ibama.gov.br/dataset/4b292c2e-56bb-4639-9ea2-a9b02fea9558#864a4d3c0e8f",
+          "@type": [
+            "prov:Entity",
+            "cupim:DatasetSnapshot"
+          ],
+          "prov:wasGeneratedBy": {
+            "@id": "cupim:run-20261125T213730Z"
+          },
+          "cupim:changeType": "SCHEMA_DRIFT",
+          "cupim:severity": "CRITICAL",
+          "cupim:datasetId": "4b292c2e-56bb-4639-9ea2-a9b02fea9558",
+          "cupim:contentHash": "864a4d3c0e8feffe1984c308608beac1e1a85b4b5afa419be00e5096d2189fe4",
+          "cupim:detectedAt": {
+            "@value": "2026-11-25T21:37:30.487851+00:00",
+            "@type": "xsd:dateTime"
+          },
+          "prov:wasAttributedTo": {
+            "@id": "https://dadosabertos.ibama.gov.br/organization/ibama"
+          },
+          "prov:wasDerivedFrom": {
+            "@id": "https://dadosabertos.ibama.gov.br/dataset/4b292c2e-56bb-4639-9ea2-a9b02fea9558#ac484a83530c"
+          },
+          "cupim:changeSummary": "8 resource(s) added; description edited; resource renamed; resource descriptions edited",
+          "cupim:changedFields": [
+            "notes",
+            "metadata_modified",
+            "num_resources",
+            "resource.name",
+            "resources"
+          ],
+          "cupim:fieldsOutsideFingerprint": [
+            "author_email",
+            "maintainer_email",
+            "num_tags",
+            "tags",
+            "resource.description",
+            "resource.position"
+          ],
+          "cupim:resourceUrlChanges": 0,
+          "cupim:hostMoves": 0,
+          "cupim:packagingChanges": 0
+        },
+        {
+          "@id": "cupim:run-20261125T213730Z",
+          "@type": [
+            "prov:Activity",
+            "cupim:MonitoringRun"
+          ],
+          "prov:startedAtTime": {
+            "@value": "2026-11-25T21:37:30.490589+00:00",
+            "@type": "xsd:dateTime"
+          },
+          "prov:endedAtTime": {
+            "@value": "2026-11-25T21:37:30.492250+00:00",
+            "@type": "xsd:dateTime"
+          },
+          "prov:wasAssociatedWith": {
+            "@id": "https://github.com/lsp3cesarschool/5ltep-layer4@ae8dbf5"
+          },
+          "prov:used": {
+            "@id": "https://dadosabertos.ibama.gov.br/api/3/action/package_show?id=4b292c2e-56bb-4639-9ea2-a9b02fea9558"
+          }
+        },
+        {
+          "@id": "https://github.com/lsp3cesarschool/5ltep-layer4@ae8dbf5",
+          "@type": [
+            "prov:Agent",
+            "prov:SoftwareAgent"
+          ],
+          "rdfs:label": "5L-TEP Toolkit v1.1.0 (Layer 4 — Observability & Provenance)",
+          "cupim:repositoryUrl": "https://github.com/lsp3cesarschool/5ltep-layer4",
+          "cupim:commitSha": "ae8dbf529579fc1ffaa085820c3e5ca986e9bd50"
+        },
+        {
+          "@id": "https://dadosabertos.ibama.gov.br/organization/ibama",
+          "@type": [
+            "prov:Agent",
+            "cupim:DataCustodian"
+          ],
+          "rdfs:label": "ibama",
+          "cupim:portalUrl": "https://dadosabertos.ibama.gov.br"
+        }
+      ]
     }
   ]
 }

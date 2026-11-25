@@ -7,9 +7,9 @@ first monitoring cycle that saw the change).
 
 - **Monitored since:** 2026-06-09
 - **Datasets in the latest snapshot:** 79
-- **Changes recorded as PROV events:** 46 (0 critical)
+- **Changes recorded as PROV events:** 53 (5 critical)
 - **New datasets:** 23
-- **Last change detected:** 2026-11-18 20:26 UTC
+- **Last change detected:** 2026-11-25 21:37 UTC
 
 Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 (resources added, removed, renamed or re-formatted; critical), `RETRO_ALTER`
@@ -20,7 +20,7 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Month | PROV events | Critical | New datasets |
 |---|---:|---:|---:|
-| 2026-11 | 6 | 0 | 10 |
+| 2026-11 | 13 | 5 | 10 |
 | 2026-10 | 8 | 0 | 5 |
 | 2026-09 | 8 | 0 | 0 |
 | 2026-08 | 10 | 0 | 3 |
@@ -31,6 +31,13 @@ Types: `CONTENT_MOD` (content changed with a new timestamp), `SCHEMA_DRIFT`
 
 | Detected (UTC) | Dataset | Type | What changed | Provenance |
 |---|---|---|---|---|
+| 2026-11-25 21:37 | [Pessoas jurídicas inscritas no CTF/AIDA](https://dadosabertos.ibama.gov.br/dataset/pessoas-juridicas-inscritas-no-ctf-aida) | `SCHEMA_DRIFT` | 1 resource(s) added; description edited | [log](provenance_logs/520bbf04-e66f-430b-813b-2efd4bc0d56e.jsonld) |
+| 2026-11-25 21:37 | [Multas ambientais distribuídas por bens tutelados](https://dadosabertos.ibama.gov.br/dataset/multas-ambientais-distribuidas-por-bens-tutelados) | `SCHEMA_DRIFT` | 1 resource(s) added; 1 resource(s) removed; title changed; description edited; resource renamed; resource descriptions edited | [log](provenance_logs/004c4ee8-5580-430e-8cec-b52ac7ea9461.jsonld) |
+| 2026-11-25 21:37 | [Fiscalização – termo de destruição ou inutilização (série A e B)](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b) | `CONTENT_MOD` | 4 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/2b346de7-e221-43f7-a155-3993c4353506.jsonld) |
+| 2026-11-25 21:37 | [Fiscalização - termo de embargo](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-embargo) | `SCHEMA_DRIFT` | 8 resource(s) added; description edited; resource renamed; resource descriptions edited | [log](provenance_logs/4b292c2e-56bb-4639-9ea2-a9b02fea9558.jsonld) |
+| 2026-11-25 21:37 | [Fiscalização - termo de apreensão](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-apreensao) | `CONTENT_MOD` | 9 resource URL(s) changed (9 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net; 9 zip → plain file) | [log](provenance_logs/89568872-a865-4e19-8a7c-6f11965a3195.jsonld) |
+| 2026-11-25 21:37 | [Fiscalização - Auto de infração](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-auto-de-infracao) | `SCHEMA_DRIFT` | 8 resource(s) added; title changed; description edited; resource renamed; resource descriptions edited | [log](provenance_logs/09850847-5ba2-435a-942c-a5dcd7e970c9.jsonld) |
+| 2026-11-25 21:37 | [Arrecadação de Multas Ambientais Bens tutelados](https://dadosabertos.ibama.gov.br/dataset/arrecadacao-de-multas-ambientais-bens-tutelados) | `SCHEMA_DRIFT` | 1 resource(s) added; 1 resource(s) removed; description edited; resource renamed; resource descriptions edited | [log](provenance_logs/ef55602f-73f2-4976-a35d-23d6bfebc1df.jsonld) |
 | 2026-11-18 20:26 | [Sisfogo - ROI](https://dadosabertos.ibama.gov.br/dataset/sisfogo-roi) | `CONTENT_MOD` | 5 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/d2eb0087-6500-4315-92ec-e66fe2c56ec1.jsonld) |
 | 2026-11-18 20:26 | [Julgamentos de Auto de Infração - Realizado no âmbito do IBAMA](https://dadosabertos.ibama.gov.br/dataset/julgamentos-de-auto-de-infracao-realizado-no-ambito-do-ibama) | `CONTENT_MOD` | 4 resource URL(s) changed (4 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net; 4 plain file → zip); license title changed | [log](provenance_logs/41cffdc5-d9ec-4c16-a6eb-ab31407425c4.jsonld) |
 | 2026-11-18 20:26 | [Fiscalização – termo de destruição ou inutilização (série A e B)](https://dadosabertos.ibama.gov.br/dataset/fiscalizacao-termo-de-destruicao-ou-inutilizacao-serie-a-e-b) | `CONTENT_MOD` | 3 resource URL(s) changed (3 moved from dadosabertos.ibama.gov.br to stibamadadosabertosprd.blob.core.windows.net) | [log](provenance_logs/2b346de7-e221-43f7-a155-3993c4353506.jsonld) |
