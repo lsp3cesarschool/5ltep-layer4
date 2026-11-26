@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-11-25T21:37:32.423842+00:00",
+ "generated_at": "2026-11-26T08:08:51.872425+00:00",
  "toolkit_version": "1.1.0",
  "repository": "lsp3cesarschool/5ltep-layer4",
  "portal": {
@@ -10,8 +10,8 @@
  },
  "monitoring": {
   "since": "2026-06-09T14:25:14+00:00",
-  "last_cycle": "2026-11-25T21:37:13+00:00",
-  "cycles": 590,
+  "last_cycle": "2026-11-26T08:08:28+00:00",
+  "cycles": 591,
   "cycles_by_day": {
    "2026-06-09": 2,
    "2026-06-10": 4,
@@ -182,12 +182,21 @@
    "2026-11-22": 2,
    "2026-11-23": 2,
    "2026-11-24": 2,
-   "2026-11-25": 2
+   "2026-11-25": 2,
+   "2026-11-26": 1
   },
-  "cycles_30d": 74,
+  "cycles_30d": 73,
   "max_gap_hours_30d": 16.4,
   "distinct_snapshots": 43,
   "failures": [
+   {
+    "run_id": 45705983742,
+    "when": "2026-11-25T21:37:04+00:00",
+    "category": "unknown",
+    "detail": "step: Alert on CRITICAL schema change (SCHEMA_DRIFT / RETRO_ALTER)",
+    "step": "Alert on CRITICAL schema change (SCHEMA_DRIFT / RETRO_ALTER)",
+    "source": "actions"
+   },
    {
     "run_id": 40188331608,
     "when": "2026-10-25T11:18:54+00:00",
@@ -320,7 +329,8 @@
   "failures_by_category": {
    "blocked": 11,
    "dns": 3,
-   "portal_down": 2
+   "portal_down": 2,
+   "unknown": 1
   },
   "unread_last_cycle": []
  },
